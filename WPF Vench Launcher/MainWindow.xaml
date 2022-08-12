@@ -1,0 +1,229 @@
+﻿<Window x:Class="WPF_Vench_Launcher.MainWindow"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Vench_Launcher"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="1070">
+
+    <Window.Resources>
+        <Style x:Key="IsStartedStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="TextBlock.Foreground" Value="LightYellow"/>
+        </Style>
+        <Style x:Key="IsntStartedStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="TextBlock.Foreground" Value="#202225"/>
+        </Style>
+        <Style x:Key="IsStartedCSGO" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="TextBlock.Foreground" Value="#BEF56E"/>
+        </Style>
+        
+        <Style x:Key="settingsIcon" TargetType="{x:Type Border}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#4F545C" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate  TargetType="{x:Type Button}">
+                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#646a75" />
+                                <Setter Property="Foreground" Value="White" />
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="DarkGray" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <DataTemplate x:Key="AccountsTemplate" >
+            <Border Name="AccountListBoxItemBD" Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e" Width="310">
+                <Grid Margin="7" >
+                    <Grid.RowDefinitions >
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="AccountRoundStatus" Text="⚫" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" FontWeight="Bold" Foreground="White" FontSize="15" Text="{Binding Path=Login}"/>
+
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Value="True"
+                 Binding="{Binding 
+                              IsSelected, 
+                              RelativeSource={RelativeSource 
+                                  AncestorType={x:Type ListBoxItem}}}">
+                    <!-- everybody loves HotPink -->
+                    <Setter TargetName="AccountListBoxItemBD" Property="Background" Value="#68707a"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupsTemplate">
+            <Border  Name="AccountListBoxItemBD" Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e" Width="420">
+                <Grid Margin="7" >
+                    <Grid.RowDefinitions >
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
+ 
+                    
+                    <Viewbox Width="30" Height="30" Grid.Column="2" HorizontalAlignment="Right">
+                        <Border Margin="1" BorderThickness="2"  CornerRadius="8" Width="30" Style="{StaticResource settingsIcon}">
+                            <Button Click="DeleteGroup">
+                                <Canvas Width="24" Height="24">
+                                    <Path Fill="Black" Data="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" />
+                                </Canvas>
+                            </Button>
+                        </Border>
+                    </Viewbox>
+                    <TextBox LostFocus="GroupNameLostFocus" Grid.Row="0" Grid.Column="0" FontWeight="Bold" BorderThickness="0" Background="#50565E" Foreground="White" FontSize="20" Text="{Binding Path=GroupName}"/>
+
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Value="True"
+                 Binding="{Binding 
+                              IsSelected, 
+                              RelativeSource={RelativeSource 
+                                  AncestorType={x:Type ListBoxItem}}}">
+                    <!-- everybody loves HotPink -->
+                    <Setter TargetName="AccountListBoxItemBD" Property="Background" Value="#68707a"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+
+
+
+    <Grid ShowGridLines="False" Background="#2F3136" >
+        <Grid.RowDefinitions>
+            <RowDefinition ></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+
+
+
+        <Rectangle Name="CustomTitle" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="2" Fill="#202225" />
+        <Rectangle Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="3" Grid.RowSpan="16" Fill="#202225" Margin="7">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
+            </Rectangle.Effect>
+        </Rectangle>
+        <Rectangle Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" Grid.RowSpan="5" Fill="#202225" Margin="7">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
+            </Rectangle.Effect>
+        </Rectangle>
+        <Rectangle Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="11" Fill="#202225" Margin="7">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
+            </Rectangle.Effect>
+        </Rectangle>
+
+        <Button Grid.Row="0" Grid.Column="8" FontSize="20" Name="CloseButton" Content="x" Click="CloseButton_Click" Margin="30,10,10,33" Grid.RowSpan="2" />
+        <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="HideButton" Content="-" Click="HideButton_Click" Margin="50,10,109,33" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+
+        <Button Grid.Column="0" Grid.Row="11" Content="Start" Click="ButtonStartClick" Grid.ColumnSpan="3" Margin="10,2,108,0" />
+        <Button Grid.Column="0" Content="Stop" Click="ButtonStopClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="14" Margin="10,0,108,5" />
+        <TextBox Name="startupParams" Background="#303030" Foreground="White" Grid.ColumnSpan="6" TextChanged="OnTextBoxStartupParamsChanged" LostFocus="OnTextBoxStartupParamsLostFocus" Grid.Row="8" Margin="10,0,14,0"/>
+        <Label Foreground="White" FontSize="22" Grid.Row="6" Content="Startup params" Margin="10,34,3,0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+
+
+        <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="5" Fill="#202225" Margin="7">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
+            </Rectangle.Effect>
+        </Rectangle>
+        <Button Grid.ColumnSpan="2" Grid.Row="5" Content="Add account" Name="AddAccount" Click="ButtonAddClick" Margin="0,26,20,10" Grid.RowSpan="2" Grid.Column="1"/>
+        <TextBox Grid.ColumnSpan="2" Background="#303030" Foreground="White" FontSize="15" Grid.Row="3" Name="AccountLogin" Margin="0,24,20,24" Grid.Column="1" Grid.RowSpan="2" />
+        <TextBox Grid.ColumnSpan="2" Background="#303030" Foreground="White" FontSize="15" Grid.Row="4" Name="AccountPassword" Margin="0,24,20,24" Grid.Column="1" Grid.RowSpan="2"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Account" Margin="116,0,3,34" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="20" Grid.Row="3" Content="Login" Margin="10,17,109,17" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="20" Grid.Row="4" Content="Password" Margin="10,17,109,17" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Accounts " Margin="19,0,107,34" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="5" Content="Started " Margin="19,0,0,34" Grid.RowSpan="2" Grid.Column="3"/>
+        <ListBox ItemTemplate="{StaticResource AccountsTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" SelectionMode="Multiple" Grid.Column="6" Background="#202225" Grid.Row="2" Grid.RowSpan="16" Name="accountsList" Grid.ColumnSpan="3" Margin="15" >
+
+            <ListBox.ItemContainerStyleSelector>
+                <local:CategoryHighlightStyleSelector IsStartedStyle="{StaticResource IsStartedStyle}"
+                          IsntStartedStyle="{StaticResource IsntStartedStyle}" IsStartedCSGO="{StaticResource IsStartedCSGO}"/>
+            </ListBox.ItemContainerStyleSelector>
+
+        </ListBox>
+        <ListBox Name="AccountGroups" SelectionChanged="AccountGroups_SelectionChanged" ItemTemplate="{StaticResource GroupsTemplate}" Background="#202225" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled"   Grid.Row="11" Grid.Column="2" Grid.RowSpan="7" Grid.ColumnSpan="4" Margin="24,0,14,15">
+
+        </ListBox>
+        <Label Name="LogoLabel" Content="Venchass Panel" HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.ColumnSpan="2" FontFamily="Segoe UI Black" FontSize="28"  Grid.RowSpan="2" Foreground="White" />
+        <TextBlock Foreground="White" Name="AccountsTotal" FontSize="25" Grid.Row="3" Text="0 " Margin="29,5,0,29" Grid.Column="4" Grid.RowSpan="2"/>
+        <TextBlock Foreground="White" Name="AccountsStarted" FontSize="25" Grid.Row="5" Text="... " Margin="29,5,0,0" Grid.Column="4" />
+        <TextBlock Foreground="White" FontSize="30" Grid.Row="9" Text="Groups " Margin="24,16,0,1" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5">
+
+        </TextBlock>
+        <Button Grid.Column="0" Grid.Row="12" Content="Make Group" Click="MakeGroupButton_Click" Grid.ColumnSpan="3" Margin="10,18,108,21" Grid.RowSpan="2" />
+
+        <!-- <Button Name="Test" Grid.Row="16" Content="test" Click="OnTestButtonclick" Grid.ColumnSpan="2" Margin="10,0,107,0"/>-->
+
+    </Grid>
+</Window>
