@@ -10,6 +10,12 @@ using System.Text;
 using SteamAuth;
 using Newtonsoft.Json;
 using System.Threading;
+using WPF_Vench_Launcher.pages;
+//Software by Venchass
+//My:
+//Discord VenchasS#9039
+//telegram @VenchasS
+//https://vk.com/venchass
 
 namespace WPF_Vench_Launcher
 {
@@ -32,11 +38,12 @@ namespace WPF_Vench_Launcher
         static string steamPath = @"C:\Program Files (x86)\Steam";
 
         static List<Account> AccountsBase = new List<Account>();
-        public static void StartAccount(Account account, string startParams = "")
+        public static void StartAccount(Account account, string startParams = "", bool startSteam = false)
         {
             lock (account)
             {
                 string path = steamPath + @"\steam.exe";
+                var startApp = startSteam ? "" : "-applaunch 730";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -44,7 +51,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = steamPath,
                     FileName = path,
-                    Arguments = string.Format(" -login {0} {1}  -applaunch 730  {2} ", account.Login, account.Password, startParams)
+                    Arguments = string.Format(" -login {0} {1}  {2}  {3} ", account.Login, account.Password, startApp, startParams)
                 };
                 Process process = new Process()
                 {
@@ -57,6 +64,16 @@ namespace WPF_Vench_Launcher
             }
         }
 
+        public static void OpenSteam(Account acc)
+        {
+            lock (acc)
+            {
+                if (acc.Status == 0)
+                {
+                    StartAccount(acc, "-console", true);
+                }
+            }
+        }
         private static Process GetProcessByAccount(Account acc)
         {
             return StartedAccountsDict[acc];
@@ -88,6 +105,85 @@ namespace WPF_Vench_Launcher
             }
         }
 
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, ref COPYDATASTRUCT lParam);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowText(IntPtr hWnd, string text);
+
+        public struct COPYDATASTRUCT
+        {
+            public IntPtr dwData;
+            public int cbData;
+            public IntPtr lpData;
+        }
+
+        public static COPYDATASTRUCT CreateForString(int dwData, string value, bool Unicode = false)
+        {
+            var result = new COPYDATASTRUCT();
+            result.dwData = (IntPtr)dwData;
+            result.lpData = Unicode ? Marshal.StringToCoTaskMemUni(value) : Marshal.StringToCoTaskMemAnsi(value);
+            result.cbData = value.Length + 1;
+            return result;
+        }
+
+        public static void SendCmd(string str)
+        {
+            foreach (var acc in GetAccountsBase())
+            {
+                try
+                {
+                    var cds = CreateForString(0, str, false);
+                    var csgo = GetGameProcess(acc);
+                    SendMessage(csgo.MainWindowHandle, 0x4A, IntPtr.Zero, ref cds);
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        public static void RenameWindows()
+        {
+            foreach (var acc in GetAccountsBase())
+            {
+                try
+                {
+                    var csgo = GetGameProcess(acc);
+                    SetWindowText(csgo.MainWindowHandle, acc.Login);
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        public static void StopAllAccounts()
+        {
+            lock (StartedAccountsDict)
+            {
+                StartedAccountsDict.Clear();
+            }
+            lock (GetAccountsBase())
+            {
+                foreach (var item in GetAccountsBase())
+                {
+                    item.Status = 0;
+                    item.PID = 0;
+                }
+            }
+            foreach (Process proc in Process.GetProcessesByName("steam"))
+            {
+                proc.Kill();
+            }
+            foreach (Process proc in Process.GetProcessesByName("csgo"))
+            {
+                proc.Kill();
+            }
+        }
         static void SaveAccountData(Account acc, Process proc)
         {
             lock (StartedAccountsDict)
@@ -116,6 +212,14 @@ namespace WPF_Vench_Launcher
                     acc.Status = 0;
                     acc.PID = 0;
                 }
+            }
+        }
+
+        public static void DelteAccount(Account acc)
+        {
+            lock(AccountsBase)
+            {
+                AccountsBase.Remove(acc);
             }
         }
 
@@ -241,6 +345,9 @@ namespace WPF_Vench_Launcher
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern bool PostMessage(IntPtr hWnd, int Msg, char wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int wMsg, char wParam, int lParam);
+
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -256,9 +363,9 @@ namespace WPF_Vench_Launcher
             {
                 SetForegroundWindow(hwnd);
                 //Thread.Sleep(150);
-                PostMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
-                //Thread.Sleep(10);
-                PostMessage(hwnd, WM_KEYUP, (char)VK_RETURN, 0);
+                Thread.Sleep(10);
+                SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
+                SendMessage(hwnd, WM_KEYUP, (char)VK_RETURN, 0);
                 return;
             }
             try
@@ -269,7 +376,7 @@ namespace WPF_Vench_Launcher
                 //передаем ему текст посимвольно
                 foreach (char ch in message)
                 {
-                    PostMessage(hwnd, WM_CHAR, ch, 1);
+                    SendMessage(hwnd, WM_CHAR, ch, 1);
                 }
             }
             catch (Exception error)
@@ -287,6 +394,8 @@ namespace WPF_Vench_Launcher
         public int Status { get; set; }
 
         public int PID { get; set; }
+
+        public bool PrimeStatus { get; set; }
 
         public override string ToString()
         {
@@ -331,8 +440,13 @@ namespace WPF_Vench_Launcher
 
         public static async void SaveAccountsDataAsync()
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(AccountManager.GetAccountsBase());
-            // полная перезапись файла 
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var accounts = AccountManager.GetAccountsBase();
+            var json = "";
+            lock (accounts)
+            {
+                json = System.Text.Json.JsonSerializer.Serialize(accounts, options);
+            }
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
             {
                 await writer.WriteLineAsync(json);
@@ -398,6 +512,11 @@ namespace WPF_Vench_Launcher
             {
                 MessageBox.Show("не удалось загрузить конфиг");
             }
+            return config;
+        }
+
+        public static ConfigObject GetConfig()
+        {
             return config;
         }
     }
