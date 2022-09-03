@@ -2,7 +2,7 @@
 
 Easy panel for starting CS:GO or Steam apps
 
-![VP s1](https://user-images.githubusercontent.com/49115035/188275792-c2fd2fbf-df7a-4ceb-9fa7-3c1c27417403.png)
+![VP s1](https://user-images.githubusercontent.com/49115035/188276931-c23801fb-0ec8-438b-91ea-2ca020381c7f.png)
 
 
 Options:
