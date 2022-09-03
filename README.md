@@ -1,6 +1,7 @@
 # Venchass Panel
 
-Easy panel for starting csgo's
+Easy panel for starting CS:GO or Steam apps
+
 ![VP s1](https://user-images.githubusercontent.com/49115035/188273904-b3c8e585-b10e-408d-a097-03d98c813d42.png)
 
 Options:
