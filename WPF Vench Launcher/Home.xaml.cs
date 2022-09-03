@@ -109,6 +109,7 @@ namespace WPF_Vench_Launcher.pages
             var s = sender as Button;
             var acc = (Account)s.DataContext;
             AccountManager.OpenSteam(acc);
+            Config.SaveAccountsDataAsync();
         }
 
         private void ButtonStartClick(object sender, RoutedEventArgs e)

@@ -11,6 +11,8 @@ using SteamAuth;
 using Newtonsoft.Json;
 using System.Threading;
 using WPF_Vench_Launcher.pages;
+using WinForms = System.Windows.Forms;
+
 //Software by Venchass
 //My:
 //Discord VenchasS#9039
@@ -35,7 +37,13 @@ namespace WPF_Vench_Launcher
 
         static Dictionary<Account, Process> StartedAccountsDict = new Dictionary<Account, Process>();
 
-        static string steamPath = @"C:\Program Files (x86)\Steam";
+        private static string steamPath = @"C:\Program Files (x86)\Steam";
+        public static string SteamPath { get { return steamPath; }  }
+
+        public static void SetSteamPath(string newPath)
+        {
+            steamPath = newPath;
+        }
 
         static List<Account> AccountsBase = new List<Account>();
         public static void StartAccount(Account account, string startParams = "", bool startSteam = false)
@@ -158,6 +166,52 @@ namespace WPF_Vench_Launcher
                 {
 
                 }
+            }
+        }
+
+        public struct RECT
+        {
+
+            public int Left;
+
+            public int Top;
+
+            public int Right;
+
+            public int Bottom;
+
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+
+        static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+        public static void AutoMoveWidnow()
+        {
+            var SysHeight = SystemParameters.FullPrimaryScreenHeight;
+            var SysWidth = SystemParameters.FullPrimaryScreenWidth;
+            int currentHeight = 0;
+            int currentWith = 0;
+            const int SWP_NOSIZE = 1;
+            foreach (Process proc in Process.GetProcessesByName("csgo"))
+            {
+                RECT rc = new RECT();
+                GetWindowRect(proc.MainWindowHandle, ref rc);
+                int width = rc.Right - rc.Left;
+                int height = rc.Bottom - rc.Top;
+                if (currentWith + width >= SysWidth)
+                {
+                    currentHeight += height;
+                    currentWith = 0;
+                }
+                SetWindowPos(proc.MainWindowHandle, 1, 60 + currentWith, currentHeight, 900, 261, SWP_NOSIZE);
+
+                currentWith += width;
+                
             }
         }
 
@@ -423,6 +477,7 @@ namespace WPF_Vench_Launcher
     public class ConfigObject
     {
         public string StartParams { get; set; }
+        public string SteamPath { get; set; }
 
         public List<AccountsGroup> Groups { get; set; }
 
@@ -435,12 +490,21 @@ namespace WPF_Vench_Launcher
     public static class Config
     {
         private static ConfigObject config = new ConfigObject();
+        private static string currentDirectoryPath;
+        public static string DirectoryPath { get { return currentDirectoryPath; } } //update's with initializing components
 
-        public static string DirectoryPath = "VenchassPanel"; //update's with initializing components
+        public static void SetDirectoryPath(string newPath)
+        {
+            currentDirectoryPath = newPath;
+        }
 
         public static async void SaveAccountsDataAsync()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions 
+            { 
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true 
+            };
             var accounts = AccountManager.GetAccountsBase();
             var json = "";
             lock (accounts)
@@ -453,15 +517,22 @@ namespace WPF_Vench_Launcher
             }
         }
 
-        public static async void SaveGroupsParams(List<AccountsGroup> groups)
+        public static void SaveGroupsParams(List<AccountsGroup> groups)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
             config.Groups = groups;
-            var json = System.Text.Json.JsonSerializer.Serialize(config, options);
-            using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
-            {
-                await writer.WriteLineAsync(json);
-            }
+            SaveConfig();
+        }
+
+        public static void SaveStartUpParams(string startupParams)
+        {
+            config.StartParams = startupParams;
+            SaveConfig();
+        }
+
+        public static void SaveSteamPath(string steamPath)
+        {
+            config.SteamPath = steamPath;
+            SaveConfig();
         }
 
         public static void LoadAccountsData()
@@ -486,10 +557,13 @@ namespace WPF_Vench_Launcher
             
         }
 
-        public static async void SaveStartUpParams(string startupParams)
+        private static async void SaveConfig()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            config.StartParams = startupParams;
+            var options = new JsonSerializerOptions 
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
             var json = System.Text.Json.JsonSerializer.Serialize(config, options);
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
             {
@@ -507,17 +581,32 @@ namespace WPF_Vench_Launcher
                     json = reader.ReadToEnd();
                 }
                 config = System.Text.Json.JsonSerializer.Deserialize<ConfigObject>(json);
+                if (config.SteamPath == null)
+                {
+                    AskSteamPath();
+                }
             }
             catch
             {
                 MessageBox.Show("не удалось загрузить конфиг");
             }
-            return config;
+            return GetConfig();
         }
 
         public static ConfigObject GetConfig()
         {
             return config;
+        }
+
+        public static void AskSteamPath()
+        {
+            var folderDialog = new WinForms.FolderBrowserDialog();
+            folderDialog.Description = "Select Steam folder which contains steam.exe";
+            if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                SaveSteamPath(folderDialog.SelectedPath);
+            }
+            AccountManager.SetSteamPath(GetConfig().SteamPath);
         }
     }
 

@@ -74,7 +74,7 @@
                         <ColumnDefinition Width="40"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="AccountRoundStatus" Text="⚫" Grid.Column="0" HorizontalAlignment="Left"  VerticalAlignment="Center" />
-                    <Label x:Name="AccountLogin" Grid.Row="0" Grid.Column="1" FontWeight="Bold"  HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="15" Content="{Binding Path=Login}"/>
+                    <TextBlock x:Name="AccountLogin" Grid.Row="0" Grid.Column="1" Foreground="White" FontWeight="Bold"  HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="15" Text="{Binding Path=Login}"/>
                     <Viewbox HorizontalAlignment="Right" Width="30" Height="30" Grid.Column="2">
                         <Border Margin="1" BorderThickness="2"  CornerRadius="8" Width="30" Style="{StaticResource settingsIcon}">
                             <Button Click="ButtonOpenSteamClick">

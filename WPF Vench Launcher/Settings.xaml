@@ -41,7 +41,7 @@
             </Setter>
         </Style>
     </Page.Resources>
-    
+
     <Grid>
         <Grid  ShowGridLines="False" Background="#2F3136" >
             <Grid.RowDefinitions>
@@ -76,7 +76,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            
+
             <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="16" Fill="#202225" Margin="7,7,10,10">
                 <Rectangle.Effect>
                     <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
@@ -84,8 +84,10 @@
             </Rectangle>
             <Button Grid.Column="0" Grid.Row="2" Click="RenameWindows"  Content="Rename windows to logins"  Grid.ColumnSpan="3" Margin="10,29,108,10" Grid.RowSpan="2" />
             <Button Grid.Column="0" Grid.Row="4" Click="SendCMD" Content="Send text to console"  Grid.ColumnSpan="3" Margin="10,0,108,3" />
-            <Button Grid.Column="0" Grid.Row="5" Click="MoveWindows" Content="Move windows"  Grid.ColumnSpan="3" Margin="10,10,108,29" Grid.RowSpan="2" />
+            <Button Grid.Column="2" Grid.Row="2" Click="MoveWindows" Content="Move windows"  Grid.ColumnSpan="3" Margin="38,29,81,10" Grid.RowSpan="2" />
             <TextBox Name="TextBoxToConsole" Background="#303030" Foreground="White" Grid.ColumnSpan="7"  Grid.Row="4" Margin="38,0,26,0" Grid.Column="2"/>
+            <Button Grid.Row="6" Click="OpenSDAFolder" Content="Open SDA folder"  Grid.ColumnSpan="3" Margin="10,29,108,10" Grid.RowSpan="2" />
+            <Button Grid.Row="5" Click="SelectSteamPath" Content="Select Steam path"  Grid.ColumnSpan="3" Margin="7,14,111,25" Grid.RowSpan="2" />
 
 
 

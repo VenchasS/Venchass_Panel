@@ -38,14 +38,9 @@ namespace WPF_Vench_Launcher
         public void InitConfig()
         {
             Config.LoadAccountsData();
-            //accountsList.ItemsSource = AccountManager.GetAccountsBase();
             config = Config.LoadConfig();
-            
-            /*if (config.Groups != null)
-                accountGroupsSource = config.Groups;
-            if (config.StartParams != null)
-                startupParams.Text = config.StartParams;
-            AccountGroups.ItemsSource = accountGroupsSource;*/
+            AccountManager.SetSteamPath(config.SteamPath);
+
         }
 
 
@@ -89,7 +84,7 @@ namespace WPF_Vench_Launcher
         void InitializeFolder()
         {
             var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
-            Config.DirectoryPath = currentDirectory;
+            Config.SetDirectoryPath(currentDirectory);
             var dir = new DirectoryInfo(currentDirectory);
             if (!dir.Exists)
                 dir.Create();
