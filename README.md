@@ -1,5 +1,15 @@
-# Venchass_Panel
+# Venchass Panel
 
-Easy panel for starting csgo's
+Easy panel for starting CS:GO or Steam apps
 
-Install steam to C:\\\\ disk to use this panel
+![VP s1](https://user-images.githubusercontent.com/49115035/188276931-c23801fb-0ec8-438b-91ea-2ca020381c7f.png)
+
+
+Options:
+  1. Start Steam
+  2. Start CS:GO
+  3. Auto 2FA input
+  4. The possibility of choice startup params to your accounts
+  5. Making groups to easy start many accounts
+  6. The possibility of sending CS:GO console command to all started accounts
+  
