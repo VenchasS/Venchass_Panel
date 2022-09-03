@@ -91,6 +91,8 @@ namespace WPF_Vench_Launcher.pages
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
             var account = new Account(AccountLogin.Text, AccountPassword.Text);
+            if (PrimeCheck.IsChecked == true)
+                account.PrimeStatus = true;
             AccountManager.AddAccount(account);
             Config.SaveAccountsDataAsync();
             UpdateTable();

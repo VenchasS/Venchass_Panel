@@ -24,6 +24,17 @@ namespace WPF_Vench_Launcher
         public Settings()
         {
             InitializeComponent();
+            InitConfig();
+        }
+
+        public void InitConfig()
+        {
+            UpdateSteamPathTExtBlockContent();
+        }
+
+        private void UpdateSteamPathTExtBlockContent()
+        {
+            SteamPathTextBlock.Text = Config.GetConfig().SteamPath;
         }
 
         private void RenameWindows(object sender, RoutedEventArgs e)
@@ -49,8 +60,7 @@ namespace WPF_Vench_Launcher
         private void SelectSteamPath(object sender, RoutedEventArgs e)
         {
             Config.AskSteamPath();
-            
-            
+            UpdateSteamPathTExtBlockContent();
         }
     }
 }
