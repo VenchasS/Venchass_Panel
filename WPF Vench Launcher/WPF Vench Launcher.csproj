@@ -189,6 +189,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Setup\VPinstaller.msi" />
     <None Include="WPF Vench Launcher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +224,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Sources\checkmark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Setup\setup.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" />
