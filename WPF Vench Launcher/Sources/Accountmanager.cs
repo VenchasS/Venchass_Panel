@@ -72,6 +72,9 @@ namespace WPF_Vench_Launcher
             }
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 message, IntPtr w, IntPtr l);
+
         public static void OpenSteam(Account acc)
         {
             lock (acc)
