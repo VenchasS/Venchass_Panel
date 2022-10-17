@@ -13,5 +13,5 @@ Easy panel for starting CS:GO or Steam apps
   5. Making groups to easy start many accounts
   6. The possibility of sending CS:GO console command to all started accounts
   
-  ## [Download](https://github.com/VenchasS/Venchass_Panel/raw/master/WPF%20Vench%20Launcher/Setup/setup.exe) latest stable version 1.0.
+  ## [Download](https://github.com/VenchasS/Venchass_Panel/tree/master/VPinstaller/Release) latest stable version 1.0.
   
