@@ -51,7 +51,7 @@ namespace WPF_Vench_Launcher
             lock (account)
             {
                 string path = steamPath + @"\steam.exe";
-                var startApp = startSteam ? "" : "-applaunch 730";
+                var startApp = startSteam ? "" : "";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -59,7 +59,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = steamPath,
                     FileName = path,
-                    Arguments = string.Format(" -login {0} {1}  {2}  {3} ", account.Login, account.Password, startApp, startParams)
+                    Arguments = string.Format("-noreactlogin -login {0} {1}  {2}  {3} ", account.Login, account.Password, startApp, startParams)
                 };
                 Process process = new Process()
                 {
@@ -71,9 +71,6 @@ namespace WPF_Vench_Launcher
                 SaveAccountData(account, process); //save started acc
             }
         }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 message, IntPtr w, IntPtr l);
 
         public static void OpenSteam(Account acc)
         {
@@ -410,7 +407,7 @@ namespace WPF_Vench_Launcher
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        private static void SendText(string message , IntPtr hwnd)
+        public static void SendText(string message , IntPtr hwnd)
         {
             const int WM_KEYDOWN = 0x100;
             const int WM_KEYUP = 0x101;
@@ -422,6 +419,15 @@ namespace WPF_Vench_Launcher
                 //Thread.Sleep(150);
                 Thread.Sleep(10);
                 SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
+                Thread.Sleep(10);
+                SendMessage(hwnd, WM_CHAR, (char)VK_RETURN, 1);
+                SendMessage(hwnd, WM_CHAR, (char)VK_RETURN, 1);
+                SendMessage(hwnd, WM_KEYUP, (char)VK_RETURN, 0);
+                Thread.Sleep(10);
+                SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
+                Thread.Sleep(10);
+                SendMessage(hwnd, WM_CHAR, (char)VK_RETURN, 1);
+                SendMessage(hwnd, WM_CHAR, (char)VK_RETURN, 1);
                 SendMessage(hwnd, WM_KEYUP, (char)VK_RETURN, 0);
                 return;
             }

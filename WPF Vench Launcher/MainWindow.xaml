@@ -89,10 +89,11 @@
         <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="HideButton" Content="-" Click="HideButton_Click" Margin="50,10,109,33" Grid.RowSpan="2" Grid.ColumnSpan="2" />
         <Button Click="HomeuButtonClick" Grid.Row="0" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
         <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
+        <Button  Grid.Row="0" Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" x:Name="SettingsButton_Copy" Content="Boost"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
 
 
 
-        
+
 
     </Grid>
 </Window>

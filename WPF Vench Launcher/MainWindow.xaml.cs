@@ -81,6 +81,13 @@ namespace WPF_Vench_Launcher
                 File.Create(currentDirectory + name);
         }
 
+        private void CheckFolder(string name)
+        {
+            var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
+            if (!System.IO.Directory.Exists(currentDirectory + name))
+                System.IO.Directory.CreateDirectory(currentDirectory + name);
+        }
+
         void InitializeFolder()
         {
             var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
@@ -91,6 +98,8 @@ namespace WPF_Vench_Launcher
 
             CheckFile(@"/Accounts.cfg");
             CheckFile(@"/config.cfg");
+            CheckFolder(@"/Steam Desktop Authenticator");
+            CheckFolder(@"/Steam Desktop Authenticator/maFiles");
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -110,6 +119,11 @@ namespace WPF_Vench_Launcher
         private void SettingsButtonClick(object sender, RoutedEventArgs e)
         {
             MainFrame.Source = new Uri("Settings.xaml", UriKind.Relative);
+        }
+
+        private void BoostButtonClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Source = new Uri("Boost.xaml", UriKind.Relative);
         }
 
     }

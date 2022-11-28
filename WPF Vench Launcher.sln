@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF Vench Launcher", "WPF Vench Launcher\WPF Vench Launcher.csproj", "{428EDD7B-55E4-4757-BA41-75FC6C0B92C2}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "VPinstaller", "VPinstaller\VPinstaller.vdproj", "{D4F5BBCF-6EF2-4445-9EB8-6BB0F03C135E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +15,6 @@ Global
 		{428EDD7B-55E4-4757-BA41-75FC6C0B92C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{428EDD7B-55E4-4757-BA41-75FC6C0B92C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{428EDD7B-55E4-4757-BA41-75FC6C0B92C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4F5BBCF-6EF2-4445-9EB8-6BB0F03C135E}.Debug|Any CPU.ActiveCfg = Debug
-		{D4F5BBCF-6EF2-4445-9EB8-6BB0F03C135E}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

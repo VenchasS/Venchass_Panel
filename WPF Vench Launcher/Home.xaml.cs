@@ -22,6 +22,8 @@ namespace WPF_Vench_Launcher.pages
     {
         public CategoryHighlightStyleSelector CategoryHighlightStyleSelector;
 
+        
+
         List<AccountsGroup> accountGroupsSource = new List<AccountsGroup>() { new AccountsGroup(AccountManager.GetAccountsBase(), "all accounts") };
 
         private bool StartUpParamsChanged = false;
