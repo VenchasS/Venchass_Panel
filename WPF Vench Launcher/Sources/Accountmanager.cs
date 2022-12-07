@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using WPF_Vench_Launcher.pages;
 using WinForms = System.Windows.Forms;
+using System.Collections.ObjectModel;
 
 //Software by Venchass
 //My:
@@ -616,6 +617,48 @@ namespace WPF_Vench_Launcher
                 SaveSteamPath(folderDialog.SelectedPath);
             }
             AccountManager.SetSteamPath(GetConfig().SteamPath);
+        }
+
+        public static bool ImportAccountsFromFile()
+        {
+           var fildeDialog = new Microsoft.Win32.OpenFileDialog();
+
+
+
+            // Set filter for file extension and default file extension 
+            fildeDialog.DefaultExt = ".txt";
+
+
+
+            if (fildeDialog.ShowDialog() == true)
+            {
+                var path = fildeDialog.FileName;
+                // Open file
+                using (var file = System.IO.File.OpenText(path))
+                {
+                    // Read file
+                    while (!file.EndOfStream)
+                    {
+                        var line = file.ReadLine();
+                        if (line.Length > 0)
+                        {
+                            var accountLine = line.Split(':');
+                            if (accountLine.Length == 2 || accountLine.Length == 3)
+                            {
+                                var login = accountLine[0];
+                                var password = accountLine[1];
+                                var account = new Account(login, password);
+                                if (accountLine.Length == 3)
+                                    account.PrimeStatus = accountLine[3] == "true";
+                                AccountManager.AddAccount(account);
+                            }
+                        }
+                    }
+                    Config.SaveAccountsDataAsync();
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

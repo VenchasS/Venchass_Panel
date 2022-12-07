@@ -29,10 +29,10 @@ namespace WPF_Vench_Launcher
 
         public void InitConfig()
         {
-            UpdateSteamPathTExtBlockContent();
+            UpdateSteamPathTextBlockContent();
         }
 
-        private void UpdateSteamPathTExtBlockContent()
+        private void UpdateSteamPathTextBlockContent()
         {
             SteamPathTextBlock.Text = Config.GetConfig().SteamPath;
         }
@@ -60,7 +60,13 @@ namespace WPF_Vench_Launcher
         private void SelectSteamPath(object sender, RoutedEventArgs e)
         {
             Config.AskSteamPath();
-            UpdateSteamPathTExtBlockContent();
+            UpdateSteamPathTextBlockContent();
         }
+
+        private void ImportAccountsFromFile(object sender, RoutedEventArgs e)
+        {
+            Config.ImportAccountsFromFile();
+        }
+        
     }
 }
