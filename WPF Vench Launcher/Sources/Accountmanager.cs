@@ -553,21 +553,23 @@ namespace WPF_Vench_Launcher
             {
                 System.IO.Directory.CreateDirectory(subPath);
             }
-            var config = File.Create(subPath + @"/config.cfg");
-            if (config.CanWrite)
+
+            Action<string, string> rewrite = (path, value) =>
             {
-                config.Write(Encoding.Default.GetBytes(Properties.Resources.configDefault),0 , Properties.Resources.configDefault.Length);
-            }
-            var video = File.Create(subPath + @"/video.txt");
-            if (video.CanWrite)
-            {
-                video.Write(Encoding.Default.GetBytes(Properties.Resources.video), 0, Properties.Resources.video.Length);
-            }
-            var videoDefaults= File.Create(subPath + @"/videodefaults.txt");
-            if (videoDefaults.CanWrite)
-            {
-                videoDefaults.Write(Encoding.Default.GetBytes(Properties.Resources.videodefaults), 0, Properties.Resources.videodefaults.Length);
-            }
+                if (File.Exists(path))
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                }
+                var file = File.Create(path);
+                if (file.CanWrite)
+                {
+                    file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
+                };
+            };
+            rewrite(subPath + @"/config.cfg", Properties.Resources.configDefault);
+            rewrite(subPath + @"/video.txt", Properties.Resources.video);
+            rewrite(subPath + @"/videodefaults.txt", Properties.Resources.videodefaults);
+
         }
 
         public static void SetDirectoryPath(string newPath)
