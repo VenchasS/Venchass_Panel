@@ -13,6 +13,8 @@ using System.Threading;
 using WPF_Vench_Launcher.pages;
 using WinForms = System.Windows.Forms;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Security.Principal;
 
 //Software by Venchass
 //My:
@@ -51,6 +53,38 @@ namespace WPF_Vench_Launcher
         {
             lock (account)
             {
+                if (account.SteamId32 == 0)
+                {
+                    var login = new UserLogin(account.Login, account.Password);
+                    var response = login.DoLogin();
+                    if (response == LoginResult.Need2FA)
+                    {
+                        if (SteamGuard.HasGuard(account.Login.ToLower()))
+                        {
+                            login.TwoFactorCode = SteamGuard.GetGuard(account.Login.ToLower());
+                            response = login.DoLogin();
+                        }
+                    }
+                    if (login.LoggedIn)
+                    {
+                        account.SteamId32 = login.Session.SteamID - 76561197960265728;
+                    }
+                }
+                if (account.SteamId32 != 0)
+                {
+                    Config.SetOptimizeSettings(account.SteamId32);
+
+                }
+
+
+
+
+
+
+
+
+
+
                 string path = steamPath + @"\steam.exe";
                 var startApp = startSteam ? "" : "";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
@@ -141,16 +175,19 @@ namespace WPF_Vench_Launcher
         {
             foreach (var acc in GetAccountsBase())
             {
-                try
+                var task = Task.Factory.StartNew(() =>
                 {
-                    var cds = CreateForString(0, str, false);
-                    var csgo = GetGameProcess(acc);
-                    SendMessage(csgo.MainWindowHandle, 0x4A, IntPtr.Zero, ref cds);
-                }
-                catch
-                {
+                    try
+                    {
+                        var cds = CreateForString(0, str, false);
+                        var csgo = GetGameProcess(acc);
+                        SendMessage(csgo.MainWindowHandle, 0x4A, IntPtr.Zero, ref cds);
+                    }
+                    catch
+                    {
 
-                }
+                    }
+                });
             }
         }
 
@@ -209,10 +246,12 @@ namespace WPF_Vench_Launcher
                     currentHeight += height;
                     currentWith = 0;
                 }
-                SetWindowPos(proc.MainWindowHandle, 1, 60 + currentWith, currentHeight, 900, 261, SWP_NOSIZE);
-
+                var widthBuff = currentWith;
+                Task.Factory.StartNew(() =>
+                {
+                    SetWindowPos(proc.MainWindowHandle, 1, 60 + widthBuff, currentHeight, 900, 261, SWP_NOSIZE);
+                });
                 currentWith += width;
-                
             }
         }
 
@@ -461,6 +500,8 @@ namespace WPF_Vench_Launcher
 
         public bool PrimeStatus { get; set; }
 
+        public ulong SteamId32 { get; set; }
+
         public override string ToString()
         {
             return Login;
@@ -502,6 +543,32 @@ namespace WPF_Vench_Launcher
         private static ConfigObject config = new ConfigObject();
         private static string currentDirectoryPath;
         public static string DirectoryPath { get { return currentDirectoryPath; } } //update's with initializing components
+
+        public static void SetOptimizeSettings(ulong steamId32)
+        {
+            //check folder and settings
+            string subPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
+            bool exists = System.IO.Directory.Exists(subPath);
+            if (!exists)
+            {
+                System.IO.Directory.CreateDirectory(subPath);
+            }
+            var config = File.Create(subPath + @"/config.cfg");
+            if (config.CanWrite)
+            {
+                config.Write(Encoding.Default.GetBytes(Properties.Resources.configDefault),0 , Properties.Resources.configDefault.Length);
+            }
+            var video = File.Create(subPath + @"/video.txt");
+            if (video.CanWrite)
+            {
+                video.Write(Encoding.Default.GetBytes(Properties.Resources.video), 0, Properties.Resources.video.Length);
+            }
+            var videoDefaults= File.Create(subPath + @"/videodefaults.txt");
+            if (videoDefaults.CanWrite)
+            {
+                videoDefaults.Write(Encoding.Default.GetBytes(Properties.Resources.videodefaults), 0, Properties.Resources.videodefaults.Length);
+            }
+        }
 
         public static void SetDirectoryPath(string newPath)
         {
@@ -545,6 +612,9 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        /// <summary>
+        /// Load Accounts from Accounts.cfg to AccountsManager, rewrite file to empty when error
+        /// </summary>
         public static void LoadAccountsData()
         {
             var json = "";

@@ -30,11 +30,13 @@ namespace WPF_Vench_Launcher
         {
             InitializeComponent();
             InitializeFolder();
-            InitConfig();
+            InitConfig(); 
             InitEvents();
             UpdateAccountsProcessesInfoThread();
         }
-
+        /// <summary>
+        /// Read all cfg files
+        /// </summary>
         public void InitConfig()
         {
             Config.LoadAccountsData();

@@ -19,7 +19,7 @@ namespace WPF_Vench_Launcher.Properties {
     // с помощью такого средства, как ResGen или Visual Studio.
     // Чтобы добавить или удалить член, измените файл .ResX и снова запустите ResGen
     // с параметром /str или перестройте свой проект VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,92 @@ namespace WPF_Vench_Launcher.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на unbindall
+        ///bind &quot;0&quot; &quot;slot10&quot;
+        ///bind &quot;1&quot; &quot;slot1&quot;
+        ///bind &quot;2&quot; &quot;slot2&quot;
+        ///bind &quot;3&quot; &quot;slot3&quot;
+        ///bind &quot;4&quot; &quot;slot4&quot;
+        ///bind &quot;5&quot; &quot;slot5&quot;
+        ///bind &quot;6&quot; &quot;slot6&quot;
+        ///bind &quot;7&quot; &quot;slot7&quot;
+        ///bind &quot;8&quot; &quot;slot8&quot;
+        ///bind &quot;9&quot; &quot;slot9&quot;
+        ///bind &quot;a&quot; &quot;+moveleft&quot;
+        ///bind &quot;b&quot; &quot;buymenu&quot;
+        ///bind &quot;d&quot; &quot;+moveright&quot;
+        ///bind &quot;e&quot; &quot;+use&quot;
+        ///bind &quot;f&quot; &quot;+lookatweapon&quot;
+        ///bind &quot;g&quot; &quot;drop&quot;
+        ///bind &quot;i&quot; &quot;show_loadout_toggle&quot;
+        ///bind &quot;k&quot; &quot;+voicerecord&quot;
+        ///bind &quot;m&quot; &quot;teammenu&quot;
+        ///bind &quot;q&quot; &quot;lastinv&quot;
+        ///bind &quot;r&quot; &quot;+reload&quot;
+        ///bind &quot;s&quot; &quot;+back&quot;
+        ///bind &quot;t&quot; &quot;+spray_menu&quot;
+        ///bind &quot;u&quot; &quot;messagemode2&quot;
+        ///bind &quot;w&quot; &quot;+forward&quot;
+        ///bind &quot;x&quot; &quot....
+        /// </summary>
+        internal static string configDefault {
+            get {
+                return ResourceManager.GetString("configDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &quot;VideoConfig&quot;
+        ///{
+        ///	&quot;setting.cpu_level&quot;		&quot;0&quot;
+        ///	&quot;setting.gpu_level&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_antialias&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_aaquality&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_forceaniso&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_vsync&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_triplebuffered&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_grain_scale_override&quot;		&quot;-1.0&quot;
+        ///	&quot;setting.gpu_mem_level&quot;		&quot;0&quot;
+        ///	&quot;setting.mem_level&quot;		&quot;2&quot;
+        ///	&quot;setting.mat_queue_mode&quot;		&quot;-1&quot;
+        ///	&quot;setting.csm_quality_level&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_software_aa_strength&quot;		&quot;1&quot;
+        ///	&quot;setting.mat_motion_blur_enabled&quot;		&quot;0&quot;
+        ///	&quot;setting.defaultres&quot;		&quot;640&quot;        /// [остаток строки не уместился]&quot;;.
+        /// </summary>
+        internal static string video {
+            get {
+                return ResourceManager.GetString("video", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на &quot;config&quot;
+        ///{
+        ///	&quot;setting.csm_quality_level&quot;		&quot;3&quot;
+        ///	&quot;setting.mat_software_aa_strength&quot;		&quot;1&quot;
+        ///	&quot;VendorID&quot;		&quot;4318&quot;
+        ///	&quot;DeviceID&quot;		&quot;7041&quot;
+        ///	&quot;setting.fullscreen&quot;		&quot;0&quot;
+        ///	&quot;setting.nowindowborder&quot;		&quot;1&quot;
+        ///	&quot;setting.aspectratiomode&quot;		&quot;1&quot;
+        ///	&quot;setting.mat_vsync&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_triplebuffered&quot;		&quot;0&quot;
+        ///	&quot;setting.mat_monitorgamma&quot;		&quot;2.200000&quot;
+        ///	&quot;setting.mat_queue_mode&quot;		&quot;-1&quot;
+        ///	&quot;setting.mat_motion_blur_enabled&quot;		&quot;0&quot;
+        ///	&quot;setting.gpu_mem_level&quot;		&quot;2&quot;
+        ///	&quot;setting.gpu_level&quot;		&quot;3&quot;
+        ///	&quot;setting.mat_antialias&quot;		&quot;8&quot;
+        ///	&quot;setting.mat_aaqual [остаток строки не уместился]&quot;;.
+        /// </summary>
+        internal static string videodefaults {
+            get {
+                return ResourceManager.GetString("videodefaults", resourceCulture);
             }
         }
     }

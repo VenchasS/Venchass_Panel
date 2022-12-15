@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SteamAuth;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -121,9 +122,11 @@ namespace WPF_Vench_Launcher.pages
             var selectedAccounts = accountsList.SelectedItems;
             lock (selectedAccounts)
             {
-                foreach (var item in selectedAccounts)
+                foreach (var accountObj in selectedAccounts)
                 {
-                    AccountManager.StartAccount((Account)item, startupParams.Text);
+                    var account = accountObj as Account;
+                    
+                    AccountManager.StartAccount(account, startupParams.Text);
                 }
             }
             Config.SaveAccountsDataAsync();
