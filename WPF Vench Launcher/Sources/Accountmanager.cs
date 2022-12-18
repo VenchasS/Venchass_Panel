@@ -556,15 +556,22 @@ namespace WPF_Vench_Launcher
 
             Action<string, string> rewrite = (path, value) =>
             {
-                if (File.Exists(path))
+                try
                 {
-                    File.SetAttributes(path, FileAttributes.Normal);
+                    if (File.Exists(path))
+                    {
+                        File.SetAttributes(path, FileAttributes.Normal);
+                    }
+                    var file = File.Create(path);
+                    if (file != null && file.CanWrite)
+                    {
+                        file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
+                    };
                 }
-                var file = File.Create(path);
-                if (file != null && file.CanWrite)
+                catch
                 {
-                    file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
-                };
+
+                }
             };
             rewrite(subPath + @"/config.cfg", Properties.Resources.configDefault);
             rewrite(subPath + @"/video.txt", Properties.Resources.video);
