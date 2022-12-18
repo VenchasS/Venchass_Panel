@@ -561,7 +561,7 @@ namespace WPF_Vench_Launcher
                     File.SetAttributes(path, FileAttributes.Normal);
                 }
                 var file = File.Create(path);
-                if (file.CanWrite)
+                if (file != null && file.CanWrite)
                 {
                     file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
                 };
