@@ -247,14 +247,14 @@
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="BorderBrush" Value="#FF51555C"/>
                                     </Trigger>
-                                        
+
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
                         <Image>
                             <Image.Style>
                                 <Style>
-                                    
+
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
                                             <Setter Property="Image.Source" Value="Sources/checkmark.png"/>
@@ -267,6 +267,8 @@
                 </ControlTemplate>
             </ToggleButton.Template>
         </ToggleButton>
+        <Button Grid.Column="4" Grid.Row="9" Content="Export" Click="ButtonExportClick" Grid.ColumnSpan="2" Margin="63,25,81,13" Grid.RowSpan="2" />
+        <Button Grid.Column="3" Grid.Row="9" Content="Import" Click="ButtonImportClick" Grid.ColumnSpan="2" Margin="75,25,68,13" Grid.RowSpan="2" />
 
         <!--<Button Name="Test" Grid.Row="16" Content="test" Click="OnTestButtonclick" Grid.ColumnSpan="2" Margin="10,21,107,15" Grid.RowSpan="2"/>-->
 

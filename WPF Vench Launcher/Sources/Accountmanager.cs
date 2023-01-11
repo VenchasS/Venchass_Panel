@@ -722,13 +722,13 @@ namespace WPF_Vench_Launcher
                         if (line.Length > 0)
                         {
                             var accountLine = line.Split(':');
-                            if (accountLine.Length == 2 || accountLine.Length == 3)
+                            if (accountLine.Length == 2 || accountLine.Length >= 3)
                             {
                                 var login = accountLine[0];
                                 var password = accountLine[1];
                                 var account = new Account(login, password);
-                                if (accountLine.Length == 3)
-                                    account.PrimeStatus = accountLine[3] == "true";
+                                if (accountLine.Length >= 3)
+                                    account.PrimeStatus = accountLine[2] == "true";
                                 AccountManager.AddAccount(account);
                             }
                         }

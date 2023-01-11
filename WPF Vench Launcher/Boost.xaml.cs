@@ -92,7 +92,7 @@ namespace WPF_Vench_Launcher
             //UpdateTable();
         }
 
-        private void StartBiistButtonClick(object sender, RoutedEventArgs e)
+        private void StartBoostButtonClick(object sender, RoutedEventArgs e)
         {
             var selectedAccs = accountsList.SelectedItems;
             List<Account> list = new List<Account>();

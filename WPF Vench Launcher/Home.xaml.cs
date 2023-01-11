@@ -134,6 +134,31 @@ namespace WPF_Vench_Launcher.pages
             UpdateTable();
         }
 
+        private void ButtonExportClick(object sender, RoutedEventArgs e)
+        {
+            var selectedAccounts = accountsList.SelectedItems;
+            var fileText = "";
+            lock (selectedAccounts)
+            {
+                foreach (var accountObj in selectedAccounts)
+                {
+                    var account = accountObj as Account;
+                    fileText += account.Login + ":" + account.Password + "\n";
+                }
+            }
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.File.WriteAllText(sfd.FileName, fileText);
+            }
+        }
+
+        private void ButtonImportClick(object sender, RoutedEventArgs e)
+        {
+            Config.ImportAccountsFromFile();
+        }
+
         private void OnTestButtonclick(object sender, RoutedEventArgs e)
         {
             //AccountManager.UpdateAccountsChildrens();

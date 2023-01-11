@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -58,6 +59,18 @@ namespace WPF_Vench_Launcher
             }
         }
 
+        public class Vector2Int
+        {
+            public int X { get; set; }
+            public int Y { get; set; }
+
+            public Vector2Int(int x, int y)
+            {
+                this.X = x;
+                this.Y = y;
+            }
+        }
+
         public class BoostAccount
         {
             public string Login { get; set; }
@@ -85,6 +98,13 @@ namespace WPF_Vench_Launcher
                 PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(x, y));
             }
 
+            public void LeftClick(Vector2Int vec)
+            {
+                PostMessage(csgo.MainWindowHandle, WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+                PostMessage(csgo.MainWindowHandle, WM_LBUTTONDOWN, (IntPtr)1, (IntPtr)MakeLParam(vec.X, vec.Y));
+                PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+            }
+
             public Color GetColor(int x, int y)
             {
                 IntPtr hDC = GetDC(csgo.MainWindowHandle);//Ссылка на окно, в котором будет выполнен поиск пикселя
@@ -108,8 +128,7 @@ namespace WPF_Vench_Launcher
                         LeftClick(339, 62);
                     }
                     LeftClick(269, 78);
-                    while (!GetColor(209, 108).Equals(new Color(37, 37, 37)))
-                        Thread.Sleep(100);
+                    WaitColor(209, 108, new Color(37, 37, 37));
                     LeftClick(191, 149);
                     Thread.Sleep(10);
                     try
@@ -118,7 +137,7 @@ namespace WPF_Vench_Launcher
                     }
                     catch
                     {
-                        InviteCode = Clipboard.GetText();
+                        
                     }
                     LeftClick(211, 145);
                 }
@@ -175,36 +194,66 @@ namespace WPF_Vench_Launcher
                 Thread.Sleep(2000);
                 AcceptLobbyInvite();
             }
+
+            public void OpenRightTab()
+            {
+                while(GetColor(320, 216).Equals(new Color(0,0,0)))
+                {
+                    LeftClick(349, 230);
+                    Thread.Sleep(200);
+                }
+            }
+
+            public Vector2Int FindMessage()
+            {
+                int x = 338;
+                for (int y = 50; y < 200; y++)
+                {
+                    if (GetColor(x, y).Equals(new Color(220, 220, 220)))
+                    {
+                        return new Vector2Int(x, y);
+                    }
+                }
+                return new Vector2Int(0, 0);
+            }
+
+            public void WaitColor(int x, int y, Color color)
+            {
+                while(!GetColor(x,y).Equals(color))
+                {
+                    Thread.Sleep(200);
+                }
+            }
         }
 
         public class BoostGroup
         {
-            private List<BoostAccount> list = new List<BoostAccount>();
+            private List<BoostAccount> boostAccountsList = new List<BoostAccount>();
 
             public int Id { get; }
             public BoostGroup(List<Account> accounts)
             {
                 foreach (var acc in accounts)
                 {
-                    list.Add(new BoostAccount(acc));
+                    boostAccountsList.Add(new BoostAccount(acc));
                 }
                 Id = boostGroups.Count;
             }
 
             public List<BoostAccount> GetAccounts()
             {
-                return list;
+                return boostAccountsList;
             }
 
             private void AllLeftClick(int x,int y)
             {
-                foreach (var acc in list)
+                foreach (var acc in boostAccountsList)
                     acc.LeftClick(x, y);
             }
 
             private bool IsAllAccsHaveInviteCode()
             {
-                foreach (var acc in list)
+                foreach (var acc in boostAccountsList)
                     if (acc.InviteCode == null)
                         return false;
                 return true;
@@ -212,7 +261,7 @@ namespace WPF_Vench_Launcher
 
             private void CollectInviteCodes()
             {
-                foreach (var account in list)
+                foreach (var account in boostAccountsList)
                 {
                     account.GetInviteCode();
                 }
@@ -234,14 +283,22 @@ namespace WPF_Vench_Launcher
                 list[5].InviteToLobbyByCode(list[8].GetInviteCode());
                 list[5].InviteToLobbyByCode(list[9].GetInviteCode());*/
 
-                list[1].WaitLobbyInvite();
-                list[2].WaitLobbyInvite();
-                list[3].WaitLobbyInvite();
-                list[4].WaitLobbyInvite();
-                list[6].WaitLobbyInvite();
-                list[7].WaitLobbyInvite();
-                list[8].WaitLobbyInvite();
-                list[9].WaitLobbyInvite();
+                foreach(var acc in boostAccountsList)
+                {
+                    acc.OpenRightTab();
+                }
+                foreach (var acc in boostAccountsList)
+                {
+                    var msgCoords = acc.FindMessage();
+                    acc.LeftClick(msgCoords);
+                    var addFriendCoords = new Vector2Int(msgCoords.X - 70, msgCoords.Y + 20);
+                    //acc.WaitColor(addFriendCoords.X, addFriendCoords.Y, new Color(173, 173, 173));
+                    Thread.Sleep(1000);
+                    /*acc.LeftClick(addFriendCoords);
+                    acc.WaitColor(207, 110, new Color(37, 37, 37));*/
+                    acc.GetInviteCode();
+
+                }
             }
 
             public void Start()

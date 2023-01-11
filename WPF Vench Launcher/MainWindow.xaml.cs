@@ -128,6 +128,7 @@ namespace WPF_Vench_Launcher
             MainFrame.Source = new Uri("Boost.xaml", UriKind.Relative);
         }
 
+
     }
 
     
