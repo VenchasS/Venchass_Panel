@@ -12,6 +12,7 @@ Easy panel for starting CS:GO or Steam apps
   4. The possibility of choice startup params to your accounts
   5. Making groups to easy start many accounts
   6. The possibility of sending CS:GO console command to all started accounts
+  7. Automaticly set low csgo graphics settings
   
-  ## [Download](https://github.com/VenchasS/Venchass_Panel/tree/master/VPinstaller/Release) latest stable version 1.0.
+
   
