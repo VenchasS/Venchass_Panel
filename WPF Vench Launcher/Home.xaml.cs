@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -104,8 +105,29 @@ namespace WPF_Vench_Launcher.pages
         {
             var s = sender as Button;
             var acc = (Account)s.DataContext;
+
+            var selectedList = new List<Account>();
+            var selectedAccounts = accountsList.SelectedItems;
+            lock (selectedAccounts)
+            {
+                foreach (var accountObj in selectedAccounts)
+                {
+                    var account = accountObj as Account;
+                    selectedList.Add(account);
+                }
+            }
+            
             AccountManager.DelteAccount(acc);
             Config.SaveAccountsDataAsync();
+            ClearSelected();
+            foreach (var account in selectedList)
+            {
+                for (int i = 0; i < accountsList.Items.Count; i++)
+                {
+                    if (((Account)accountsList.Items[i]).Login == account.Login)
+                        accountsList.SelectedItems.Add(accountsList.Items[i]);
+                }
+            }
             UpdateTable();
         }
 
@@ -157,6 +179,7 @@ namespace WPF_Vench_Launcher.pages
         private void ButtonImportClick(object sender, RoutedEventArgs e)
         {
             Config.ImportAccountsFromFile();
+            UpdateTable();
         }
 
         private void OnTestButtonclick(object sender, RoutedEventArgs e)

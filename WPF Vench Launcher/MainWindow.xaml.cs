@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 //Software by Venchass
 //My:
 //Discord VenchasS#9039
@@ -33,7 +34,16 @@ namespace WPF_Vench_Launcher
             InitConfig(); 
             InitEvents();
             UpdateAccountsProcessesInfoThread();
+            InitDataBase();
         }
+
+        private void InitDataBase()
+        {
+            //throw new NotImplementedException();
+        }
+
+
+
         /// <summary>
         /// Read all cfg files
         /// </summary>
@@ -42,7 +52,7 @@ namespace WPF_Vench_Launcher
             Config.LoadAccountsData();
             config = Config.LoadConfig();
             AccountManager.SetSteamPath(config.SteamPath);
-
+            Config.InitCSGOconfig(Properties.Resources.Venchcfg);
         }
 
 

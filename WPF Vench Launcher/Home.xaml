@@ -65,13 +65,13 @@
             <Border Name="AccountListBoxItemBD"  Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e" >
                 <Grid Margin="7" >
                     <Grid.RowDefinitions >
-                        <RowDefinition/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="22"/>
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="27"/>
+                        <ColumnDefinition Width="27"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="AccountRoundStatus" Text="⚫" Grid.Column="0" HorizontalAlignment="Left"  VerticalAlignment="Center" />
                     <TextBlock x:Name="AccountLogin" Grid.Row="0" Grid.Column="1" Foreground="White" FontWeight="Bold"  HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="15" Text="{Binding Path=Login}"/>
@@ -232,7 +232,7 @@
 
         </TextBlock>
         <Button Grid.Column="0" Grid.Row="12" Content="Make Group" Click="MakeGroupButton_Click" Grid.ColumnSpan="3" Margin="10,18,108,21" Grid.RowSpan="2" />
-        <Button Grid.Column="0" Background="OrangeRed" Click="StopAllButtonClick"  Content="Stop all" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="15" Margin="10,15,108,26" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Background="OrangeRed" Click="StopAllButtonClick"  Content="Stop all" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="16" Margin="10,23,108,18" Grid.RowSpan="2" />
         <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Prime" Margin="19,28,107,6" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"/>
         <TextBlock Foreground="White" x:Name="PrimeTotal" FontSize="25" Grid.Row="3" Text="0 " Margin="29,33,0,1" Grid.Column="4" Grid.RowSpan="2"/>
         <Label Foreground="White" FontSize="15" Grid.Row="5" Content="Prime" Margin="10,24,60,10" Grid.RowSpan="2" RenderTransformOrigin="0.48,1.64"/>

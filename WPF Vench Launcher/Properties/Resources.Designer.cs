@@ -96,6 +96,36 @@ namespace WPF_Vench_Launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на +left
+        ///+right
+        ///mm_dedicated_search_maxping 350
+        ///con_enable 1
+        ///con_filter_enable 2
+        ///developer 1
+        ///con_filter_text match_id
+        ///bind &quot;t&quot; &quot;disconnect&quot;
+        ///m_rawinput 0
+        ///mat_setvideomode 350 261 1
+        ///+left
+        ///+right
+        ///mm_dedicated_search_maxping 350
+        ///con_enable 1
+        ///con_filter_enable 2
+        ///developer 1
+        ///con_filter_text match_id
+        ///bind &quot;t&quot; &quot;disconnect&quot;
+        ///m_rawinput 0
+        ///mat_setvideomode 350 261 1
+        ///fps_max_menu 40
+        ///fps_max 20.
+        /// </summary>
+        internal static string Venchcfg {
+            get {
+                return ResourceManager.GetString("Venchcfg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на &quot;VideoConfig&quot;
         ///{
         ///	&quot;setting.cpu_level&quot;		&quot;0&quot;

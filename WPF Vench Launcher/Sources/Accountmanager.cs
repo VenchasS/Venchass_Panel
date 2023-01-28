@@ -15,6 +15,7 @@ using WinForms = System.Windows.Forms;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Security.Principal;
+using Newtonsoft.Json.Linq;
 
 //Software by Venchass
 //My:
@@ -73,20 +74,11 @@ namespace WPF_Vench_Launcher
                 if (account.SteamId32 != 0)
                 {
                     Config.SetOptimizeSettings(account.SteamId32);
-
                 }
 
-
-
-
-
-
-
-
-
-
                 string path = steamPath + @"\steam.exe";
-                var startApp = startSteam ? "" : "";
+                var startApp = startSteam ? "" : "-applaunch 730"; //csgo id
+                var cfg = "+exec Vench.cfg";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -94,7 +86,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = steamPath,
                     FileName = path,
-                    Arguments = string.Format("-noreactlogin -login {0} {1}  {2}  {3} ", account.Login, account.Password, startApp, startParams)
+                    Arguments = string.Format("-noreactlogin -login {0} {1}  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
                 };
                 Process process = new Process()
                 {
@@ -547,12 +539,10 @@ namespace WPF_Vench_Launcher
         public static void SetOptimizeSettings(ulong steamId32)
         {
             //check folder and settings
-            string subPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
-            bool exists = System.IO.Directory.Exists(subPath);
-            if (!exists)
-            {
-                System.IO.Directory.CreateDirectory(subPath);
-            }
+            var csgoSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
+            var steamSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote";
+            System.IO.Directory.CreateDirectory(csgoSubPath);
+            System.IO.Directory.CreateDirectory(steamSubPath);
 
             Action<string, string> rewrite = (path, value) =>
             {
@@ -570,13 +560,24 @@ namespace WPF_Vench_Launcher
                 }
                 catch
                 {
-
+                    MessageBox.Show("не удалось применить оптимальные параметры к " + steamId32);
                 }
             };
-            rewrite(subPath + @"/config.cfg", Properties.Resources.configDefault);
-            rewrite(subPath + @"/video.txt", Properties.Resources.video);
-            rewrite(subPath + @"/videodefaults.txt", Properties.Resources.videodefaults);
+            rewrite(csgoSubPath + @"/config.cfg", Properties.Resources.configDefault);
+            rewrite(csgoSubPath + @"/video.txt", Properties.Resources.video);
+            rewrite(csgoSubPath + @"/videodefaults.txt", Properties.Resources.videodefaults);
 
+            File.Copy(@"cfg\userdata\remotecache_7.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remotecache.vdf", true);
+            File.Copy(@"cfg\userdata\remotecache_730.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\remotecache.vdf", true);
+            File.Copy(@"cfg\userdata\sharedconfig.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote\sharedconfig.vdf", true);
+
+        }
+
+        public static void InitCSGOconfig(string value)
+        {
+            string path = AccountManager.SteamPath + "\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\cfg\\Vench.cfg";
+            var file = File.Create(path);
+            file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
         }
 
         public static void SetDirectoryPath(string newPath)
