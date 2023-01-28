@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Security.Principal;
 using Newtonsoft.Json.Linq;
+using System.Windows.Shapes;
 
 //Software by Venchass
 //My:
@@ -538,6 +539,13 @@ namespace WPF_Vench_Launcher
 
         public static void SetOptimizeSettings(ulong steamId32)
         {
+            Action<string> setAccess = (path) =>
+            {
+                if (File.Exists(path))
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                }
+            };
             //check folder and settings
             var csgoSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
             var steamSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote";
@@ -548,10 +556,8 @@ namespace WPF_Vench_Launcher
             {
                 try
                 {
-                    if (File.Exists(path))
-                    {
-                        File.SetAttributes(path, FileAttributes.Normal);
-                    }
+                    setAccess(path);
+                    
                     var file = File.Create(path);
                     if (file != null && file.CanWrite)
                     {
@@ -567,8 +573,11 @@ namespace WPF_Vench_Launcher
             rewrite(csgoSubPath + @"/video.txt", Properties.Resources.video);
             rewrite(csgoSubPath + @"/videodefaults.txt", Properties.Resources.videodefaults);
 
+            setAccess(AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remotecache.vdf");
             File.Copy(@"cfg\userdata\remotecache_7.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remotecache.vdf", true);
+            setAccess(AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\remotecache.vdf");
             File.Copy(@"cfg\userdata\remotecache_730.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\remotecache.vdf", true);
+            setAccess(AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote\sharedconfig.vdf");
             File.Copy(@"cfg\userdata\sharedconfig.vdf", AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote\sharedconfig.vdf", true);
 
         }
