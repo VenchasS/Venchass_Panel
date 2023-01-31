@@ -237,7 +237,8 @@ namespace WPF_Vench_Launcher.pages
         {
             if (AccountGroups.SelectedItem == null)
                 return;
-            ClearSelected();
+            if(!Keyboard.IsKeyDown(Key.LeftShift))
+                ClearSelected();
             var selected = (AccountsGroup)AccountGroups.SelectedItem;
             foreach (var acc in selected.InGroupAccounts)
             {
