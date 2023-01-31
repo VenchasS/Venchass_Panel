@@ -63,13 +63,13 @@
             <Border Name="AccountListBoxItemBD"  Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e" >
                 <Grid Margin="7" >
                     <Grid.RowDefinitions >
-                        <RowDefinition/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="22"/>
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="27"/>
+                        <ColumnDefinition Width="27"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="AccountRoundStatus" Text="⚫" Grid.Column="0" HorizontalAlignment="Left"  VerticalAlignment="Center" />
                     <TextBlock x:Name="AccountLogin" Grid.Row="0" Grid.Column="1" Foreground="White" FontWeight="Bold"  HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="15" Text="{Binding Path=Login}"/>
@@ -189,7 +189,8 @@
         <ListBox Name="AccountGroups" HorizontalContentAlignment="Stretch" SelectionChanged="AccountGroups_SelectionChanged" ItemTemplate="{StaticResource GroupsTemplate}" Background="#202225" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled"   Grid.Row="11" Grid.Column="2" Grid.RowSpan="7" Grid.ColumnSpan="4" Margin="24,0,81,15">
         </ListBox>
 
-        <Button Grid.Column="0" Grid.Row="11" Click="StartBoostButtonClick"  Content="Start Boost"  Grid.ColumnSpan="3" Margin="13,3,100,0" />
+        <Button Grid.Column="0" Grid.Row="12"  Content="Farm selected"  Grid.ColumnSpan="3" Margin="10,10,103,29" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Grid.Row="10"  Content="Auto farm"  Grid.ColumnSpan="3" Margin="10,36,103,3" Grid.RowSpan="2" />
 
     </Grid>
 </Page>

@@ -106,6 +106,11 @@ namespace WPF_Vench_Launcher
             }
             BoostManager.GetGroups().Last().Start();
         }
+
+        private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public class Selector : StyleSelector

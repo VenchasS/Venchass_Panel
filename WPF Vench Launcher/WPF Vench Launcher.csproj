@@ -154,6 +154,7 @@
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sources\Accountmanager.cs" />
+    <Compile Include="Sources\Farm.cs" />
     <Page Include="Boost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

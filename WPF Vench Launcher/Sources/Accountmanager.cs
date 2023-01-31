@@ -525,6 +525,11 @@ namespace WPF_Vench_Launcher
 
         public List<AccountsGroup> Groups { get; set; }
 
+        public int MaxSameTimeAccounts { get; set; }
+
+        public int MaxRemainingTimeToDropCase { get; set; }
+
+
         public ConfigObject()
         {
 
@@ -546,18 +551,12 @@ namespace WPF_Vench_Launcher
                     File.SetAttributes(path, FileAttributes.Normal);
                 }
             };
-            //check folder and settings
-            var csgoSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
-            var steamSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote";
-            System.IO.Directory.CreateDirectory(csgoSubPath);
-            System.IO.Directory.CreateDirectory(steamSubPath);
-
             Action<string, string> rewrite = (path, value) =>
             {
                 try
                 {
                     setAccess(path);
-                    
+
                     var file = File.Create(path);
                     if (file != null && file.CanWrite)
                     {
@@ -569,6 +568,14 @@ namespace WPF_Vench_Launcher
                     MessageBox.Show("не удалось применить оптимальные параметры к " + steamId32);
                 }
             };
+
+            //check folder and settings
+            var csgoSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\730\local\cfg";
+            var steamSubPath = AccountManager.SteamPath + @"\userdata\" + steamId32 + @"\7\remote";
+            System.IO.Directory.CreateDirectory(csgoSubPath);
+            System.IO.Directory.CreateDirectory(steamSubPath);
+
+            
             rewrite(csgoSubPath + @"/config.cfg", Properties.Resources.configDefault);
             rewrite(csgoSubPath + @"/video.txt", Properties.Resources.video);
             rewrite(csgoSubPath + @"/videodefaults.txt", Properties.Resources.videodefaults);
@@ -784,6 +791,7 @@ namespace WPF_Vench_Launcher
         {
             public string shared_secret { get; set; }
             public string account_name { get; set; } //login
+            public string SteamID { get; set; }
         }
 
         private static void init()
