@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using WPF_Vench_Launcher.pages;
+using WPF_Vench_Launcher.Sources;
 
 namespace WPF_Vench_Launcher
 {
@@ -110,6 +111,17 @@ namespace WPF_Vench_Launcher
         private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void FarmSelectedButtonClick(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            List<Account> list = new List<Account>();
+            foreach (var acc in selectedAccs)
+            {
+                list.Add((Account)acc);
+            }
+            FarmManager.AutoFarm(list);
         }
     }
 

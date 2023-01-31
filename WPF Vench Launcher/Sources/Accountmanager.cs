@@ -529,6 +529,9 @@ namespace WPF_Vench_Launcher
 
         public int MaxRemainingTimeToDropCase { get; set; }
 
+        public string ServersToConnect { get; set; }
+
+
 
         public ConfigObject()
         {
