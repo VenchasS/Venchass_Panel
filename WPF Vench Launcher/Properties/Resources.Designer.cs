@@ -115,7 +115,7 @@ namespace WPF_Vench_Launcher.Properties {
         ///con_filter_text match_id
         ///bind &quot;t&quot; &quot;disconnect&quot;
         ///m_rawinput 0
-        ///mat_setvideomode 350 261 1
+        ///mat_setvideomode 100 50 1
         ///fps_max_menu 40
         ///fps_max 20.
         /// </summary>
