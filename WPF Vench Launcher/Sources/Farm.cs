@@ -109,7 +109,11 @@ namespace WPF_Vench_Launcher.Sources
 
         private static List<FarmAccount> currentFarmQueue = new List<FarmAccount>();
 
-        
+        public static int QueueCount { get { return queueToFarm.Count; } private set { } }
+        public static int StartedCount { get { return currentFarmQueue.Count; } private set { } }
+        public static int FarmedCount { get; private set; }
+
+
         public static void AutoFarm(List<Account> list)
         {
             if (queueToFarm.Count != 0 || currentFarmQueue.Count != 0)
@@ -135,11 +139,12 @@ namespace WPF_Vench_Launcher.Sources
                 }
             }
             AccountManager.StopAccount(farmAcc.prop);
+            FarmedCount += 1;
         }
 
         public static void StartFarmAccount(FarmAccount farmAcc)
         {
-            farmAcc.StartupTime = DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            farmAcc.StartupTime = DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes;
             lock (queueToFarm)
             {
                 if (queueToFarm.Contains(farmAcc))
@@ -150,7 +155,7 @@ namespace WPF_Vench_Launcher.Sources
             {
                 currentFarmQueue.Add(farmAcc);
             }
-            AccountManager.StartAccount(farmAcc.prop, String.Format("-no-browser -novid -nosound -w 640 -h 480  -nomouse +connect 78.153.5.45:27015"), false);
+            AccountManager.StartAccount(farmAcc.prop, String.Format("-no-browser -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
         }
 
         private static void AutoFarmController()
@@ -159,7 +164,7 @@ namespace WPF_Vench_Launcher.Sources
             {
                 foreach (var farmAcc in currentFarmQueue.ToList())
                 {
-                    if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
+                    if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
                     {
                         try
                         {

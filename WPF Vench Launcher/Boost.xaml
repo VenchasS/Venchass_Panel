@@ -58,84 +58,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <DataTemplate x:Key="AccountsTemplate" >
-            <Border Name="AccountListBoxItemBD"  Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e" >
-                <Grid Margin="7" >
-                    <Grid.RowDefinitions >
-                        <RowDefinition Height="25"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="22"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="27"/>
-                        <ColumnDefinition Width="27"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="AccountRoundStatus" Text="⚫" Grid.Column="0" HorizontalAlignment="Left"  VerticalAlignment="Center" />
-                    <TextBlock x:Name="AccountLogin" Grid.Row="0" Grid.Column="1" Foreground="White" FontWeight="Bold"  HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="15" Text="{Binding Path=Login}"/>
-                    <Viewbox HorizontalAlignment="Right" Width="30" Height="30" Grid.Column="2">
-                        <Border Margin="1" BorderThickness="2"  CornerRadius="8" Width="30" Style="{StaticResource settingsIcon}">
-                            <Button Click="ButtonOpenSteamClick">
-                                <Canvas Width="24" Height="24">
-                                    <Path Fill="Black" Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C7.4,22 3.55,18.92 2.36,14.73L6.19,16.31C6.45,17.6 7.6,18.58 8.97,18.58C10.53,18.58 11.8,17.31 11.8,15.75V15.62L15.2,13.19H15.28C17.36,13.19 19.05,11.5 19.05,9.42C19.05,7.34 17.36,5.65 15.28,5.65C13.2,5.65 11.5,7.34 11.5,9.42V9.47L9.13,12.93L8.97,12.92C8.38,12.92 7.83,13.1 7.38,13.41L2,11.2C2.43,6.05 6.73,2 12,2M8.28,17.17C9.08,17.5 10,17.13 10.33,16.33C10.66,15.53 10.28,14.62 9.5,14.29L8.22,13.76C8.71,13.58 9.26,13.57 9.78,13.79C10.31,14 10.72,14.41 10.93,14.94C11.15,15.46 11.15,16.04 10.93,16.56C10.5,17.64 9.23,18.16 8.15,17.71C7.65,17.5 7.27,17.12 7.06,16.67L8.28,17.17M17.8,9.42C17.8,10.81 16.67,11.94 15.28,11.94C13.9,11.94 12.77,10.81 12.77,9.42A2.5,2.5 0 0,1 15.28,6.91C16.67,6.91 17.8,8.04 17.8,9.42M13.4,9.42C13.4,10.46 14.24,11.31 15.29,11.31C16.33,11.31 17.17,10.46 17.17,9.42C17.17,8.38 16.33,7.53 15.29,7.53C14.24,7.53 13.4,8.38 13.4,9.42Z" />
-                                </Canvas>
-                            </Button>
-                        </Border>
-
-                    </Viewbox>
-                    <Viewbox Width="30" Height="30" Grid.Column="3" HorizontalAlignment="Right">
-                        <Border Margin="1" BorderThickness="2"  CornerRadius="8" Width="30" Style="{StaticResource settingsIcon}">
-                            <Button Click="ButtonDeleteAccountClick">
-                                <Canvas Width="24" Height="24">
-                                    <Path Fill="Black" Data="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" />
-                                </Canvas>
-                            </Button>
-                        </Border>
-                    </Viewbox>
-                </Grid>
-            </Border>
-            <DataTemplate.Triggers>
-                <DataTrigger Value="True"
-                 Binding="{Binding 
-                              IsSelected, 
-                              RelativeSource={RelativeSource 
-                                  AncestorType={x:Type ListBoxItem}}}">
-                    <Setter TargetName="AccountListBoxItemBD" Property="Background" Value="#68707a"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-
-        <DataTemplate x:Key="GroupsTemplate">
-            <Border  Name="AccountListBoxItemBD" Margin="1" BorderThickness="2" BorderBrush="#50565e" CornerRadius="4" Background="#50565e">
-                <Grid Margin="7" >
-                    <Grid.RowDefinitions >
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="40"/>
-                    </Grid.ColumnDefinitions>
-
-
-
-                    <TextBlock Height="30" LostFocus="GroupNameLostFocus" Grid.Row="0" Grid.Column="0" FontWeight="Bold"  Background="#50565E" Foreground="White" FontSize="20" Text="{Binding Path=GroupName}"/>
-
-                </Grid>
-            </Border>
-            <DataTemplate.Triggers>
-                <DataTrigger Value="True"
-                 Binding="{Binding 
-                              IsSelected, 
-                              RelativeSource={RelativeSource 
-                                  AncestorType={x:Type ListBoxItem}}}">
-                    <!-- everybody loves HotPink -->
-                    <Setter TargetName="AccountListBoxItemBD" Property="Background" Value="#68707a"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
     </Page.Resources>
-    <Grid ShowGridLines="False" Background="#2F3136" >
+    <Grid ShowGridLines="False" Background="#2F3136" LostFocus="OnFormLostFocus" >
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -178,19 +102,25 @@
                 <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
             </Rectangle.Effect>
         </Rectangle>
-
-        <ListBox Name="accountsList" ItemTemplate="{StaticResource AccountsTemplate}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" SelectionMode="Multiple" Grid.Column="5" Background="#202225" Grid.Row="2" Grid.RowSpan="16"  Grid.ColumnSpan="4" Margin="79,15,15,15" >
-            <ListBox.ItemContainerStyleSelector>
-                <local:Selector   IsStartedStyle="{StaticResource IsStartedStyle}"
-                          IsntStartedStyle="{StaticResource IsntStartedStyle}" IsStartedCSGO="{StaticResource IsStartedCSGO}"/>
-            </ListBox.ItemContainerStyleSelector>
-        </ListBox>
-
-        <ListBox Name="AccountGroups" HorizontalContentAlignment="Stretch" SelectionChanged="AccountGroups_SelectionChanged" ItemTemplate="{StaticResource GroupsTemplate}" Background="#202225" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled"   Grid.Row="11" Grid.Column="2" Grid.RowSpan="7" Grid.ColumnSpan="4" Margin="24,0,81,15">
-        </ListBox>
-
-        <Button Grid.Column="0" Grid.Row="12"  Content="Farm selected" Click="FarmSelectedButtonClick"  Grid.ColumnSpan="3" Margin="10,10,103,29" Grid.RowSpan="2" />
-        <Button Grid.Column="0" Grid.Row="10"  Content="Auto farm"  Grid.ColumnSpan="3" Margin="10,36,103,3" Grid.RowSpan="2" />
+        <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="5" Fill="#202225" Margin="7,10,65,10">
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
+            </Rectangle.Effect>
+        </Rectangle>
+        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="In Queue:" Margin="16,33,106,1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Started:" Margin="16,35,119,36" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="4" Content="Farmed:" Margin="16,34,119,36" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <TextBlock Foreground="White" x:Name="InQueue" FontSize="25" Grid.Row="2" Text="0 " Margin="29,36,119,35" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <TextBlock Foreground="White" x:Name="Started" FontSize="25" Grid.Row="3" Text="0 " Margin="29,36,119,35" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <TextBlock Foreground="White" x:Name="Farmed" FontSize="25" Grid.Row="4" Text="0 " Margin="29,35,119,1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="7" Content="Max same time accounts:" Margin="16,14,50,20" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="8" Content="Wait before close (min):" Margin="16,14,50,20" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="9" Content="Server ip:" Margin="16,13,50,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Want to Farm:" Margin="62,31,118,3" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2"/>
+        <TextBlock Foreground="White" x:Name="WantToFarm" FontSize="25" Grid.Row="2" Text="0 " Margin="0,35,28,0" Grid.Column="4" Grid.RowSpan="2"/>
+        <TextBox LostFocus="OnTextBoxMaxSameTimeLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="7" x:Name="sameTimeAccounts" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxWaitBeforeCloseLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="waitBeforeClose" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
 
     </Grid>
 </Page>

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using WPF_Vench_Launcher.pages;
 using WPF_Vench_Launcher.Sources;
+using System.Windows.Forms;
 
 namespace WPF_Vench_Launcher
 {
@@ -26,135 +27,63 @@ namespace WPF_Vench_Launcher
     /// </summary>
     public partial class Boost : Page
     {
-        public Selector selector;
-
-        List<AccountsGroup> accountGroupsSource = new List<AccountsGroup>() { new AccountsGroup(AccountManager.GetAccountsBase(), "all accounts") };
-
+        private System.Windows.Threading.DispatcherTimer timer;
         public Boost()
         {
             InitializeComponent();
-            accountsList.ItemsSource = AccountManager.GetAccountsBase();
-            var config = Config.GetConfig();
-            if (config.Groups != null)
-                accountGroupsSource = config.Groups;
-            AccountGroups.ItemsSource = accountGroupsSource;
+            LoadConfig();
+            timer = InitTimer();
+            
         }
 
-        public void UpdateTable()
+        private void LoadConfig()
         {
-            accountsList.ItemsSource = AccountManager.GetAccountsBase();
-            StyleSelector selector = accountsList.ItemContainerStyleSelector;
-            accountsList.ItemContainerStyleSelector = null;
-            accountsList.ItemContainerStyleSelector = selector;
+            sameTimeAccounts.Text = Convert.ToString(Config.GetConfig().MaxSameTimeAccounts);
+            waitBeforeClose.Text = Convert.ToString(Config.GetConfig().MaxRemainingTimeToDropCase);
+            ServerIp.Text = Convert.ToString(Config.GetConfig().ServersToConnect);
+
+            InQueue.Text = Convert.ToString(FarmManager.QueueCount);
+            Started.Text = Convert.ToString(FarmManager.StartedCount);
+            Farmed.Text = Convert.ToString(FarmManager.FarmedCount);
         }
 
-        private void ButtonDeleteAccountClick(object sender, RoutedEventArgs e)
+        private System.Windows.Threading.DispatcherTimer InitTimer()
         {
-            var s = sender as Button;
-            var acc = (Account)s.DataContext;
-            AccountManager.DelteAccount(acc);
-            Config.SaveAccountsDataAsync();
-            UpdateTable();
+            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Tick += new EventHandler(timerTick);
+            timer.Interval = new TimeSpan(0, 0, 2);
+            timer.Start();
+            return timer;
         }
 
-        private void ButtonOpenSteamClick(object sender, RoutedEventArgs e)
+        private void timerTick(object sender, EventArgs e)
         {
-            var s = sender as Button;
-            var acc = (Account)s.DataContext;
-            AccountManager.OpenSteam(acc);
-            Config.SaveAccountsDataAsync();
+            //update accounts info
+            InQueue.Text = Convert.ToString(FarmManager.QueueCount); 
+            Started.Text = Convert.ToString(FarmManager.StartedCount);
+            Farmed.Text  = Convert.ToString(FarmManager.FarmedCount);
         }
 
-        private void GroupNameLostFocus(object sender, RoutedEventArgs e)
+        
+
+        private void OnTextBoxMaxSameTimeLostFocus(object sender, RoutedEventArgs e)
         {
-            Config.SaveGroupsParams(accountGroupsSource);
+            Config.SaveMaxSameTimeAccounts(Convert.ToInt32(sameTimeAccounts.Text));
         }
 
-        public void ClearSelected()
+        private void OnTextBoxWaitBeforeCloseLostFocus(object sender, RoutedEventArgs e)
         {
-            accountsList.UnselectAll();
+            Config.SaveWaitBeforeCloseAccounts(Convert.ToInt32(waitBeforeClose.Text));
         }
 
-        private void AccountGroups_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnTextBoxServersLostFocus(object sender, RoutedEventArgs e)
         {
-            if (AccountGroups.SelectedItem == null)
-                return;
-            if (!Keyboard.IsKeyDown(Key.LeftShift))
-                ClearSelected();
-            var selected = (AccountsGroup)AccountGroups.SelectedItem;
-            foreach (var acc in selected.InGroupAccounts)
-            {
-                for (int i = 0; i < accountsList.Items.Count; i++)
-                {
-                    if (((Account)accountsList.Items[i]).Login == acc.Login)
-                        accountsList.SelectedItems.Add(accountsList.Items[i]);
-                }
-            }
-            AccountGroups.UnselectAll();
-            //UpdateTable();
+            Config.SaveServersIp(ServerIp.Text);
         }
 
-        private void StartBoostButtonClick(object sender, RoutedEventArgs e)
+        private void OnFormLostFocus(object sender, RoutedEventArgs e)
         {
-            var selectedAccs = accountsList.SelectedItems;
-            List<Account> list = new List<Account>();
-            foreach (var acc in selectedAccs)
-            {
-                list.Add((Account)acc);
-            }
-            if (!BoostManager.MakeBoostGroup(list))
-            {
-                throw new Exception("can not make group");
-            }
-            BoostManager.GetGroups().Last().Start();
-        }
-
-        private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FarmSelectedButtonClick(object sender, RoutedEventArgs e)
-        {
-            var selectedAccs = accountsList.SelectedItems;
-            List<Account> list = new List<Account>();
-            foreach (var acc in selectedAccs)
-            {
-                list.Add((Account)acc);
-            }
-            FarmManager.AutoFarm(list);
-        }
-    }
-
-    public class Selector : StyleSelector
-    {
-        public Style IsStartedStyle { get; set; }
-        public Style IsntStartedStyle { get; set; }
-
-        public Style IsStartedCSGO { get; set; }
-
-        private Style NotStartedNonPrime;
-
-        private Style StartedNonPrime;
-        public Selector()
-        {
-
-        }
-
-        public override Style SelectStyle(object item, DependencyObject container)
-        {
-            Account acc = (Account)item;
-            switch (acc.Status)
-            {
-                case 0:
-                    return IsntStartedStyle;
-                case 1:
-                    return IsStartedStyle;
-                case 2:
-                    return IsStartedCSGO;
-                default:
-                    return null;
-            }
+            timer.Stop();
         }
     }
 

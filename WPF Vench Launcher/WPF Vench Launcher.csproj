@@ -143,6 +143,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Sources\BoostManager.cs" />
     <Compile Include="Boost.xaml.cs">
       <DependentUpon>Boost.xaml</DependentUpon>
@@ -156,6 +159,10 @@
     <Compile Include="Sources\Accountmanager.cs" />
     <Compile Include="Sources\Farm.cs" />
     <Page Include="Boost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

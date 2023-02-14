@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPF_Vench_Launcher.Sources;
 
 namespace WPF_Vench_Launcher.pages
 {
@@ -29,11 +30,12 @@ namespace WPF_Vench_Launcher.pages
         List<AccountsGroup> accountGroupsSource = new List<AccountsGroup>() { new AccountsGroup(AccountManager.GetAccountsBase(), "all accounts") };
 
         private bool StartUpParamsChanged = false;
-
+        private static bool timerStarted = false;
         public Home()
         {
             InitializeComponent();
-            var timer = InitTimer();
+            if(!timerStarted)
+                InitTimer();
             InitConfig();
             AccountsTotal.Text = accountsList.Items.Count.ToString();
             AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
@@ -56,6 +58,7 @@ namespace WPF_Vench_Launcher.pages
 
         private System.Windows.Threading.DispatcherTimer InitTimer()
         {
+            timerStarted= true;
             System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += new EventHandler(timerTick);
             timer.Interval = new TimeSpan(0, 0, 5);
@@ -117,7 +120,7 @@ namespace WPF_Vench_Launcher.pages
                 }
             }
             
-            AccountManager.DelteAccount(acc);
+            AccountManager.DeleteAccount(acc);
             Config.SaveAccountsDataAsync();
             ClearSelected();
             foreach (var account in selectedList)
@@ -216,8 +219,6 @@ namespace WPF_Vench_Launcher.pages
             AccountManager.StopAllAccounts();
         }
 
-
-
         private void OnTextBoxStartupParamsChanged(object sender, RoutedEventArgs e)
         {
             StartUpParamsChanged = true;
@@ -281,6 +282,22 @@ namespace WPF_Vench_Launcher.pages
         private void GroupNameLostFocus(object sender, RoutedEventArgs e)
         {
             Config.SaveGroupsParams(accountGroupsSource);
+        }
+
+        private void FarmSelectedButtonClick(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            List<Account> list = new List<Account>();
+            foreach (var acc in selectedAccs)
+            {
+                list.Add((Account)acc);
+            }
+            FarmManager.AutoFarm(list);
+        }
+
+        private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
+        {
+            FarmManager.AutoFarm(AccountManager.GetAccountsBase());
         }
     }
 

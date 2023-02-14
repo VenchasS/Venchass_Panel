@@ -66,11 +66,18 @@ namespace WPF_Vench_Launcher
         public static void UpdateAccountsProcessesInfoThread()
         {
             Task.Factory.StartNew(() => {
+                
                 while (true)
                 {
-                    AccountManager.UpdateAccountsChildrens();
-                    AccountManager.SdaCheck();
-                    Thread.Sleep(2000);
+                    try
+                    {
+                        AccountManager.UpdateAccountsChildrens();
+                        AccountManager.SdaCheck();
+                        Thread.Sleep(2000);
+                    }
+                    catch (Exception ex) {
+                        //MessageBox.Show(ex.Message);
+                    }
                 }
             });
         }
@@ -138,7 +145,13 @@ namespace WPF_Vench_Launcher
             MainFrame.Source = new Uri("Boost.xaml", UriKind.Relative);
         }
 
-
+        private void LoginPage(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new LoginPage(() =>
+            {
+                MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
+            }));
+        }
     }
 
     

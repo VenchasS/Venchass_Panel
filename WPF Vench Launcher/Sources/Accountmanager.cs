@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using System.Security.Principal;
 using Newtonsoft.Json.Linq;
 using System.Windows.Shapes;
+using System.Net.Http;
+using System.Windows.Media.Animation;
+using System.ComponentModel;
 
 //Software by Venchass
 //My:
@@ -44,6 +47,30 @@ namespace WPF_Vench_Launcher
 
         private static string steamPath = @"C:\Program Files (x86)\Steam";
         public static string SteamPath { get { return steamPath; }  }
+
+        private static bool isSignedIn = false;
+        private static readonly HttpClient client = new HttpClient();
+        public static async Task TrySignInAsync(string login, string password)
+        {
+            var values = new Dictionary<string, string>
+              {
+                  { "thing1", login },
+                  { "thing2", password }
+              };
+
+            var content = new FormUrlEncodedContent(values);
+            var response = await client.PostAsync("http://www.example.com/recepticle.aspx", content);
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (true)
+            {
+                isSignedIn= true;
+            }
+        }
+
+        public static bool GetIsSignedIn()
+        {
+            return isSignedIn;
+        }
 
         public static void SetSteamPath(string newPath)
         {
@@ -87,7 +114,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = steamPath,
                     FileName = path,
-                    Arguments = string.Format("-noreactlogin -login {0} {1}  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
+                    Arguments = string.Format("-language english  -noreactlogin -login {0} {1}  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
                 };
                 Process process = new Process()
                 {
@@ -302,7 +329,7 @@ namespace WPF_Vench_Launcher
             }
         }
 
-        public static void DelteAccount(Account acc)
+        public static void DeleteAccount(Account acc)
         {
             lock(AccountsBase)
             {
@@ -638,6 +665,24 @@ namespace WPF_Vench_Launcher
         public static void SaveSteamPath(string steamPath)
         {
             config.SteamPath = steamPath;
+            SaveConfig();
+        }
+
+        public static void SaveMaxSameTimeAccounts(int value)
+        {
+            config.MaxSameTimeAccounts = value;
+            SaveConfig();
+        }
+
+        public static void SaveWaitBeforeCloseAccounts(int time)
+        {
+            config.MaxRemainingTimeToDropCase = time;
+            SaveConfig();
+        }
+
+        public static void SaveServersIp(string ip)
+        {
+            config.ServersToConnect = ip;
             SaveConfig();
         }
 
