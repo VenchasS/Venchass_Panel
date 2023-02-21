@@ -25,6 +25,21 @@ namespace WPF_Vench_Launcher
         {
             InitializeComponent();
             this.callback = signInCallback;
+            SignInFromConfig();
+        }
+
+        private void SignInFromConfig()
+        {
+            var login = Config.GetConfig().Login;
+            var password = Config.GetConfig().Password;
+            Login.Text = login;
+            Password.Text = password;
+            SignInBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+
+        private void SaveAccountsData(string login, string password)
+        {
+            Config.SaveDataAccount(login, password);
         }
 
         public async void SignInButtonClickAsync(object sender, EventArgs e)
@@ -32,6 +47,7 @@ namespace WPF_Vench_Launcher
             await AccountManager.TrySignInAsync(Login.Text, Password.Text);
             if (AccountManager.GetIsSignedIn())
             {
+                SaveAccountsData(Login.Text,Password.Text);
                 callback();
             }
             else

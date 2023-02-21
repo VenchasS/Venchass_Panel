@@ -236,7 +236,7 @@
         <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Prime" Margin="19,28,107,6" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"/>
         <TextBlock Foreground="White" x:Name="PrimeTotal" FontSize="25" Grid.Row="3" Text="0 " Margin="29,33,0,1" Grid.Column="4" Grid.RowSpan="2"/>
         <Label Foreground="White" FontSize="15" Grid.Row="5" Content="Prime" Margin="10,24,60,10" Grid.RowSpan="2" RenderTransformOrigin="0.48,1.64"/>
-        <ToggleButton Name="PrimeCheck" Grid.Row="5" Height="20" Width="20" HorizontalAlignment="Left" Margin="79,30,0,22" Grid.RowSpan="2">
+        <ToggleButton Name="PrimeCheck" Grid.Row="5" Height="20" Width="20" HorizontalAlignment="Left" Margin="79,30,0,22" Grid.RowSpan="2" Checked="PrimeCheck_Checked" Unchecked="PrimeCheck_Checked">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >

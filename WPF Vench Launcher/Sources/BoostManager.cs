@@ -157,7 +157,7 @@ namespace WPF_Vench_Launcher
                 LeftClick(269, 78);
                 while (!GetColor(209, 108).Equals(new Color(37, 37, 37)))
                     Thread.Sleep(100);
-                AccountManager.SendText(code, csgo.MainWindowHandle);
+                //AccountManager.SendText(code, csgo.MainWindowHandle);
                 while (!GetColor(268, 120).Equals(new Color(43, 43, 43))) //ждем окно для нажатия на письмо
                 {
                     LeftClick(204, 133);

@@ -71,6 +71,7 @@ namespace WPF_Vench_Launcher
                 {
                     try
                     {
+
                         AccountManager.UpdateAccountsChildrens();
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
@@ -132,17 +133,20 @@ namespace WPF_Vench_Launcher
 
         private void HomeuButtonClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
+            if(AccountManager.GetIsSignedIn())
+                MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
         }
 
         private void SettingsButtonClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Source = new Uri("Settings.xaml", UriKind.Relative);
+            if (AccountManager.GetIsSignedIn())
+                MainFrame.Source = new Uri("Settings.xaml", UriKind.Relative);
         }
 
         private void BoostButtonClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Source = new Uri("Boost.xaml", UriKind.Relative);
+            if (AccountManager.GetIsSignedIn())
+                MainFrame.Source = new Uri("Boost.xaml", UriKind.Relative);
         }
 
         private void LoginPage(object sender, RoutedEventArgs e)

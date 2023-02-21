@@ -47,7 +47,7 @@
         <Label Foreground="White" FontSize="30" Grid.Row="8" Content="Password" Margin="0,9,10,0" Grid.RowSpan="2" Grid.ColumnSpan="2" Grid.Column="2"/>
         <TextBox  Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="6" x:Name="Login" Margin="0,30,44,18" Grid.Column="4" Grid.RowSpan="2"  />
         <TextBox  Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="Password" Margin="0,30,44,18" Grid.Column="4" Grid.RowSpan="2"  />
-        <Button Click="SignInButtonClickAsync"  Grid.Column="3" Grid.Row="12" Content="Sign In" Grid.ColumnSpan="3" Margin="58,15,59,25" Grid.RowSpan="2" />
+        <Button Click="SignInButtonClickAsync" x:Name="SignInBtn"  Grid.Column="3" Grid.Row="12" Content="Sign In" Grid.ColumnSpan="3" Margin="58,15,59,25" Grid.RowSpan="2" />
 
     </Grid>
 </Page>

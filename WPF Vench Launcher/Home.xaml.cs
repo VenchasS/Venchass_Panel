@@ -195,6 +195,7 @@ namespace WPF_Vench_Launcher.pages
         {
             Config.ImportAccountsFromFile();
             UpdateTable();
+            UpdateGroupsList();
         }
 
         private void OnTestButtonclick(object sender, RoutedEventArgs e)
@@ -268,6 +269,11 @@ namespace WPF_Vench_Launcher.pages
             Config.SaveGroupsParams(accountGroupsSource);
         }
 
+        public void UpdateGroupsList()
+        {
+            AccountGroups.ItemsSource = Config.GetConfig().Groups;
+        }
+
         private void DeleteGroup(object sender, RoutedEventArgs e)
         {
             var s = sender as Button;
@@ -298,6 +304,16 @@ namespace WPF_Vench_Launcher.pages
         private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
         {
             FarmManager.AutoFarm(AccountManager.GetAccountsBase());
+        }
+
+        private void PrimeCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            foreach (Account acc in selectedAccs)
+            {
+                acc.PrimeStatus = PrimeCheck.IsChecked == true;
+            }
+            Config.SaveAccountsDataAsync();
         }
     }
 

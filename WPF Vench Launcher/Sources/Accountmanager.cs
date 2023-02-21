@@ -20,6 +20,8 @@ using System.Windows.Shapes;
 using System.Net.Http;
 using System.Windows.Media.Animation;
 using System.ComponentModel;
+using System.Windows.Interop;
+using System.Linq;
 
 //Software by Venchass
 //My:
@@ -53,18 +55,28 @@ namespace WPF_Vench_Launcher
         public static async Task TrySignInAsync(string login, string password)
         {
             var values = new Dictionary<string, string>
-              {
-                  { "thing1", login },
-                  { "thing2", password }
-              };
-
-            var content = new FormUrlEncodedContent(values);
-            var response = await client.PostAsync("http://www.example.com/recepticle.aspx", content);
-            var responseString = await response.Content.ReadAsStringAsync();
-            if (true)
             {
-                isSignedIn= true;
+                { "thing1", login },
+                { "thing2", password }
+            };
+            if (login != "")
+            {
+                isSignedIn = true;
             }
+            try
+            {
+                var content = new FormUrlEncodedContent(values);
+                var response = await client.PostAsync("http://localhost:8000/", content);
+                var responseString = await response.Content.ReadAsStringAsync();
+                if (login != "")
+                {
+                    isSignedIn = true;
+                }
+            }
+            catch {
+                
+            }
+            
         }
 
         public static bool GetIsSignedIn()
@@ -82,7 +94,7 @@ namespace WPF_Vench_Launcher
         {
             lock (account)
             {
-                if (account.SteamId32 == 0)
+                if (account.SteamId32 == 0 && startSteam == false)
                 {
                     var login = new UserLogin(account.Login, account.Password);
                     var response = login.DoLogin();
@@ -99,7 +111,7 @@ namespace WPF_Vench_Launcher
                         account.SteamId32 = login.Session.SteamID - 76561197960265728;
                     }
                 }
-                if (account.SteamId32 != 0)
+                if (account.SteamId32 != 0 && startSteam == false)
                 {
                     Config.SetOptimizeSettings(account.SteamId32);
                 }
@@ -431,6 +443,9 @@ namespace WPF_Vench_Launcher
             return handles;
         }
 
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
         public static void SdaCheck()
         {
             lock (AccountsBase)
@@ -493,6 +508,7 @@ namespace WPF_Vench_Launcher
             }
             try
             {
+                
                 //активизируем окно, которое имело фокус
                 SetForegroundWindow(hwnd);
                 Thread.Sleep(100);
@@ -557,6 +573,9 @@ namespace WPF_Vench_Launcher
         public int MaxRemainingTimeToDropCase { get; set; }
 
         public string ServersToConnect { get; set; }
+
+        public string Login { get; set; }
+        public string Password { get; set; }
 
 
 
@@ -686,6 +705,13 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        public static void SaveDataAccount(string login,string password)
+        {
+            config.Login = login;
+            config.Password = password;
+            SaveConfig();
+        }
+
         /// <summary>
         /// Load Accounts from Accounts.cfg to AccountsManager, rewrite file to empty when error
         /// </summary>
@@ -766,20 +792,16 @@ namespace WPF_Vench_Launcher
         public static bool ImportAccountsFromFile()
         {
            var fildeDialog = new Microsoft.Win32.OpenFileDialog();
-
-
-
             // Set filter for file extension and default file extension 
             fildeDialog.DefaultExt = ".txt";
-
-
-
             if (fildeDialog.ShowDialog() == true)
             {
                 var path = fildeDialog.FileName;
+                var name = fildeDialog.SafeFileName;
                 // Open file
                 using (var file = System.IO.File.OpenText(path))
                 {
+                    var ImportedAccounts = new List<Account>();
                     // Read file
                     while (!file.EndOfStream)
                     {
@@ -795,9 +817,14 @@ namespace WPF_Vench_Launcher
                                 if (accountLine.Length >= 3)
                                     account.PrimeStatus = accountLine[2] == "true";
                                 AccountManager.AddAccount(account);
+                                ImportedAccounts.Add(account);
                             }
                         }
                     }
+                    var group = new AccountsGroup(ImportedAccounts, name);
+                    var newGroupsList = Config.GetConfig().Groups.ToList();
+                    newGroupsList.Add(group);
+                    Config.SaveGroupsParams(newGroupsList);
                     Config.SaveAccountsDataAsync();
                     return true;
                 }
