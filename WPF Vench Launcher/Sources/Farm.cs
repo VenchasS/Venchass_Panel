@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -169,6 +170,7 @@ namespace WPF_Vench_Launcher.Sources
                         try
                         {
                             CloseAccount(farmAcc);
+                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by time {1} minutes", farmAcc.prop.Login, Config.GetConfig().MaxRemainingTimeToDropCase));
                         }
                         catch(Exception ex)
                         {
@@ -180,6 +182,9 @@ namespace WPF_Vench_Launcher.Sources
                         try
                         {
                             CloseAccount(farmAcc);
+                            farmAcc.prop.LastDrop = DateTime.Now.ToString(new CultureInfo("ru-RU"));
+                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", farmAcc.prop.Login, Config.GetConfig().ServersToConnect));
+                            Config.SaveAccountsDataAsync();
                         }
                         catch (Exception ex)
                         {

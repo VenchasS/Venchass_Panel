@@ -177,15 +177,18 @@ namespace WPF_Vench_Launcher.pages
             {
                 System.IO.File.WriteAllText(sfd.FileName, fileText);
             }
-            /*var selectedAccounts = accountsList.SelectedItems;
+
+
+/*
+            var selectedAccounts = accountsList.SelectedItems;
             var fileText = "";
             lock (selectedAccounts)
             {
                 foreach (var accountObj in selectedAccounts)
                 {
                     var account = accountObj as Account;
-                    fileText = "{\r\n  \"Enabled\": true,\r\n  \"Paused\": true,\r\n  \"SteamLogin\": \"" + account.Login + "\",\r\n  \"SteamPassword\": \"" + account.Password + "\",\r\n  \"SteamTradeToken\": \"_4pbH-Uk\",\r\n  \"SteamUserPermissions\": {\r\n    \"76561199149265215\": 3\r\n  }\r\n}"; 
-                    System.IO.File.WriteAllText("C:\\Users\\PC1\\Desktop\\buyed_accs_2\\"+account.Login+".json", fileText);
+                    fileText = "{\r\n  \"Enabled\": true,\r\n  \"Paused\": true,\r\n  \"SteamLogin\": \"" + account.Login + "\",\r\n  \"SteamPassword\": \"" + account.Password + "\",\r\n  \"SteamTradeToken\": \"aMLn_QlD\",\r\n  \"SteamUserPermissions\": {\r\n    \"76561199149809591\": 3\r\n  }\r\n}";
+                    System.IO.File.WriteAllText("C:\\Users\\PC1\\Desktop\\buyed_accs_2\\" + account.Login + ".json", fileText);
                 }
             }*/
 

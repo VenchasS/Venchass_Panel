@@ -35,6 +35,7 @@ namespace WPF_Vench_Launcher
             InitEvents();
             UpdateAccountsProcessesInfoThread();
             InitDataBase();
+            AccountManager.SaveLogInfo("Panel started");
         }
 
         private void InitDataBase()
@@ -118,6 +119,7 @@ namespace WPF_Vench_Launcher
 
             CheckFile(@"/Accounts.cfg");
             CheckFile(@"/config.cfg");
+            CheckFile(@"/log.txt");
             CheckFolder(@"/Steam Desktop Authenticator");
             CheckFolder(@"/Steam Desktop Authenticator/maFiles");
         }

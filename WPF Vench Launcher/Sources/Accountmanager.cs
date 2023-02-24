@@ -22,6 +22,7 @@ using System.Windows.Media.Animation;
 using System.ComponentModel;
 using System.Windows.Interop;
 using System.Linq;
+using System.Globalization;
 
 //Software by Venchass
 //My:
@@ -82,6 +83,13 @@ namespace WPF_Vench_Launcher
         public static bool GetIsSignedIn()
         {
             return isSignedIn;
+        }
+
+        public static void SaveLogInfo(string text)
+        {
+            var time = DateTime.Now.ToString(new CultureInfo("ru-RU"));
+            var info = String.Format("{0} {1}{2}", time, text, "\n");
+            File.AppendAllText(Config.DirectoryPath + @"/log.txt", info);
         }
 
         public static void SetSteamPath(string newPath)
@@ -538,6 +546,8 @@ namespace WPF_Vench_Launcher
 
         public ulong SteamId32 { get; set; }
 
+        public string LastDrop { get; set; }
+
         public override string ToString()
         {
             return Login;
@@ -576,7 +586,6 @@ namespace WPF_Vench_Launcher
 
         public string Login { get; set; }
         public string Password { get; set; }
-
 
 
         public ConfigObject()
