@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
-using System.Text.Json;
 using System.Windows;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -67,9 +66,9 @@ namespace WPF_Vench_Launcher
             try
             {
                 var content = new FormUrlEncodedContent(values);
-                var response = await client.PostAsync("http://localhost:8000/", content);
+                var response = await client.PostAsync("http://78.153.5.45:8000/hwid", content);
                 var responseString = await response.Content.ReadAsStringAsync();
-                if (login != "")
+                if (login != "" && responseString == "error")
                 {
                     isSignedIn = true;
                 }
@@ -661,16 +660,16 @@ namespace WPF_Vench_Launcher
 
         public static async void SaveAccountsDataAsync()
         {
-            var options = new JsonSerializerOptions 
+            /*var options = new JsonSerializerOptions 
             { 
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true 
-            };
+            };*/
             var accounts = AccountManager.GetAccountsBase();
             var json = "";
             lock (accounts)
             {
-                json = System.Text.Json.JsonSerializer.Serialize(accounts, options);
+                json = JsonConvert.SerializeObject(accounts);
             }
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
             {
@@ -733,7 +732,7 @@ namespace WPF_Vench_Launcher
             }
             try
             {
-                var accountsList = System.Text.Json.JsonSerializer.Deserialize<List<Account>>(json);
+                var accountsList = JsonConvert.DeserializeObject<List<Account>>(json);
                 foreach (var item in accountsList)
                 {
                     AccountManager.AddAccount(item);
@@ -748,12 +747,12 @@ namespace WPF_Vench_Launcher
 
         private static async void SaveConfig()
         {
-            var options = new JsonSerializerOptions 
+            /*var options = new JsonSerializerOptions 
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true
-            };
-            var json = System.Text.Json.JsonSerializer.Serialize(config, options);
+            };*/
+            var json = JsonConvert.SerializeObject(config);
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
             {
                 await writer.WriteLineAsync(json);
@@ -769,7 +768,7 @@ namespace WPF_Vench_Launcher
                 {
                     json = reader.ReadToEnd();
                 }
-                config = System.Text.Json.JsonSerializer.Deserialize<ConfigObject>(json);
+                config = JsonConvert.DeserializeObject<ConfigObject>(json);
                 if (config.SteamPath == null)
                 {
                     AskSteamPath();

@@ -36,6 +36,10 @@ namespace WPF_Vench_Launcher
             UpdateAccountsProcessesInfoThread();
             InitDataBase();
             AccountManager.SaveLogInfo("Panel started");
+            MainFrame.Navigate(new LoginPage(() =>
+            {
+                MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
+            }));
         }
 
         private void InitDataBase()
