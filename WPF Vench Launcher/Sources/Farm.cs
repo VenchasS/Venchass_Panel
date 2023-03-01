@@ -130,6 +130,17 @@ namespace WPF_Vench_Launcher.Sources
             });
         }
 
+        public static List<Account> GetAutoFarmAccounts()
+        {
+            return AccountManager.GetAccountsBase()
+                .Where(x => x.PrimeStatus == true)
+                .Where(x => x.LastDrop != null)
+                .Where(x => Convert.ToDateTime(x.LastDrop).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
+                .Concat(AccountManager.GetAccountsBase()
+                .Where(x => x.PrimeStatus == true)
+                .Where(x => x.LastDrop == null))
+                .ToList();
+        }
         public static void CloseAccount(FarmAccount farmAcc)
         {
             lock (currentFarmQueue)

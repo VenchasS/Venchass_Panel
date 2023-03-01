@@ -306,9 +306,9 @@ namespace WPF_Vench_Launcher.pages
 
         private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
         {
-            FarmManager.AutoFarm(AccountManager.GetAccountsBase());
+            
+            FarmManager.AutoFarm(FarmManager.GetAutoFarmAccounts());
         }
-
         private void PrimeCheck_Checked(object sender, RoutedEventArgs e)
         {
             var selectedAccs = accountsList.SelectedItems;

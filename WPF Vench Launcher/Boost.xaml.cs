@@ -51,7 +51,8 @@ namespace WPF_Vench_Launcher
         {
             System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += new EventHandler(timerTick);
-            timer.Interval = new TimeSpan(0, 0, 2);
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timerTick(new object(),new EventArgs());
             timer.Start();
             return timer;
         }
@@ -59,6 +60,7 @@ namespace WPF_Vench_Launcher
         private void timerTick(object sender, EventArgs e)
         {
             //update accounts info
+            WantToFarm.Text = Convert.ToString(FarmManager.GetAutoFarmAccounts().Count);
             InQueue.Text = Convert.ToString(FarmManager.QueueCount); 
             Started.Text = Convert.ToString(FarmManager.StartedCount);
             Farmed.Text  = Convert.ToString(FarmManager.FarmedCount);

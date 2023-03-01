@@ -733,6 +733,10 @@ namespace WPF_Vench_Launcher
             try
             {
                 var accountsList = JsonConvert.DeserializeObject<List<Account>>(json);
+                if (accountsList == null) {
+                    accountsList = new List<Account>();
+                }
+
                 foreach (var item in accountsList)
                 {
                     AccountManager.AddAccount(item);
@@ -769,6 +773,10 @@ namespace WPF_Vench_Launcher
                     json = reader.ReadToEnd();
                 }
                 config = JsonConvert.DeserializeObject<ConfigObject>(json);
+                if (config == null)
+                {
+                    config = new ConfigObject();
+                }
                 if (config.SteamPath == null)
                 {
                     AskSteamPath();
