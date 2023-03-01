@@ -669,7 +669,7 @@ namespace WPF_Vench_Launcher
             var json = "";
             lock (accounts)
             {
-                json = JsonConvert.SerializeObject(accounts);
+                json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
             }
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
             {
@@ -756,7 +756,7 @@ namespace WPF_Vench_Launcher
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true
             };*/
-            var json = JsonConvert.SerializeObject(config);
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
             {
                 await writer.WriteLineAsync(json);
