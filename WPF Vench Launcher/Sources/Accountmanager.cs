@@ -106,7 +106,7 @@ namespace WPF_Vench_Launcher
                     var login = new UserLogin(account.Login, account.Password);
                     LoginResult response = LoginResult.BadCredentials; //login.DoLogin();
                     int attempts = 0;
-                    while ((response = login.DoLogin()) == LoginResult.GeneralFailure || attempts < 3)
+                    while ((response = login.DoLogin()) == LoginResult.GeneralFailure && attempts < 3)
                     {
                         attempts++;
                     }
