@@ -104,7 +104,12 @@ namespace WPF_Vench_Launcher
                 if (account.SteamId32 == 0 && startSteam == false)
                 {
                     var login = new UserLogin(account.Login, account.Password);
-                    LoginResult response = login.DoLogin();
+                    LoginResult response = LoginResult.BadCredentials; //login.DoLogin();
+                    int attempts = 0;
+                    while ((response = login.DoLogin()) == LoginResult.GeneralFailure || attempts < 3)
+                    {
+                        attempts++;
+                    }
                     if (response == LoginResult.Need2FA)
                     {
                         if (SteamGuard.HasGuard(account.Login.ToLower()))
@@ -477,7 +482,7 @@ namespace WPF_Vench_Launcher
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
                                 SendText(guard, hwnd);
                                 SendText("ENTER", hwnd);
-                                SaveLogInfo(String.Format("send {0} to ", guard, acc.Login.ToLower()));
+                                SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
                             }
                         }
                     }
