@@ -221,6 +221,7 @@ namespace WPF_Vench_Launcher.pages
         private void StopAllButtonClick(object sender, RoutedEventArgs e)
         {
             AccountManager.StopAllAccounts();
+            Config.SaveAccountsDataAsync();
         }
 
         private void OnTextBoxStartupParamsChanged(object sender, RoutedEventArgs e)
