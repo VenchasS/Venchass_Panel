@@ -1,4 +1,6 @@
-﻿using SteamAuth;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SteamAuth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -246,7 +248,7 @@ namespace WPF_Vench_Launcher.pages
             if(!Keyboard.IsKeyDown(Key.LeftShift))
                 ClearSelected();
             var selected = (AccountsGroup)AccountGroups.SelectedItem;
-            foreach (var acc in selected.InGroupAccounts)
+            foreach (var acc in selected.InGroupAccounts())
             {
                 for (int i = 0; i < accountsList.Items.Count; i++)
                 {
@@ -356,32 +358,33 @@ namespace WPF_Vench_Launcher.pages
 
     public class AccountsGroup
     {
-        public List<Account> InGroupAccounts = new List<Account>();
+        public List<Account> InGroupAccounts()
+        {
+            List<Account> res = new List<Account>();
+            List<string> logins = AccountManager.GetAccountsBase().Select(x => x.Login).ToList();
+            foreach (var item in AccountLogins)
+            {
+                if (logins.Contains(item))
+                {
+                    foreach (var acc in AccountManager.GetAccountsBase())
+                    {
+                        if (acc.Login == item)
+                        {
+                            res.Add(acc);
+                            break;
+                        }
+
+                    }
+                }
+            }
+            return res;
+        }
 
         public string GroupName { get; set; }
 
         public List<string> AccountLogins
         {
-            get { return InGroupAccounts.Select(x => x.Login).ToList(); }
-            set
-            {
-                List<string> logins = AccountManager.GetAccountsBase().Select(x => x.Login).ToList();
-                foreach (var item in value)
-                {
-                    if (logins.Contains(item))
-                    {
-                        foreach (var acc in AccountManager.GetAccountsBase())
-                        {
-                            if (acc.Login == item)
-                            {
-                                InGroupAccounts.Add(acc);
-                                break;
-                            }
-
-                        }
-                    }
-                }
-            }
+            get; set;
         }
 
         public AccountsGroup()
@@ -392,7 +395,7 @@ namespace WPF_Vench_Launcher.pages
         public AccountsGroup(List<Account> inGroupAccounts, string groupName)
         {
             this.GroupName = groupName;
-            this.InGroupAccounts = inGroupAccounts;
+            this.AccountLogins = inGroupAccounts.Select(x => x.Login).ToList();
         }
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gameloop.Vdf.JsonConverter</name>
+    </assembly>
+    <members>
+        <member name="P:Gameloop.Vdf.JsonConverter.VdfJsonConversionSettings.ObjectDuplicateKeyHandling">
+            <summary>
+            Sets duplicate key handling when the corresponding value is an object or list.
+            </summary>
+        </member>
+        <member name="P:Gameloop.Vdf.JsonConverter.VdfJsonConversionSettings.ValueDuplicateKeyHandling">
+            <summary>
+            Sets duplicate key handling when the corresponding value is a singular value.
+            </summary>
+        </member>
+        <member name="F:Gameloop.Vdf.JsonConverter.DuplicateKeyHandling.Ignore">
+            <summary>
+            Ignores all duplicate keys after the first. Selecting this option will cause all duplicates to be discarded.
+            </summary>
+        </member>
+        <member name="F:Gameloop.Vdf.JsonConverter.DuplicateKeyHandling.Merge">
+            <summary>
+            Merges two JObjects or JArrays using the <see href="https://www.newtonsoft.com/json/help/html/MergeJson.htm">.Merge() method provided by Json.NET</see> with default settings.
+            </summary>
+        </member>
+        <member name="F:Gameloop.Vdf.JsonConverter.DuplicateKeyHandling.Replace">
+            <summary>
+            Ignores all duplicate keys before the last. Selecting this option will cause all duplicates to be discarded.
+            </summary>
+        </member>
+        <member name="F:Gameloop.Vdf.JsonConverter.DuplicateKeyHandling.Throw">
+            <summary>
+            Simply throws an exception when a duplicate key is encountered. This is the default behavior.
+            </summary>
+        </member>
+    </members>
+</doc>
