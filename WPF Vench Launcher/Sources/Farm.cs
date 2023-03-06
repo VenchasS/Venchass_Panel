@@ -168,6 +168,7 @@ namespace WPF_Vench_Launcher.Sources
                 currentFarmQueue.Add(farmAcc);
             }
             AccountManager.StartAccount(farmAcc.prop, String.Format("-no-browser -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
+            Config.SaveAccountsDataAsync();
         }
 
         private static void AutoFarmController()

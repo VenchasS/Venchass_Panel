@@ -22,6 +22,10 @@ using System.ComponentModel;
 using System.Windows.Interop;
 using System.Linq;
 using System.Globalization;
+using Gameloop.Vdf;
+using Gameloop.Vdf.JsonConverter;
+using System.Reflection;
+using System.Xml.Linq;
 
 //Software by Venchass
 //My:
@@ -95,6 +99,131 @@ namespace WPF_Vench_Launcher
         {
             steamPath = newPath;
         }
+        class SteamLoginUsersSingleUser
+        {
+            public string AccountName { get; set; }
+            public string PersonaName { get; set; }
+            public int RememberPassword { get; set; }
+            public int WantsOfflineMode { get; set; }
+            public int SkipOfflineModeWarning { get; set; }
+            public int AllowAutoLogin { get; set; }
+            public int MostRecent { get; set; }
+            public int Timestamp { get; set; }
+
+            public SteamLoginUsersSingleUser()
+            {
+
+            }
+        }
+
+        class SteamLoginUsers
+        {
+            public List<SteamLoginUsersSingleUser> users { get; set; }
+
+            public string Path { get; set; }
+
+        }
+
+        
+
+        public static void StartSteamNoSandbox(Account account)
+        {
+            lock (account)
+            {
+                string path = steamPath + @"\NoSandBoxsteam.exe";
+                File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    WorkingDirectory = steamPath,
+                    FileName = path,
+                    Arguments = string.Format("-language english  -noreactlogin -login {0} {1} ", account.Login, account.Password)
+                };
+                Process process = new Process()
+                {
+                    StartInfo = processStartInfo
+                };
+                process.Start();
+                account.Status = 1;
+                account.PID = process.Id;
+                SaveAccountData(account, process); //save started acc
+            }
+            while (true)
+            {
+                var windows = GetWindowHandles(account);
+                bool stop = false;
+                foreach (var hwnd in windows)
+                {
+                    var name = GetWindowNameByHwnd(hwnd);
+                    var visible = IsWindowVisible(hwnd);
+                    if (name == "Steam" && windows.Count() > 40 && visible)
+                    {
+                        AccountManager.StopAccount(account);
+                        stop = true;
+                    }
+                }
+                if(stop)
+                    break;
+            }
+            
+        }
+
+        private static bool TryGetSteamId(Account account)
+        {
+            Func<Account,ulong> parseVdf = (accountDB) =>
+            {
+                var path = Config.GetConfig().SteamPath + @"/config/loginusers.vdf";
+                var volvo = VdfConvert.Deserialize(File.ReadAllText(path));
+                var sm = volvo.ToJson();
+                foreach (dynamic acc in sm.Values())
+                {
+                    var login = (JToken)acc;
+                    var key = login.Values().First().Values().First().Value<String>();
+                    if (key.ToLower() == accountDB.Login.ToLower())
+                    {
+                        return ulong.Parse(acc.Name ) - 76561197960265728;
+                    }
+                }
+                return 0;
+            };
+
+            account.SteamId32 = parseVdf(account);
+            if (account.SteamId32 == 0)
+            {
+                StartSteamNoSandbox(account);
+            }
+            account.SteamId32 = parseVdf(account);
+
+
+            return account.SteamId32 != 0;
+            /*var login = new UserLogin(account.Login, account.Password);
+            LoginResult response = LoginResult.BadCredentials; //login.DoLogin();
+            int attempts = 0;
+            while ((response = login.DoLogin()) == LoginResult.GeneralFailure && attempts < 3)
+            {
+                attempts++;
+            }
+            if (response == LoginResult.Need2FA)
+            {
+                if (SteamGuard.HasGuard(account.Login.ToLower()))
+                {
+                    login.TwoFactorCode = SteamGuard.GetGuard(account.Login.ToLower());
+                    response = login.DoLogin();
+                }
+            }
+            else
+            {
+                SaveLogInfo(String.Format("{0} SDA error: {1}", account.Login, response.ToString()));
+            }
+            if (login.LoggedIn)
+            {
+                account.SteamId32 = login.Session.SteamID - 76561197960265728;
+                return true;
+            }
+            return false;*/
+        }
 
         static List<Account> AccountsBase = new List<Account>();
         public static void StartAccount(Account account, string startParams = "", bool startSteam = false)
@@ -103,29 +232,7 @@ namespace WPF_Vench_Launcher
             {
                 if (account.SteamId32 == 0 && startSteam == false)
                 {
-                    var login = new UserLogin(account.Login, account.Password);
-                    LoginResult response = LoginResult.BadCredentials; //login.DoLogin();
-                    int attempts = 0;
-                    while ((response = login.DoLogin()) == LoginResult.GeneralFailure && attempts < 3)
-                    {
-                        attempts++;
-                    }
-                    if (response == LoginResult.Need2FA)
-                    {
-                        if (SteamGuard.HasGuard(account.Login.ToLower()))
-                        {
-                            login.TwoFactorCode = SteamGuard.GetGuard(account.Login.ToLower());
-                            response = login.DoLogin();
-                        }
-                    }
-                    else
-                    {
-                        SaveLogInfo(String.Format("{0} SDA error: {1}", account.Login, response.ToString()));
-                    }
-                    if (login.LoggedIn)
-                    {
-                        account.SteamId32 = login.Session.SteamID - 76561197960265728;
-                    }
+                    TryGetSteamId(account);
                 }
                 if (account.SteamId32 != 0 && startSteam == false)
                 {
@@ -462,6 +569,10 @@ namespace WPF_Vench_Launcher
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool IsWindowVisible(IntPtr hWnd);
+
         public static void SdaCheck()
         {
             lock (AccountsBase)
@@ -475,7 +586,8 @@ namespace WPF_Vench_Launcher
                     var windows = GetWindowHandles(acc);
                     foreach (var hwnd in windows)
                     {
-                        if (GetWindowNameByHwnd(hwnd) == "Steam Guard - Computer Authorization Required")
+                        var name = GetWindowNameByHwnd(hwnd);
+                        if (name == "Steam Guard - Computer Authorization Required")
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
@@ -500,6 +612,9 @@ namespace WPF_Vench_Launcher
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
         public static void SendText(string message , IntPtr hwnd)
         {
             const int WM_KEYDOWN = 0x100;
@@ -508,7 +623,7 @@ namespace WPF_Vench_Launcher
             int WM_CHAR = 0x0102;
             if (message == "ENTER")
             {
-                SetForegroundWindow(hwnd);
+                SetActiveWindow(hwnd);
                 //Thread.Sleep(150);
                 Thread.Sleep(10);
                 SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
