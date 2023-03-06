@@ -784,7 +784,7 @@ namespace WPF_Vench_Launcher
             }
             catch
             {
-                var path = Config.DirectoryPath + String.Format("backup {0}", DateTime.Now.ToString());
+                var path = Config.DirectoryPath + String.Format("\\backup {0}.txt", DateTime.Now.ToString());
                 File.Create(path);
                 var accounts = AccountManager.GetAccountsBase();
                 var json = "";
