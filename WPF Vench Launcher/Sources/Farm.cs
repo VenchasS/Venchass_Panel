@@ -119,11 +119,6 @@ namespace WPF_Vench_Launcher.Sources
         {
             if (queueToFarm.Count != 0 || currentFarmQueue.Count != 0)
                 return;
-            foreach (var account in list.Where(x => x.SteamId32 == 0))
-            {
-                AccountManager.TryGetSteamId(account);
-            }
-            
             foreach (var account in list)
             {
                 var farmAccount = new FarmAccount(account);
