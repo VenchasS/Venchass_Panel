@@ -128,49 +128,30 @@ namespace WPF_Vench_Launcher
 
         public static void StartSteamNoSandbox(Account account)
         {
-            lock (account)
-            {
-                string path = steamPath + @"\NoSandBoxsteam.exe";
-                File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
-                ProcessStartInfo processStartInfo = new ProcessStartInfo()
-                {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    WorkingDirectory = steamPath,
-                    FileName = path,
-                    Arguments = string.Format("-language english  -noreactlogin -login {0} {1} ", account.Login, account.Password)
-                };
-                Process process = new Process()
-                {
-                    StartInfo = processStartInfo
-                };
-                process.Start();
-                account.Status = 1;
-                account.PID = process.Id;
-                SaveAccountData(account, process); //save started acc
-            }
+            var startParams = "-no-browser -window -novid -nosound -w 640 -h 480";
+            string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
+            File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
+            StartAccount(account, startParams, false, path);
+            
             while (true)
             {
                 var windows = GetWindowHandles(account);
                 bool stop = false;
-                foreach (var hwnd in windows)
+                try
                 {
-                    var name = GetWindowNameByHwnd(hwnd);
-                    var visible = IsWindowVisible(hwnd);
-                    if (name == "Steam" && windows.Count() > 40 && visible)
-                    {
-                        AccountManager.StopAccount(account);
-                        stop = true;
-                    }
-                }
-                if(stop)
+                    AccountManager.GetGameProcess(account);
+                    AccountManager.StopAccount(account);
                     break;
+                }
+                catch
+                {
+
+                }
             }
             
         }
 
-        private static bool TryGetSteamId(Account account)
+        public static bool TryGetSteamId(Account account)
         {
             Func<Account,ulong> parseVdf = (accountDB) =>
             {
@@ -195,6 +176,10 @@ namespace WPF_Vench_Launcher
                 StartSteamNoSandbox(account);
             }
             account.SteamId32 = parseVdf(account);
+            if (account.SteamId32 != 0)
+                Config.SaveAccountsDataAsync();
+
+
 
 
             return account.SteamId32 != 0;
@@ -226,20 +211,17 @@ namespace WPF_Vench_Launcher
         }
 
         static List<Account> AccountsBase = new List<Account>();
-        public static void StartAccount(Account account, string startParams = "", bool startSteam = false)
+        public static void StartAccount(Account account, string startParams = "", bool startSteam = false, string path = "")
         {
             lock (account)
             {
-                if (account.SteamId32 == 0 && startSteam == false)
-                {
-                    TryGetSteamId(account);
-                }
+                
                 if (account.SteamId32 != 0 && startSteam == false)
                 {
                     Config.SetOptimizeSettings(account.SteamId32);
                 }
-
-                string path = steamPath + @"\steam.exe";
+                if(path == "")
+                    path = Config.GetConfig().SteamPath + @"\steam.exe";
                 var startApp = startSteam ? "" : "-applaunch 730"; //csgo id
                 var cfg = "+exec Vench.cfg";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
@@ -247,7 +229,7 @@ namespace WPF_Vench_Launcher
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    WorkingDirectory = steamPath,
+                    WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
                     Arguments = string.Format("-language english  -noreactlogin -login {0} {1}  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
                 };
@@ -279,18 +261,14 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            
-            if (acc.Status == 2)
+            try
             {
-                try
-                {
-                    var game = GetGameProcess(acc);
-                    game.Kill();
-                }
-                catch
-                {
+                var game = GetGameProcess(acc);
+                game.Kill();
+            }
+            catch
+            {
 
-                }
             }
             lock (StartedAccountsDict)
             {
@@ -791,15 +769,34 @@ namespace WPF_Vench_Launcher
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true 
             };*/
-            var accounts = AccountManager.GetAccountsBase();
-            var json = "";
-            lock (accounts)
+            try
             {
-                json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+                var accounts = AccountManager.GetAccountsBase();
+                var json = "";
+                lock (accounts)
+                {
+                    json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+                }
+                using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
+                {
+                    await writer.WriteLineAsync(json);
+                }
             }
-            using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
+            catch
             {
-                await writer.WriteLineAsync(json);
+
+                var path = Config.DirectoryPath + String.Format("\\backup {0}.txt", DateTime.Now.ToString());
+                File.Create(path);
+                var accounts = AccountManager.GetAccountsBase();
+                var json = "";
+                lock (accounts)
+                {
+                    json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+                }
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    await writer.WriteLineAsync(json);
+                }
             }
         }
 
