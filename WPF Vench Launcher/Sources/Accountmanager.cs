@@ -130,13 +130,10 @@ namespace WPF_Vench_Launcher
         {
             var startParams = "-no-browser -window -novid -nosound -w 640 -h 480";
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
-            File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
             StartAccount(account, startParams, false, path);
             
             while (true)
             {
-                var windows = GetWindowHandles(account);
-                bool stop = false;
                 try
                 {
                     AccountManager.GetGameProcess(account);
@@ -176,10 +173,6 @@ namespace WPF_Vench_Launcher
                 StartSteamNoSandbox(account);
             }
             account.SteamId32 = parseVdf(account);
-            if (account.SteamId32 != 0)
-                Config.SaveAccountsDataAsync();
-
-
 
 
             return account.SteamId32 != 0;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -119,6 +120,15 @@ namespace WPF_Vench_Launcher.Sources
         {
             if (queueToFarm.Count != 0 || currentFarmQueue.Count != 0)
                 return;
+            string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
+            try
+            {
+                Process.GetProcessesByName("NoSandBoxsteam.exe").Where(x => { x.Kill(); return true; });
+                File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
+            }
+            catch {
+                Process.GetProcessesByName("NoSandBoxsteam.exe").Where(x => { x.Kill(); return true; });
+            }
             foreach (var account in list.Where(x => x.SteamId32 == 0))
             {
                 AccountManager.TryGetSteamId(account);
