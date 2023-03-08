@@ -70,7 +70,7 @@ namespace WPF_Vench_Launcher
             try
             {
                 var content = new FormUrlEncodedContent(values);
-                var response = await client.PostAsync("http://78.153.5.45:8000/hwid", content);
+                var response = await client.PostAsync("http://188.234.213.172:8000/hwid", content);
                 var responseString = await response.Content.ReadAsStringAsync();
                 if (login != "" && responseString == "error")
                 {
@@ -130,25 +130,22 @@ namespace WPF_Vench_Launcher
         {
             var startParams = "-no-browser -window -novid -nosound -w 640 -h 480";
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
-            StartAccount(account, startParams, false, path);
+            StartAccount(account, startParams, true, path);
             
             while (true)
             {
-                try
+                var windows = GetWindowHandles(account);
+                if(windows.Count() > 40)
                 {
-                    AccountManager.GetGameProcess(account);
+                    Thread.Sleep(10000);
                     AccountManager.StopAccount(account);
                     break;
                 }
-                catch
-                {
-
-                }
             }
-            
         }
 
-        public static bool TryGetSteamId(Account account)
+
+        public static bool TryGetSteamId(Account account, int threadSleep = 0)
         {
             Func<Account,ulong> parseVdf = (accountDB) =>
             {
@@ -171,6 +168,7 @@ namespace WPF_Vench_Launcher
             if (account.SteamId32 == 0)
             {
                 StartSteamNoSandbox(account);
+                Thread.Sleep(threadSleep);
             }
             account.SteamId32 = parseVdf(account);
 

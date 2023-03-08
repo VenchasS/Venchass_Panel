@@ -123,15 +123,14 @@ namespace WPF_Vench_Launcher.Sources
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
             try
             {
-                Process.GetProcessesByName("NoSandBoxsteam.exe").Where(x => { x.Kill(); return true; });
+                Process.GetProcessesByName("NoSandBoxsteam").Where(x => { x.Kill(); return true; });
                 File.Copy(Config.GetConfig().SteamPath + @"\steam.exe", path, true);
             }
             catch {
-                Process.GetProcessesByName("NoSandBoxsteam.exe").Where(x => { x.Kill(); return true; });
             }
             foreach (var account in list.Where(x => x.SteamId32 == 0))
             {
-                AccountManager.TryGetSteamId(account);
+                AccountManager.TryGetSteamId(account, 10000);
             }
             
             foreach (var account in list)
