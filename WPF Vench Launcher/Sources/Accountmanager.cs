@@ -763,7 +763,6 @@ namespace WPF_Vench_Launcher
             }
             try
             {
-                throw new Exception("err");
                 using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
                 {
                     await writer.WriteLineAsync(json);
