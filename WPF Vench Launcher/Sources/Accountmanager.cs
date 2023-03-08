@@ -755,19 +755,14 @@ namespace WPF_Vench_Launcher
 
         public static async void SaveAccountsDataAsync()
         {
-            /*var options = new JsonSerializerOptions 
-            { 
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true 
-            };*/
+            var accounts = AccountManager.GetAccountsBase();
+            var json = "";
+            lock (accounts)
+            {
+                json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+            }
             try
             {
-                var accounts = AccountManager.GetAccountsBase();
-                var json = "";
-                lock (accounts)
-                {
-                    json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
-                }
                 using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/Accounts.cfg", false))
                 {
                     await writer.WriteLineAsync(json);
@@ -775,15 +770,7 @@ namespace WPF_Vench_Launcher
             }
             catch
             {
-                var path = Config.DirectoryPath + String.Format("\\backup {0}.txt", DateTime.Now.ToString());
-                File.Create(path);
-                var accounts = AccountManager.GetAccountsBase();
-                var json = "";
-                lock (accounts)
-                {
-                    json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
-                }
-                using (StreamWriter writer = new StreamWriter(path))
+                using (StreamWriter writer = new StreamWriter(String.Format("{0}/backup {1} {2}.cfg", DirectoryPath, DateTime.Now.Day.ToString(), DateTime.Now.Month.ToString()), false))
                 {
                     await writer.WriteLineAsync(json);
                 }
