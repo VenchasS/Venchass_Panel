@@ -18,6 +18,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPF_Vench_Launcher.Sources;
 
+//Software by Venchass
+//My:
+//Discord VenchasS#9039
+//telegram @VenchasS
+//VK https://vk.com/venchass
+
 namespace WPF_Vench_Launcher.pages
 {
     /// <summary>

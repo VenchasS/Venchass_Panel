@@ -54,7 +54,7 @@ namespace WPF_Vench_Launcher
         private static string steamPath = @"C:\Program Files (x86)\Steam";
         public static string SteamPath { get { return steamPath; }  }
 
-        private static bool isSignedIn = false;
+        private static bool isSignedIn = true;
         private static readonly HttpClient client = new HttpClient();
         public static async Task TrySignInAsync(string login, string password)
         {

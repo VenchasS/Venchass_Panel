@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 //My:
 //Discord VenchasS#9039
 //telegram @VenchasS
-//https://vk.com/venchass
+//VK https://vk.com/venchass
 
 namespace WPF_Vench_Launcher
 {
@@ -36,10 +36,10 @@ namespace WPF_Vench_Launcher
             UpdateAccountsProcessesInfoThread();
             InitDataBase();
             AccountManager.SaveLogInfo("Panel started");
-            MainFrame.Navigate(new LoginPage(() =>
+            /*MainFrame.Navigate(new LoginPage(() =>
             {
                 MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
-            }));
+            }));*/
         }
 
         private void InitDataBase()

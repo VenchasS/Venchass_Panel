@@ -362,6 +362,8 @@
     <Content Include="bin\Release\cfg\music\1.wav" />
     <Resource Include="bin\Release\cfg\userdata\video.txt" />
     <Resource Include="bin\Release\cfg\userdata\videodefaults.txt" />
+    <Resource Include="Image1.png" />
+    <Resource Include="Image2.png" />
     <Content Include="Setup\setup.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

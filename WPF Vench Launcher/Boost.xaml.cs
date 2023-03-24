@@ -20,6 +20,12 @@ using WPF_Vench_Launcher.pages;
 using WPF_Vench_Launcher.Sources;
 using System.Windows.Forms;
 
+//Software by Venchass
+//My:
+//Discord VenchasS#9039
+//telegram @VenchasS
+//VK https://vk.com/venchass
+
 namespace WPF_Vench_Launcher
 {
     /// <summary>

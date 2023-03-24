@@ -67,6 +67,10 @@ namespace WPF_Vench_Launcher
         {
             Config.ImportAccountsFromFile();
         }
-        
+
+        private void SelectCSGOPath(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

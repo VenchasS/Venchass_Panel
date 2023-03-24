@@ -191,6 +191,12 @@ namespace WPF_Vench_Launcher.Sources
             {
                 foreach (var farmAcc in currentFarmQueue.ToList())
                 {
+                    if (farmAcc.prop.Status == 0)
+                    {
+                        CloseAccount(farmAcc);
+                        AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by user ", farmAcc.prop.Login));
+
+                    }
                     if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
                     {
                         try
