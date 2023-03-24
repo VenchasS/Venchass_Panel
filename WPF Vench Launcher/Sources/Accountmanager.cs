@@ -556,7 +556,7 @@ namespace WPF_Vench_Launcher
                     foreach (var hwnd in windows)
                     {
                         var name = GetWindowNameByHwnd(hwnd);
-                        if (name == "Steam Guard - Computer Authorization Required")
+                        if (name == "Steam Sign In")
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
