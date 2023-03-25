@@ -29,12 +29,19 @@ namespace WPF_Vench_Launcher
         private ConfigObject config;
         public MainWindow()
         {
-            InitializeComponent();
-            InitializeFolder();
-            InitConfig(); 
-            InitEvents();
-            UpdateAccountsProcessesInfoThread();
-            InitDataBase();
+            try
+            {
+                InitializeComponent();
+                InitializeFolder();
+                InitConfig();
+                InitEvents();
+                UpdateAccountsProcessesInfoThread();
+            }
+            catch(Exception e)
+            {
+                AccountManager.SaveLogInfo(e.Message);
+            }
+            
             AccountManager.SaveLogInfo("Panel started");
             /*MainFrame.Navigate(new LoginPage(() =>
             {
@@ -68,7 +75,7 @@ namespace WPF_Vench_Launcher
             this.MouseLeftButtonDown += new MouseButtonEventHandler(window_MouseDown);
         }
 
-        public static void UpdateAccountsProcessesInfoThread()
+        public void UpdateAccountsProcessesInfoThread()
         {
             Task.Factory.StartNew(() => {
                 
@@ -78,6 +85,7 @@ namespace WPF_Vench_Launcher
                     {
 
                         AccountManager.UpdateAccountsChildrens();
+                        
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
                     }

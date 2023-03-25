@@ -35,6 +35,7 @@ namespace WPF_Vench_Launcher
         private void UpdateSteamPathTextBlockContent()
         {
             SteamPathTextBlock.Text = Config.GetConfig().SteamPath;
+            CSGOPathTextBlock.Text = Config.GetConfig().CSGOPath;
         }
 
         private void RenameWindows(object sender, RoutedEventArgs e)
@@ -70,7 +71,8 @@ namespace WPF_Vench_Launcher
 
         private void SelectCSGOPath(object sender, RoutedEventArgs e)
         {
-
+            Config.AskCSGOPath();
+            UpdateSteamPathTextBlockContent();
         }
     }
 }

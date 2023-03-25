@@ -56,6 +56,11 @@ namespace WPF_Vench_Launcher
 
         private static bool isSignedIn = true;
         private static readonly HttpClient client = new HttpClient();
+
+        public static List<Account> GetStartedAccounts()
+        {
+            return StartedAccountsDict.Select(x => x.Key).ToList();
+        }
         public static async Task TrySignInAsync(string login, string password)
         {
             var values = new Dictionary<string, string>
@@ -542,11 +547,11 @@ namespace WPF_Vench_Launcher
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsWindowVisible(IntPtr hWnd);
 
-        public static void SdaCheck()
+        public static void SdaCheck( )
         {
             lock (AccountsBase)
             {
-                foreach (var acc in AccountsBase)
+                foreach (var acc in AccountManager.GetStartedAccounts())
                 {
                     if (acc.Status == 0)
                     {
@@ -556,10 +561,12 @@ namespace WPF_Vench_Launcher
                     foreach (var hwnd in windows)
                     {
                         var name = GetWindowNameByHwnd(hwnd);
-                        if (name == "Steam Guard - Computer Authorization Required")
+                        if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Sign In")
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
+                                IntPtr hWnd = FindWindow(null, "MainWindow");
+                                SetForegroundWindow(hWnd);
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
                                 SendText(guard, hwnd);
                                 SendText("ENTER", hwnd);
@@ -590,9 +597,11 @@ namespace WPF_Vench_Launcher
             const int WM_KEYUP = 0x101;
             int VK_RETURN = 13;
             int WM_CHAR = 0x0102;
+            
+
             if (message == "ENTER")
             {
-                SetActiveWindow(hwnd);
+                SetForegroundWindow(hwnd);
                 //Thread.Sleep(150);
                 Thread.Sleep(10);
                 SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
@@ -681,6 +690,7 @@ namespace WPF_Vench_Launcher
         public string Login { get; set; }
         public string Password { get; set; }
 
+        public string CSGOPath { get; set; }
 
         public ConfigObject()
         {
@@ -743,7 +753,7 @@ namespace WPF_Vench_Launcher
 
         public static void InitCSGOconfig(string value)
         {
-            string path = AccountManager.SteamPath + "\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\cfg\\Vench.cfg";
+            string path = Config.GetConfig().CSGOPath + "\\csgo\\cfg\\Vench.cfg";
             var file = File.Create(path);
             file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
         }
@@ -792,6 +802,12 @@ namespace WPF_Vench_Launcher
         public static void SaveSteamPath(string steamPath)
         {
             config.SteamPath = steamPath;
+            SaveConfig();
+        }
+
+        public static void SaveCSGOPath(string CSGOPath)
+        {
+            config.CSGOPath = CSGOPath;
             SaveConfig();
         }
 
@@ -881,6 +897,10 @@ namespace WPF_Vench_Launcher
                 {
                     AskSteamPath();
                 }
+                if (config.CSGOPath == null)
+                {
+                    AskCSGOPath();
+                }
             }
             catch
             {
@@ -901,6 +921,17 @@ namespace WPF_Vench_Launcher
             if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SaveSteamPath(folderDialog.SelectedPath);
+            }
+            AccountManager.SetSteamPath(GetConfig().SteamPath);
+        }
+
+        public static void AskCSGOPath()
+        {
+            var folderDialog = new WinForms.FolderBrowserDialog();
+            folderDialog.Description = "Select Counter-Strike Global Offensive folder";
+            if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                SaveCSGOPath(folderDialog.SelectedPath);
             }
             AccountManager.SetSteamPath(GetConfig().SteamPath);
         }

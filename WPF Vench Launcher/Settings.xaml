@@ -92,6 +92,7 @@
             <Button Grid.Row="8" Click="ImportAccountsFromFile" Content="Import from file"  Grid.ColumnSpan="3" Margin="10,10,108,29" Grid.RowSpan="2" />
             <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="8" Text="format: login:password" Margin="32,10,32,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
             <Button Grid.Row="9" Click="SelectCSGOPath" Content="Select CS:GO path"  Grid.ColumnSpan="3" Margin="10,18,108,21" Grid.RowSpan="2" />
+            <TextBlock x:Name="CSGOPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="9" Text="..." Margin="32,15,32,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
 
 
 
