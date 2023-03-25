@@ -565,7 +565,7 @@ namespace WPF_Vench_Launcher
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
-                                IntPtr hWnd = FindWindow(null, "MainWindow");
+                                IntPtr hWnd = FindWindow(null, "Venchass Panel");
                                 SetForegroundWindow(hWnd);
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
                                 SendText(guard, hwnd);
