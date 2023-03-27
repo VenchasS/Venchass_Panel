@@ -565,8 +565,7 @@ namespace WPF_Vench_Launcher
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
-                                IntPtr hWnd = FindWindow(null, "Venchass Panel");
-                                SetForegroundWindow(hWnd);
+                                StartConsole();
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
                                 SendText(guard, hwnd);
                                 SendText("ENTER", hwnd);
@@ -578,6 +577,16 @@ namespace WPF_Vench_Launcher
             }
         }
 
+        public static void StartConsole()
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = "consoleCSharp.exe";
+            process.StartInfo.Arguments = "-n";
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+            process.Start();
+            process.WaitForExit();
+        }
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern bool PostMessage(IntPtr hWnd, int Msg, char wParam, int lParam);
         [DllImport("user32.dll")]
@@ -587,6 +596,11 @@ namespace WPF_Vench_Launcher
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool ShowWindow(IntPtr hWnd, int showWindowCommand);
+
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetActiveWindow(IntPtr hWnd);
@@ -969,7 +983,12 @@ namespace WPF_Vench_Launcher
                         }
                     }
                     var group = new AccountsGroup(ImportedAccounts, name);
-                    var newGroupsList = Config.GetConfig().Groups.ToList();
+                    var config = Config.GetConfig();
+                    if (config.Groups == null)
+                    {
+                        config.Groups = new List<AccountsGroup> {};
+                    }
+                    var newGroupsList = config.Groups.ToList();
                     newGroupsList.Add(group);
                     Config.SaveGroupsParams(newGroupsList);
                     Config.SaveAccountsDataAsync();

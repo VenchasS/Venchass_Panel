@@ -230,7 +230,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Setup\VPinstaller.msi" />
     <None Include="WPF Vench Launcher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +266,7 @@
     <Resource Include="Sources\checkmark.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Release\consoleCSharp.exe" />
     <Resource Include="bin\Release\cfg\game\cfg\server_blacklist.txt" />
     <Resource Include="bin\Release\cfg\game\gameinfo.txt" />
     <Content Include="bin\Release\cfg\game\panorama\videos\acknowledge.webm" />
@@ -364,7 +364,6 @@
     <Resource Include="bin\Release\cfg\userdata\videodefaults.txt" />
     <Resource Include="Image1.png" />
     <Resource Include="Image2.png" />
-    <Content Include="Setup\setup.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

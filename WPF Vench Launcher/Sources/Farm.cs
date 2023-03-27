@@ -128,18 +128,18 @@ namespace WPF_Vench_Launcher.Sources
             }
             catch {
             }
-            foreach (var account in list.Where(x => x.SteamId32 == 0))
-            {
-                AccountManager.TryGetSteamId(account, 10000);
-            }
             
-            foreach (var account in list)
-            {
-                var farmAccount = new FarmAccount(account);
-                queueToFarm.Add(farmAccount);
-            }
             Task.Factory.StartNew(() =>
             {
+                foreach (var account in list.Where(x => x.SteamId32 == 0))
+                {
+                    AccountManager.TryGetSteamId(account, 5000);
+                }
+                foreach (var account in list)
+                {
+                    var farmAccount = new FarmAccount(account);
+                    queueToFarm.Add(farmAccount);
+                }
                 AutoFarmController();
             });
         }

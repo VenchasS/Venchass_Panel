@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,9 @@ namespace WPF_Vench_Launcher
                 InitConfig();
                 InitEvents();
                 UpdateAccountsProcessesInfoThread();
+
+           
+                
             }
             catch(Exception e)
             {
@@ -73,6 +77,8 @@ namespace WPF_Vench_Launcher
             CustomTitle.MouseLeftButtonDown += new MouseButtonEventHandler(MoveWindow);
             LogoLabel.MouseLeftButtonDown += new MouseButtonEventHandler(MoveWindow);
             this.MouseLeftButtonDown += new MouseButtonEventHandler(window_MouseDown);
+
+            
         }
 
         public void UpdateAccountsProcessesInfoThread()
@@ -85,6 +91,7 @@ namespace WPF_Vench_Launcher
                     {
 
                         AccountManager.UpdateAccountsChildrens();
+                        
                         
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
@@ -106,6 +113,8 @@ namespace WPF_Vench_Launcher
             //AccountLogin.Focus();
             Keyboard.ClearFocus();
         }
+
+        
 
         private void CheckFile(string name)
         {

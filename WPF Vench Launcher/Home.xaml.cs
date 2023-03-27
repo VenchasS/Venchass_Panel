@@ -35,7 +35,7 @@ namespace WPF_Vench_Launcher.pages
 
         
 
-        List<AccountsGroup> accountGroupsSource = new List<AccountsGroup>() { new AccountsGroup(AccountManager.GetAccountsBase(), "all accounts") };
+        List<AccountsGroup> accountGroupsSource = new List<AccountsGroup>() { };
 
         private bool StartUpParamsChanged = false;
         private static bool timerStarted = false;
