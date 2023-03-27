@@ -580,7 +580,7 @@ namespace WPF_Vench_Launcher
         public static void StartConsole()
         {
             Process process = new Process();
-            process.StartInfo.FileName = "consoleCSharp.exe";
+            process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
             process.StartInfo.Arguments = "-n";
             process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
             process.Start();
