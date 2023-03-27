@@ -224,6 +224,8 @@
     <None Include="bin\Release\cfg\userdata\remotecache_730.vdf" />
     <None Include="bin\Release\cfg\userdata\serverbrowser_hist.vdf" />
     <None Include="bin\Release\cfg\userdata\sharedconfig.vdf" />
+    <None Include="bin\Release\net6.0\consoleCSharp.deps.json" />
+    <None Include="bin\Release\net6.0\consoleCSharp.runtimeconfig.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -266,7 +268,9 @@
     <Resource Include="Sources\checkmark.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Release\consoleCSharp.exe" />
+    <Content Include="bin\Release\net6.0\consoleCSharp.dll" />
+    <Content Include="bin\Release\net6.0\consoleCSharp.exe" />
+    <Content Include="bin\Release\net6.0\consoleCSharp.pdb" />
     <Resource Include="bin\Release\cfg\game\cfg\server_blacklist.txt" />
     <Resource Include="bin\Release\cfg\game\gameinfo.txt" />
     <Content Include="bin\Release\cfg\game\panorama\videos\acknowledge.webm" />
