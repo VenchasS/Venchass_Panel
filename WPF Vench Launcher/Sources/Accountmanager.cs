@@ -26,6 +26,7 @@ using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
 using System.Reflection;
 using System.Xml.Linq;
+using System.Runtime.CompilerServices;
 
 //Software by Venchass
 //My:
@@ -541,11 +542,14 @@ namespace WPF_Vench_Launcher
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
 
         public static void SdaCheck( )
         {
@@ -579,12 +583,20 @@ namespace WPF_Vench_Launcher
 
         public static void StartConsole()
         {
+            if (GetForegroundWindow() == Config.GetMainHandle())
+                return;
             Process process = new Process();
             process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
             process.StartInfo.Arguments = "-n";
             process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
             process.Start();
             process.WaitForExit();
+            for (var i = 0; i < 5; i++)
+            {
+                if (GetForegroundWindow() == Config.GetMainHandle())
+                    break;
+                Thread.Sleep(50);
+            }
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -716,7 +728,16 @@ namespace WPF_Vench_Launcher
     {
         private static ConfigObject config = new ConfigObject();
         private static string currentDirectoryPath;
+        private static IntPtr MainHandle;
         public static string DirectoryPath { get { return currentDirectoryPath; } } //update's with initializing components
+
+
+        public static IntPtr GetMainHandle()
+        {
+            if (MainHandle == IntPtr.Zero)
+                MainHandle = AccountManager.FindWindow(null, "Venchass Panel");
+            return MainHandle;
+        }
 
         public static void SetOptimizeSettings(ulong steamId32)
         {

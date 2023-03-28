@@ -37,7 +37,6 @@ namespace WPF_Vench_Launcher
                 InitConfig();
                 InitEvents();
                 UpdateAccountsProcessesInfoThread();
-
            
                 
             }
