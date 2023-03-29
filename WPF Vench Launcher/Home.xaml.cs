@@ -45,9 +45,7 @@ namespace WPF_Vench_Launcher.pages
             if(!timerStarted)
                 InitTimer();
             InitConfig();
-            AccountsTotal.Text = accountsList.Items.Count.ToString();
-            AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
-            PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
+            timerTick(new object(),new EventArgs());
         }
 
         public void InitConfig()
@@ -76,22 +74,24 @@ namespace WPF_Vench_Launcher.pages
 
         private void timerTick(object sender, EventArgs e)
         {
-            //update accounts info
-            AccountsTotal.Text = accountsList.Items.Count.ToString();
-            AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
-            PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
-            //Task.WhenAll(new List<Task>() { Task.Run(AccountManager.UpdateAccountsChildrens), Task.Run(AccountManager.SdaCheck) });
-            /*Thread th = new Thread(AccountManager.UpdateAccountsChildrens);
-            Thread th2 = new Thread(AccountManager.SdaCheck);
-            th.Start();
-            th2.Start();*/
-            UpdateTable();
+            try
+            {
+                AccountsTotal.Text = AccountManager.GetAccountsBase().Count().ToString();
+                AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
+                PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
+                UpdateTable();
+            }
+            catch(Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
+            }
         }
 
         
 
         public void UpdateTable()
         {
+            accountsList.ItemsSource = null;
             accountsList.ItemsSource = AccountManager.GetAccountsBase();
             StyleSelector selector = accountsList.ItemContainerStyleSelector;
             accountsList.ItemContainerStyleSelector = null;
@@ -311,11 +311,11 @@ namespace WPF_Vench_Launcher.pages
                 list.Add((Account)acc);
             }
             FarmManager.AutoFarm(list);
+            ClearSelected();
         }
 
         private void AutoFarmButtonClick(object sender, RoutedEventArgs e)
         {
-            
             FarmManager.AutoFarm(FarmManager.GetAutoFarmAccounts());
         }
         private void PrimeCheck_Checked(object sender, RoutedEventArgs e)

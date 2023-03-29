@@ -32,6 +32,7 @@ namespace WPF_Vench_Launcher
         {
             try
             {
+                CheckStartedApps();
                 InitializeComponent();
                 InitializeFolder();
                 InitConfig();
@@ -57,6 +58,15 @@ namespace WPF_Vench_Launcher
             //throw new NotImplementedException();
         }
 
+        private void CheckStartedApps()
+        {
+            var hwnd = AccountManager.FindWindow(null, "Venchass Panel");
+            if(hwnd != null && hwnd != IntPtr.Zero)
+            {
+                AccountManager.SetForegroundWindow(hwnd);
+                Close();
+            }
+        }
 
 
         /// <summary>

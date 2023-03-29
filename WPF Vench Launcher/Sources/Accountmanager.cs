@@ -258,19 +258,20 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            try
-            {
-                var game = GetGameProcess(acc);
-                game.Kill();
-            }
-            catch
-            {
-
-            }
+            
             lock (StartedAccountsDict)
             {
                 if (!StartedAccountsDict.ContainsKey(acc))
                     return;
+                try
+                {
+                    var game = GetGameProcess(acc);
+                    game.Kill();
+                }
+                catch
+                {
+
+                }
                 var proc = StartedAccountsDict[acc];
                 proc.Kill();
                 StartedAccountsDict.Remove(acc);
@@ -586,7 +587,7 @@ namespace WPF_Vench_Launcher
             if (GetForegroundWindow() == Config.GetMainHandle())
                 return;
             Process process = new Process();
-            process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
+            process.StartInfo.FileName = "WPF Vench Launcher.exe";
             process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             process.Start();
             process.WaitForExit();
@@ -606,7 +607,7 @@ namespace WPF_Vench_Launcher
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
