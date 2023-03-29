@@ -587,7 +587,7 @@ namespace WPF_Vench_Launcher
             if (GetForegroundWindow() == Config.GetMainHandle())
                 return;
             Process process = new Process();
-            process.StartInfo.FileName = "WPF Vench Launcher.exe";
+            process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
             process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             process.Start();
             process.WaitForExit();

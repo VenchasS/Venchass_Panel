@@ -91,7 +91,6 @@ namespace WPF_Vench_Launcher.pages
 
         public void UpdateTable()
         {
-            accountsList.ItemsSource = null;
             accountsList.ItemsSource = AccountManager.GetAccountsBase();
             StyleSelector selector = accountsList.ItemContainerStyleSelector;
             accountsList.ItemContainerStyleSelector = null;
