@@ -587,15 +587,14 @@ namespace WPF_Vench_Launcher
                 return;
             Process process = new Process();
             process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
-            process.StartInfo.Arguments = "-n";
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             process.Start();
             process.WaitForExit();
-            for (var i = 0; i < 5; i++)
+
+            if (GetForegroundWindow() != Config.GetMainHandle())
             {
-                if (GetForegroundWindow() == Config.GetMainHandle())
-                    break;
                 Thread.Sleep(50);
+                StartConsole();
             }
         }
 
