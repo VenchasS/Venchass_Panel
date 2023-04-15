@@ -90,7 +90,6 @@
         <Button Click="HomeuButtonClick" Grid.Row="0" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
         <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
         <Button  Grid.Row="0" Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" Content="Farm"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" Click="BoostButtonClick" />
-        <Label Content="ver 1.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="13,6,0,0" Width="109" RenderTransformOrigin="-8.46,0.413" Grid.ColumnSpan="2" Grid.Row="1" />
 
 
 

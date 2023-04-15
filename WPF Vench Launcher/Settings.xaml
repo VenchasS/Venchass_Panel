@@ -97,5 +97,6 @@
 
 
         </Grid>
+        <Label Content="ver 1.1" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="12,606,0,0" Width="110" RenderTransformOrigin="-8.46,0.413" />
     </Grid>
 </Page>
