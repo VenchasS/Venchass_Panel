@@ -574,9 +574,8 @@ namespace WPF_Vench_Launcher
                             {
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
                                 SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
-                                if (GetForegroundWindow() != Config.GetMainHandle() || GetForegroundWindow() != hwnd)
-                                    return;
-                                StartConsole();
+                                if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
+                                    StartConsole();
                                 Thread.Sleep(250);
                                 SendText(guard, hwnd);
                                 Thread.Sleep(250);
