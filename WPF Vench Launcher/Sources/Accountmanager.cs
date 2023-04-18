@@ -728,6 +728,8 @@ namespace WPF_Vench_Launcher
 
         public string CSGOPath { get; set; }
 
+        public bool csgoNews { get; set; }
+
         public ConfigObject()
         {
 
@@ -853,6 +855,12 @@ namespace WPF_Vench_Launcher
         public static void SaveCSGOPath(string CSGOPath)
         {
             config.CSGOPath = CSGOPath;
+            SaveConfig();
+        }
+
+        public static void SaveCsgoNewsChecked(bool value)
+        {
+            config.csgoNews = value;
             SaveConfig();
         }
 

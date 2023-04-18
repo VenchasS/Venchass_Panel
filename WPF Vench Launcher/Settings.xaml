@@ -93,10 +93,42 @@
             <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="8" Text="format: login:password" Margin="32,10,32,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
             <Button Grid.Row="6" Click="SelectCSGOPath" Content="Select CS:GO path"  Grid.ColumnSpan="3" Margin="7,21,111,18" Grid.RowSpan="2" />
             <TextBlock x:Name="CSGOPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="6" Text="..." Margin="37,22,27,0" Grid.ColumnSpan="7" Grid.Column="2" Height="33" Grid.RowSpan="2"/>
+            <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="10" Text="Disable csgo news" Margin="44,23,20,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Height="33"/>
 
 
 
         </Grid>
         <Label Content="ver 1.1" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="12,606,0,0" Width="110" RenderTransformOrigin="-8.46,0.413" />
+        <ToggleButton x:Name="csgoNews" Height="20" Width="20" HorizontalAlignment="Left" Margin="12,389,0,241" >
+            <ToggleButton.Template>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BorderBrush" Value="#FF333842"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                    </Trigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Image>
+                            <Image.Style>
+                                <Style>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                            <Setter Property="Image.Source" Value="Sources/checkmark.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Border>
+                </ControlTemplate>
+            </ToggleButton.Template>
+        </ToggleButton>
     </Grid>
 </Page>
