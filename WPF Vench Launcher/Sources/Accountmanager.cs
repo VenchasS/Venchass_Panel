@@ -426,7 +426,17 @@ namespace WPF_Vench_Launcher
 
         public static void AddAccount(Account acc)
         {
-            AccountsBase.Add(acc);
+            lock (AccountsBase)
+            {
+                if (AccountsBase.Select(x => x.Login).Contains(acc.Login))
+                {
+                    AccountsBase.Where(x => x.Login == acc.Login).ElementAt(0).Password = acc.Password;
+                }
+                else
+                {
+                    AccountsBase.Add(acc);
+                }
+            }
             if (acc.PID != 0)
             {
                 try
