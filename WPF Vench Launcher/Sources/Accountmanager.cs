@@ -66,8 +66,8 @@ namespace WPF_Vench_Launcher
         {
             var values = new Dictionary<string, string>
             {
-                { "thing1", login },
-                { "thing2", password }
+                { "VenchassPanelLogin", login },
+                { "VenchassPanelPassword", password }
             };
             if (login != "")
             {
@@ -76,7 +76,7 @@ namespace WPF_Vench_Launcher
             try
             {
                 var content = new FormUrlEncodedContent(values);
-                var response = await client.PostAsync("http://188.234.213.172:8000/hwid", content);
+                var response = await client.PostAsync("", content);
                 var responseString = await response.Content.ReadAsStringAsync();
                 if (login != "" && responseString == "error")
                 {
@@ -228,7 +228,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english  -noreactlogin -login {0} {1}  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
+                    Arguments = string.Format("-language english  -noreactlogin -login {0} \"{1}\"  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
                 };
                 Process process = new Process()
                 {
@@ -273,7 +273,9 @@ namespace WPF_Vench_Launcher
 
                 }
                 var proc = StartedAccountsDict[acc];
-                proc.Kill();
+                proc.Refresh();
+                if(!proc.HasExited)
+                    proc.Kill();
                 StartedAccountsDict.Remove(acc);
                 acc.Status = 0;
             }
@@ -570,11 +572,14 @@ namespace WPF_Vench_Launcher
                         {
                             if (SteamGuard.HasGuard(acc.Login.ToLower()))
                             {
-                                StartConsole();
                                 var guard = SteamGuard.GetGuard(acc.Login.ToLower());
-                                SendText(guard, hwnd);
-                                SendText("ENTER", hwnd);
                                 SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
+                                if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
+                                    StartConsole();
+                                Thread.Sleep(250);
+                                SendText(guard, hwnd);
+                                Thread.Sleep(250);
+                                SendText("ENTER", hwnd);
                             }
                         }
                     }
@@ -584,18 +589,23 @@ namespace WPF_Vench_Launcher
 
         public static void StartConsole()
         {
-            if (GetForegroundWindow() == Config.GetMainHandle())
-                return;
-            Process process = new Process();
-            process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            process.Start();
-            process.WaitForExit();
-
-            if (GetForegroundWindow() != Config.GetMainHandle())
+            try
             {
-                Thread.Sleep(50);
-                StartConsole();
+                Process process = new Process();
+                process.StartInfo.FileName = "net6.0\\consoleCSharp.exe";
+                process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                process.Start();
+                process.WaitForExit();
+
+                if (GetForegroundWindow() != Config.GetMainHandle())
+                {
+                    Thread.Sleep(50);
+                    StartConsole();
+                }
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
             }
         }
 
@@ -717,6 +727,8 @@ namespace WPF_Vench_Launcher
         public string Password { get; set; }
 
         public string CSGOPath { get; set; }
+
+        public bool csgoNews { get; set; }
 
         public ConfigObject()
         {
@@ -846,6 +858,12 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        public static void SaveCsgoNewsChecked(bool value)
+        {
+            config.csgoNews = value;
+            SaveConfig();
+        }
+
         public static void SaveMaxSameTimeAccounts(int value)
         {
             config.MaxSameTimeAccounts = value;
@@ -927,6 +945,8 @@ namespace WPF_Vench_Launcher
                 if (config == null)
                 {
                     config = new ConfigObject();
+                    config.MaxRemainingTimeToDropCase = 220;
+                    config.MaxSameTimeAccounts = 10;
                 }
                 if (config.SteamPath == null)
                 {
