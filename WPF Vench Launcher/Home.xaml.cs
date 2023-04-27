@@ -157,7 +157,6 @@ namespace WPF_Vench_Launcher.pages
                 foreach (var accountObj in selectedAccounts)
                 {
                     var account = accountObj as Account;
-                    
                     AccountManager.StartAccount(account, startupParams.Text);
                 }
             }

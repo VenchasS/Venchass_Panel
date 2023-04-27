@@ -118,9 +118,11 @@
         <Label Foreground="White" FontSize="25" Grid.Row="9" Content="Server ip:" Margin="16,13,50,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
         <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Want to Farm:" Margin="62,31,118,3" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2"/>
         <TextBlock Foreground="White" x:Name="WantToFarm" FontSize="25" Grid.Row="2" Text="0 " Margin="0,35,28,0" Grid.Column="4" Grid.RowSpan="2"/>
-        <TextBox LostFocus="OnTextBoxMaxSameTimeLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="7" x:Name="sameTimeAccounts" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <TextBox LostFocus="OnTextBoxWaitBeforeCloseLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="waitBeforeClose" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,51,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxMaxSameTimeLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="7" x:Name="sameTimeAccounts" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxWaitBeforeCloseLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="waitBeforeClose" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="10" Content="Time between launches(sec):" Margin="12,13,27,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <TextBox LostFocus="OnTextBoxDelayLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="10" x:Name="LaunchDelay" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
 
     </Grid>
 </Page>

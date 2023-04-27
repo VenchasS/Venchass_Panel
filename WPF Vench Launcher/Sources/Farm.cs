@@ -73,12 +73,19 @@ namespace WPF_Vench_Launcher.Sources
 
         public Process csgo { get; set; }
 
+        public int consoleIndex { get; set; }
+
+
         public FarmAccount(Account acc)
         {
             this.prop = acc;
-
         }
-        
+
+        public void SetLastDrop()
+        {
+            this.prop.LastDrop = DateTime.Now.ToString(new CultureInfo("ru-RU"));
+        }
+
         public Color GetColor(int x, int y)
         {
             IntPtr hDC = GetDC(AccountManager.GetGameProcess(this.prop).MainWindowHandle); ;//Ссылка на окно, в котором будет выполнен поиск пикселя
@@ -118,8 +125,6 @@ namespace WPF_Vench_Launcher.Sources
 
         public static void AutoFarm(List<Account> list)
         {
-            if (queueToFarm.Count != 0 || currentFarmQueue.Count != 0)
-                return;
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
             try
             {
@@ -128,7 +133,8 @@ namespace WPF_Vench_Launcher.Sources
             }
             catch {
             }
-            
+            var listToFarm = queueToFarm.Select(x => x.prop.Login).Concat(currentFarmQueue.Select(x => x.prop.Login)).ToList();
+
             Task.Factory.StartNew(() =>
             {
                 foreach (var account in list.Where(x => x.SteamId32 == 0))
@@ -137,11 +143,24 @@ namespace WPF_Vench_Launcher.Sources
                 }
                 foreach (var account in list)
                 {
+                    if (listToFarm.Contains(account.Login))
+                        continue;
                     var farmAccount = new FarmAccount(account);
-                    queueToFarm.Add(farmAccount);
+                    lock (queueToFarm)
+                    {
+                        queueToFarm.Add(farmAccount);
+                    }
                 }
-                AutoFarmController();
+                if(listToFarm.Count() == 0)
+                    AutoFarmController();
             });
+            if (listToFarm.Count() == 0)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    AccountsLaunchController();
+                });
+            }
         }
 
         public static List<Account> GetAutoFarmAccounts()
@@ -149,7 +168,7 @@ namespace WPF_Vench_Launcher.Sources
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => Convert.ToDateTime(x.LastDrop).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
+                .Where(x => Convert.ToDateTime(x.LastDrop, new CultureInfo("ru-RU")).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))
@@ -185,50 +204,115 @@ namespace WPF_Vench_Launcher.Sources
             Config.SaveAccountsDataAsync();
         }
 
+        private static void AccountsLaunchController()
+        {
+            while (true)
+            {
+                while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
+                {
+                    lock (queueToFarm)
+                    {
+                        StartFarmAccount(queueToFarm.First());
+                    }
+                    Thread.Sleep(Config.GetConfig().launchDelay * 1000);
+                }
+                Thread.Sleep(5000);
+            }
+            
+        }
+
+        private static void ParseConsole(FarmAccount account)
+        {
+            try
+            {
+                var path = AccountManager.GetPathToLogs(account.prop);
+                if (!File.Exists(path))
+                    return;
+                var index = account.consoleIndex;
+                FileInfo log = new FileInfo(path);
+                AccountManager.SendCmd(account.prop, "status");
+                
+                using (var streamReader = new StreamReader(log.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    string text = streamReader.ReadToEnd();
+                    string[] lines = text.Split(
+                        new string[] { "\r\n", "\r", "\n" },
+                        StringSplitOptions.None
+                    );
+                    for (var i = index;i <lines.Count();i++)
+                    {
+                        var line = lines[i];
+                        if (line == "Disconnect: .")
+                        {
+                            CloseAccount(account);
+                            account.SetLastDrop();
+                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
+                            Config.SaveAccountsDataAsync();
+                            break;
+                        }
+                        else if (line == "Not connected to server")
+                        {
+                            AccountManager.SendCmd(account.prop, String.Format("connect {0}", Config.GetConfig().ServersToConnect));
+                            AccountManager.SaveLogInfo(String.Format("Accounts {0} reconected to server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
+                        }
+                    }
+                    account.consoleIndex = lines.Count()-1;
+                }
+            }
+            catch (Exception e)
+            {
+                AccountManager.SaveLogInfo(e.Message);
+            }
+        }
+
         private static void AutoFarmController()
         {
             while (queueToFarm.Count != 0 || currentFarmQueue.Count != 0)
             {
-                foreach (var farmAcc in currentFarmQueue.ToList())
+                try
                 {
-                    if (farmAcc.prop.Status == 0)
+                    foreach (var farmAcc in currentFarmQueue.ToList())
                     {
-                        CloseAccount(farmAcc);
-                        AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by user ", farmAcc.prop.Login));
-
-                    }
-                    if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
-                    {
-                        try
+                        if (farmAcc.prop.Status == 0)
                         {
                             CloseAccount(farmAcc);
-                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by time {1} minutes", farmAcc.prop.Login, Config.GetConfig().MaxRemainingTimeToDropCase));
+                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by user ", farmAcc.prop.Login));
                         }
-                        catch(Exception ex)
+                        else if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
                         {
-                            MessageBox.Show(ex.Message);
+                            try
+                            {
+                                CloseAccount(farmAcc);
+                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by time {1} minutes", farmAcc.prop.Login, Config.GetConfig().MaxRemainingTimeToDropCase));
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
                         }
+                        //Deprecated
+                        /*else if (farmAcc.CheckGrayWindow()) 
+                        {
+                            try
+                            {
+                                CloseAccount(farmAcc);
+                                farmAcc.SetLastDrop();
+                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", farmAcc.prop.Login, Config.GetConfig().ServersToConnect));
+                                Config.SaveAccountsDataAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                        }*/
+                        ParseConsole(farmAcc);
                     }
-                    else if (farmAcc.CheckGrayWindow())
-                    {
-                        try
-                        {
-                            CloseAccount(farmAcc);
-                            farmAcc.prop.LastDrop = DateTime.Now.ToString(new CultureInfo("ru-RU"));
-                            AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", farmAcc.prop.Login, Config.GetConfig().ServersToConnect));
-                            Config.SaveAccountsDataAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
+                    Thread.Sleep(10000);
                 }
-                while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
+                catch (Exception e)
                 {
-                    StartFarmAccount(queueToFarm.First());
+                    AccountManager.SaveLogInfo(e.Message);
                 }
-                Thread.Sleep(5000);
             }
         }
     }
