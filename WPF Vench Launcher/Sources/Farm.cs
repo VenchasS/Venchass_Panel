@@ -83,7 +83,7 @@ namespace WPF_Vench_Launcher.Sources
 
         public void SetLastDrop()
         {
-            this.prop.LastDrop = DateTime.Now.ToString(new CultureInfo("ru-RU"));
+            this.prop.LastDrop = DateTime.Now.ToString();
         }
 
         public Color GetColor(int x, int y)
@@ -168,7 +168,7 @@ namespace WPF_Vench_Launcher.Sources
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => Convert.ToDateTime(x.LastDrop, new CultureInfo("ru-RU")).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
+                .Where(x => Convert.ToDateTime(x.LastDrop).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))
@@ -246,6 +246,8 @@ namespace WPF_Vench_Launcher.Sources
                         {
                             CloseAccount(account);
                             account.SetLastDrop();
+                            if (Config.GetConfig().TradesCheckbox)
+                                TraderController.AddAccount(account.prop);
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
                             Config.SaveAccountsDataAsync();
                             break;

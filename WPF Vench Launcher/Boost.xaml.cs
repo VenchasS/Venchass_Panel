@@ -55,6 +55,10 @@ namespace WPF_Vench_Launcher
                 Started.Text = Convert.ToString(FarmManager.StartedCount);
                 Farmed.Text = Convert.ToString(FarmManager.FarmedCount);
                 LaunchDelay.Text = Convert.ToString(config.launchDelay);
+                tradeLink.Text = Convert.ToString(config.TradeLink);
+                TradesCheck.IsChecked = Config.GetConfig().TradesCheckbox;
+                TradesCheck.Checked += TradesCheck_Checked;
+                TradesCheck.Unchecked += TradesCheck_Checked;
             }
             catch (Exception e)
             {
@@ -107,9 +111,20 @@ namespace WPF_Vench_Launcher
             }
         }
 
+        private void tradeLinkLostFocus(object sender, RoutedEventArgs e)
+        {
+            Config.SaveTradeLink(tradeLink.Text);
+        }
+
         private void OnFormLostFocus(object sender, RoutedEventArgs e)
         {
             timer.Stop();
+        }
+
+        private void TradesCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            var value = TradesCheck.IsChecked == true;
+            Config.SaveTradesCheckbox(value);
         }
     }
 

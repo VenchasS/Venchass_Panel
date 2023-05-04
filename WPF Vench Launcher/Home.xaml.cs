@@ -325,6 +325,16 @@ namespace WPF_Vench_Launcher.pages
             }
             Config.SaveAccountsDataAsync();
         }
+
+        private void SendTradesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            foreach (Account acc in selectedAccs)
+            {
+                TraderController.AddAccount(acc);
+            }
+
+        }
     }
 
     public class CategoryHighlightStyleSelector : StyleSelector

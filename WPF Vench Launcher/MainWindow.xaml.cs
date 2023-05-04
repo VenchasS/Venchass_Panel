@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPF_Vench_Launcher.Sources;
 
 
 //Software by Venchass
@@ -35,12 +36,13 @@ namespace WPF_Vench_Launcher
             {
                 CheckStartedApps();
                 InitializeComponent();
+                CheckAdminRole();
                 InitializeFolder();
                 InitConfig();
                 InitEvents();
                 UpdateAccountsProcessesInfoThread();
-                CheckAdminRole();
                 Config.OptimizePanorama(true);
+                TraderController.TraderMainThread();
             }
             catch (Exception e)
             {
@@ -143,7 +145,7 @@ namespace WPF_Vench_Launcher
         {
             var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
             if (!File.Exists(currentDirectory + name))
-                File.Create(currentDirectory + name);
+                File.Create(currentDirectory + name).Close();
         }
 
         private void CheckFolder(string name)

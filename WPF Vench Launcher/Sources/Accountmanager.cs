@@ -684,12 +684,12 @@ namespace WPF_Vench_Launcher
             const int WM_KEYUP = 0x101;
             int VK_RETURN = 13;
             int WM_CHAR = 0x0102;
-            
+            SetForegroundWindow(hwnd);
+            Thread.Sleep(250);
 
             if (message == "ENTER")
             {
-                SetForegroundWindow(hwnd);
-                //Thread.Sleep(150);
+
                 Thread.Sleep(10);
                 SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
                 Thread.Sleep(10);
@@ -706,11 +706,6 @@ namespace WPF_Vench_Launcher
             }
             try
             {
-                
-                //активизируем окно, которое имело фокус
-                SetForegroundWindow(hwnd);
-                Thread.Sleep(100);
-                //передаем ему текст посимвольно
                 foreach (char ch in message)
                 {
                     SendMessage(hwnd, WM_CHAR, ch, 1);
@@ -778,6 +773,12 @@ namespace WPF_Vench_Launcher
         public string Password { get; set; }
 
         public string CSGOPath { get; set; }
+
+        public bool TradesCheckbox { get; set; }
+
+
+        public string TradeLink { get; set; }
+
 
         public bool csgoNews { get; set; }
 
@@ -936,6 +937,18 @@ namespace WPF_Vench_Launcher
         public static void SaveCSGOPath(string CSGOPath)
         {
             config.CSGOPath = CSGOPath;
+            SaveConfig();
+        }
+
+        public static void SaveTradesCheckbox(bool value)
+        {
+            config.TradesCheckbox = value;
+            SaveConfig();
+        }
+
+        public static void SaveTradeLink(string link)
+        {
+            config.TradeLink = link;
             SaveConfig();
         }
 
@@ -1131,12 +1144,14 @@ namespace WPF_Vench_Launcher
     {
         private static bool IsInited = false;
 
-        private static Dictionary<string, string> SteamGuardDict = new Dictionary<string, string>();
+        private static Dictionary<string, SdaAccount> SteamGuardDict = new Dictionary<string, SdaAccount>();
 
-        private static string GetsharedSecret(string login)
+        public static string GetsharedSecret(string login)
         {
+            if (!IsInited)
+                init();
             if (SteamGuardDict.ContainsKey(login))
-                return SteamGuardDict[login];
+                return SteamGuardDict[login].shared_secret;
             return null;
         }
 
@@ -1145,6 +1160,15 @@ namespace WPF_Vench_Launcher
             if (!IsInited)
                 init();
             return SteamGuardDict.ContainsKey(login);
+        }
+
+        public static string GetIdentitySecret(string login)
+        {
+            if (!IsInited)
+                init();
+            if (SteamGuardDict.ContainsKey(login))
+                return SteamGuardDict[login].identity_secret;
+            return null;
         }
 
         public static string GetGuard(string login)
@@ -1161,6 +1185,8 @@ namespace WPF_Vench_Launcher
             public string shared_secret { get; set; }
             public string account_name { get; set; } //login
             public string SteamID { get; set; }
+            public string identity_secret { get; set; }
+
         }
 
         private static void init()
@@ -1173,7 +1199,7 @@ namespace WPF_Vench_Launcher
             foreach (FileInfo file in dir.GetFiles("*.maFile"))
             {
                 var account = JsonConvert.DeserializeObject<SdaAccount>(File.ReadAllText(file.FullName));
-                SteamGuardDict.Add(account.account_name, account.shared_secret);
+                SteamGuardDict.Add(account.account_name, account);
             }
 
 

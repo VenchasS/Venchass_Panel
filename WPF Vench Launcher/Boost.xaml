@@ -123,6 +123,40 @@
         <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
         <Label Foreground="White" FontSize="25" Grid.Row="10" Content="Time between launches(sec):" Margin="12,13,27,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
         <TextBox LostFocus="OnTextBoxDelayLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="10" x:Name="LaunchDelay" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Trade link" Margin="70,21,115,8" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Enable auto trades" Margin="108,17,77,12" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <TextBox LostFocus="tradeLinkLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="4" x:Name="tradeLink" Margin="73,21,14,28" Grid.Column="5" Grid.RowSpan="2"  />
+        <ToggleButton x:Name="TradesCheck" Grid.Row="2" Height="20" Width="20" HorizontalAlignment="Left" Margin="76,31,0,21" Grid.Column="5" Grid.RowSpan="2">
+            <ToggleButton.Template>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BorderBrush" Value="#FF333842"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                    </Trigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Image>
+                            <Image.Style>
+                                <Style>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="true">
+                                            <Setter Property="Image.Source" Value="Sources/checkmark.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Border>
+                </ControlTemplate>
+            </ToggleButton.Template>
+        </ToggleButton>
 
     </Grid>
 </Page>
