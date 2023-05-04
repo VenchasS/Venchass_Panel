@@ -157,7 +157,6 @@ namespace WPF_Vench_Launcher.pages
                 foreach (var accountObj in selectedAccounts)
                 {
                     var account = accountObj as Account;
-                    
                     AccountManager.StartAccount(account, startupParams.Text);
                 }
             }
@@ -325,6 +324,16 @@ namespace WPF_Vench_Launcher.pages
                 acc.PrimeStatus = PrimeCheck.IsChecked == true;
             }
             Config.SaveAccountsDataAsync();
+        }
+
+        private void SendTradesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            foreach (Account acc in selectedAccs)
+            {
+                TraderController.AddAccount(acc);
+            }
+
         }
     }
 

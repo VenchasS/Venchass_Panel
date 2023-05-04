@@ -74,6 +74,15 @@ namespace WPF_Vench_Launcher
             Config.ImportAccountsFromFile();
         }
 
+        private void OpenLogs(object sender, RoutedEventArgs e)
+        {
+            var path = Config.DirectoryPath + @"\log.txt";
+            if (File.Exists(path))
+            {
+                System.Diagnostics.Process.Start(path);
+            }
+        }
+
         private void SelectCSGOPath(object sender, RoutedEventArgs e)
         {
             Config.AskCSGOPath();

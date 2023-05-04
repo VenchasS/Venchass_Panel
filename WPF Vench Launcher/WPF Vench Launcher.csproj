@@ -170,6 +170,7 @@
     </Compile>
     <Compile Include="Sources\Accountmanager.cs" />
     <Compile Include="Sources\Farm.cs" />
+    <Compile Include="Sources\TraderController.cs" />
     <Page Include="Boost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

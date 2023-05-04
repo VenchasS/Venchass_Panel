@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPF_Vench_Launcher.Sources;
 
 
 //Software by Venchass
@@ -34,14 +36,15 @@ namespace WPF_Vench_Launcher
             {
                 CheckStartedApps();
                 InitializeComponent();
+                CheckAdminRole();
                 InitializeFolder();
                 InitConfig();
                 InitEvents();
                 UpdateAccountsProcessesInfoThread();
-           
-                
+                Config.OptimizePanorama(true);
+                TraderController.TraderMainThread();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AccountManager.SaveLogInfo(e.Message);
             }
@@ -56,6 +59,21 @@ namespace WPF_Vench_Launcher
         private void InitDataBase()
         {
             //throw new NotImplementedException();
+        }
+
+        private void CheckAdminRole()
+        {
+            bool isElevated;
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            if(!isElevated)
+            {
+                MessageBox.Show("This app should run as administrator");
+                Close();
+            }
         }
 
         private void CheckStartedApps()
@@ -98,9 +116,7 @@ namespace WPF_Vench_Launcher
                 {
                     try
                     {
-
                         AccountManager.UpdateAccountsChildrens();
-                        
                         
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
@@ -129,7 +145,7 @@ namespace WPF_Vench_Launcher
         {
             var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
             if (!File.Exists(currentDirectory + name))
-                File.Create(currentDirectory + name);
+                File.Create(currentDirectory + name).Close();
         }
 
         private void CheckFolder(string name)
@@ -141,7 +157,7 @@ namespace WPF_Vench_Launcher
 
         void InitializeFolder()
         {
-            var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/VenchassPanel";
+            var currentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\VenchassPanel";
             Config.SetDirectoryPath(currentDirectory);
             var dir = new DirectoryInfo(currentDirectory);
             if (!dir.Exists)
@@ -156,6 +172,7 @@ namespace WPF_Vench_Launcher
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+            Config.OptimizePanorama(false);
         }
 
         private void HideButton_Click(object sender, RoutedEventArgs e)

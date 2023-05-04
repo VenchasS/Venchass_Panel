@@ -196,10 +196,10 @@
         </Rectangle>
 
 
-        <Button Grid.Column="0" Grid.Row="11" Content="Start Account" Click="ButtonStartClick" Grid.ColumnSpan="3" Margin="10,2,108,0" />
+        <Button Grid.Column="3" Grid.Row="8" Content="Manually Start Account" Click="ButtonStartClick" Grid.ColumnSpan="3" Margin="39,1,79,1" />
         <Button Grid.Column="0" Content="Stop" Click="ButtonStopClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="15" Margin="10,23,108,18" Grid.RowSpan="2" />
-        <TextBox Name="startupParams" Background="#303030" Foreground="White" Grid.ColumnSpan="6" TextChanged="OnTextBoxStartupParamsChanged" LostFocus="OnTextBoxStartupParamsLostFocus" Grid.Row="8" Margin="10,0,81,0"/>
-        <Label Foreground="White" FontSize="22" Grid.Row="6" Content="Startup params" Margin="10,34,3,0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <TextBox Name="startupParams" Background="#303030" Foreground="White" Grid.ColumnSpan="4" TextChanged="OnTextBoxStartupParamsChanged" LostFocus="OnTextBoxStartupParamsLostFocus" Grid.Row="8" Margin="10,0,85,0"/>
+        <Label Foreground="White" FontSize="22" Grid.Row="6" Content="Manually Startup params" Margin="10,34,119,36" Grid.RowSpan="3" Grid.ColumnSpan="4"/>
 
 
         <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="5" Fill="#202225" Margin="7">
@@ -231,7 +231,7 @@
         <TextBlock Foreground="White" FontSize="30" Grid.Row="9" Text="Groups " Margin="24,16,0,1" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5">
 
         </TextBlock>
-        <Button Grid.Column="0" Grid.Row="12" Content="Make Group" Click="MakeGroupButton_Click" Grid.ColumnSpan="3" Margin="10,5,108,34" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Grid.Row="14" Content="Make Group" Click="MakeGroupButton_Click" Grid.ColumnSpan="3" Margin="10,22,108,16" Grid.RowSpan="2" />
         <Button Grid.Column="0" Background="OrangeRed" Click="StopAllButtonClick"  Content="Stop all" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="16" Margin="10,23,108,18" Grid.RowSpan="2" />
         <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Prime" Margin="19,28,107,6" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"/>
         <TextBlock Foreground="White" x:Name="PrimeTotal" FontSize="25" Grid.Row="3" Text="0 " Margin="29,33,0,1" Grid.Column="4" Grid.RowSpan="2"/>
@@ -269,8 +269,9 @@
         </ToggleButton>
         <Button Grid.Column="4" Grid.Row="9" Content="Export" Click="ButtonExportClick" Grid.ColumnSpan="2" Margin="63,25,81,13" Grid.RowSpan="2" />
         <Button Grid.Column="3" Grid.Row="9" Content="Import" Click="ButtonImportClick" Grid.ColumnSpan="2" Margin="75,25,68,13" Grid.RowSpan="2" />
-        <Button Grid.Column="0" Content="Farm selected" Click="FarmSelectedButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="14" Margin="10,22,108,18" Grid.RowSpan="2" />
-        <Button Grid.Column="0" Content="Autofarm" Click="AutoFarmButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="13" Margin="10,21,108,19" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Content="Farm selected" Click="FarmSelectedButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="12" Margin="10,4,108,0" />
+        <Button Grid.Column="0" Content="Autofarm" Click="AutoFarmButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="11" Margin="10,4,108,0" />
+        <Button Grid.Column="0" Grid.Row="13" Content="Send Trades" Click="SendTradesButton_Click" Grid.ColumnSpan="3" Margin="10,21,108,18" Grid.RowSpan="2" />
 
         <!--<Button Name="Test" Grid.Row="16" Content="test" Click="OnTestButtonclick" Grid.ColumnSpan="2" Margin="10,21,107,15" Grid.RowSpan="2"/>-->
 

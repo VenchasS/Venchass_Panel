@@ -62,6 +62,11 @@ namespace WPF_Vench_Launcher
         {
             return StartedAccountsDict.Select(x => x.Key).ToList();
         }
+
+        public static string GetPathToLogs(Account account)
+        {
+            return Config.GetConfig().CSGOPath + String.Format("\\csgo\\log\\{0}.log", account.Login.ToLower());
+        }
         public static async Task TrySignInAsync(string login, string password)
         {
             var values = new Dictionary<string, string>
@@ -98,7 +103,11 @@ namespace WPF_Vench_Launcher
         {
             var time = DateTime.Now.ToString(new CultureInfo("ru-RU"));
             var info = String.Format("{0} {1}{2}", time, text, "\n");
-            File.AppendAllText(Config.DirectoryPath + @"/log.txt", info);
+            try
+            {
+                File.AppendAllText(Config.DirectoryPath + @"/log.txt", info);
+            }
+            catch { }
         }
 
         public static void SetSteamPath(string newPath)
@@ -212,7 +221,8 @@ namespace WPF_Vench_Launcher
         {
             lock (account)
             {
-                
+                AccountManager.SaveLogInfo("Starting " + account.Login);
+                ClearLogFile(account);
                 if (account.SteamId32 != 0 && startSteam == false)
                 {
                     Config.SetOptimizeSettings(account.SteamId32);
@@ -221,6 +231,7 @@ namespace WPF_Vench_Launcher
                     path = Config.GetConfig().SteamPath + @"\steam.exe";
                 var startApp = startSteam ? "" : "-applaunch 730"; //csgo id
                 var cfg = "+exec Vench.cfg";
+                var consoleLog = String.Format("+con_logfile \"log/{0}.log\"", account.Login.ToLower());
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -228,7 +239,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english  -noreactlogin -login {0} \"{1}\"  {2}  {3} {4}", account.Login, account.Password, startApp, startParams, cfg)
+                    Arguments = string.Format("-language english  -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, startParams, consoleLog, cfg)
                 };
                 Process process = new Process()
                 {
@@ -239,6 +250,19 @@ namespace WPF_Vench_Launcher
                 account.PID = process.Id;
                 SaveAccountData(account, process); //save started acc
             }
+        }
+
+        public static void ClearLogFile(Account acc)
+        {
+            try
+            {
+                var path = AccountManager.GetPathToLogs(acc);
+                if (File.Exists(path))
+                {
+                    File.WriteAllText(path, "");
+                }
+            }
+            catch { }
         }
 
         public static void OpenSteam(Account acc)
@@ -322,6 +346,23 @@ namespace WPF_Vench_Launcher
                     }
                 });
             }
+        }
+
+        public static void SendCmd(Account acc, string str)
+        {
+            var task = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var cds = CreateForString(0, str, false);
+                    var csgo = GetGameProcess(acc);
+                    SendMessage(csgo.MainWindowHandle, 0x4A, IntPtr.Zero, ref cds);
+                }
+                catch
+                {
+
+                }
+            });
         }
 
         public static void RenameWindows()
@@ -426,7 +467,17 @@ namespace WPF_Vench_Launcher
 
         public static void AddAccount(Account acc)
         {
-            AccountsBase.Add(acc);
+            lock (AccountsBase)
+            {
+                if (AccountsBase.Select(x => x.Login).Contains(acc.Login))
+                {
+                    AccountsBase.Where(x => x.Login == acc.Login).ElementAt(0).Password = acc.Password;
+                }
+                else
+                {
+                    AccountsBase.Add(acc);
+                }
+            }
             if (acc.PID != 0)
             {
                 try
@@ -633,12 +684,12 @@ namespace WPF_Vench_Launcher
             const int WM_KEYUP = 0x101;
             int VK_RETURN = 13;
             int WM_CHAR = 0x0102;
-            
+            SetForegroundWindow(hwnd);
+            Thread.Sleep(250);
 
             if (message == "ENTER")
             {
-                SetForegroundWindow(hwnd);
-                //Thread.Sleep(150);
+
                 Thread.Sleep(10);
                 SendMessage(hwnd, WM_KEYDOWN, (char)VK_RETURN, 0);
                 Thread.Sleep(10);
@@ -655,11 +706,6 @@ namespace WPF_Vench_Launcher
             }
             try
             {
-                
-                //активизируем окно, которое имело фокус
-                SetForegroundWindow(hwnd);
-                Thread.Sleep(100);
-                //передаем ему текст посимвольно
                 foreach (char ch in message)
                 {
                     SendMessage(hwnd, WM_CHAR, ch, 1);
@@ -728,7 +774,16 @@ namespace WPF_Vench_Launcher
 
         public string CSGOPath { get; set; }
 
+        public bool TradesCheckbox { get; set; }
+
+
+        public string TradeLink { get; set; }
+
+
         public bool csgoNews { get; set; }
+
+        public int launchDelay { get; set; }
+
 
         public ConfigObject()
         {
@@ -749,6 +804,33 @@ namespace WPF_Vench_Launcher
             if (MainHandle == IntPtr.Zero)
                 MainHandle = AccountManager.FindWindow(null, "Venchass Panel");
             return MainHandle;
+        }
+
+        public static void OptimizePanorama(bool value)
+        {
+            try
+            {
+                var path = Config.GetConfig().CSGOPath + "\\csgo\\panorama\\videos";
+                var newPath = Config.GetConfig().CSGOPath + "\\csgo\\panorama\\videosVen";
+                if (value)
+                {
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Move(path, newPath);
+                    }
+                }
+                else
+                {
+                    if (Directory.Exists(newPath))
+                    {
+                        Directory.Move(newPath, path);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                AccountManager.SaveLogInfo(e.Message);
+            }
         }
 
         public static void SetOptimizeSettings(ulong steamId32)
@@ -858,6 +940,18 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        public static void SaveTradesCheckbox(bool value)
+        {
+            config.TradesCheckbox = value;
+            SaveConfig();
+        }
+
+        public static void SaveTradeLink(string link)
+        {
+            config.TradeLink = link;
+            SaveConfig();
+        }
+
         public static void SaveCsgoNewsChecked(bool value)
         {
             config.csgoNews = value;
@@ -879,6 +973,12 @@ namespace WPF_Vench_Launcher
         public static void SaveServersIp(string ip)
         {
             config.ServersToConnect = ip;
+            SaveConfig();
+        }
+
+        public static void SaveLaunchDelay(int seconds)
+        {
+            config.launchDelay = seconds;
             SaveConfig();
         }
 
@@ -1044,12 +1144,14 @@ namespace WPF_Vench_Launcher
     {
         private static bool IsInited = false;
 
-        private static Dictionary<string, string> SteamGuardDict = new Dictionary<string, string>();
+        private static Dictionary<string, SdaAccount> SteamGuardDict = new Dictionary<string, SdaAccount>();
 
-        private static string GetsharedSecret(string login)
+        public static string GetsharedSecret(string login)
         {
+            if (!IsInited)
+                init();
             if (SteamGuardDict.ContainsKey(login))
-                return SteamGuardDict[login];
+                return SteamGuardDict[login].shared_secret;
             return null;
         }
 
@@ -1058,6 +1160,15 @@ namespace WPF_Vench_Launcher
             if (!IsInited)
                 init();
             return SteamGuardDict.ContainsKey(login);
+        }
+
+        public static string GetIdentitySecret(string login)
+        {
+            if (!IsInited)
+                init();
+            if (SteamGuardDict.ContainsKey(login))
+                return SteamGuardDict[login].identity_secret;
+            return null;
         }
 
         public static string GetGuard(string login)
@@ -1074,6 +1185,8 @@ namespace WPF_Vench_Launcher
             public string shared_secret { get; set; }
             public string account_name { get; set; } //login
             public string SteamID { get; set; }
+            public string identity_secret { get; set; }
+
         }
 
         private static void init()
@@ -1086,7 +1199,7 @@ namespace WPF_Vench_Launcher
             foreach (FileInfo file in dir.GetFiles("*.maFile"))
             {
                 var account = JsonConvert.DeserializeObject<SdaAccount>(File.ReadAllText(file.FullName));
-                SteamGuardDict.Add(account.account_name, account.shared_secret);
+                SteamGuardDict.Add(account.account_name, account);
             }
 
 

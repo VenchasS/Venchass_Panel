@@ -44,13 +44,26 @@ namespace WPF_Vench_Launcher
 
         private void LoadConfig()
         {
-            sameTimeAccounts.Text = Convert.ToString(Config.GetConfig().MaxSameTimeAccounts);
-            waitBeforeClose.Text = Convert.ToString(Config.GetConfig().MaxRemainingTimeToDropCase);
-            ServerIp.Text = Convert.ToString(Config.GetConfig().ServersToConnect);
+            try
+            {
+                var config = Config.LoadConfig();
+                sameTimeAccounts.Text = Convert.ToString(Config.GetConfig().MaxSameTimeAccounts);
+                waitBeforeClose.Text = Convert.ToString(Config.GetConfig().MaxRemainingTimeToDropCase);
+                ServerIp.Text = Convert.ToString(Config.GetConfig().ServersToConnect);
 
-            InQueue.Text = Convert.ToString(FarmManager.QueueCount);
-            Started.Text = Convert.ToString(FarmManager.StartedCount);
-            Farmed.Text = Convert.ToString(FarmManager.FarmedCount);
+                InQueue.Text = Convert.ToString(FarmManager.QueueCount);
+                Started.Text = Convert.ToString(FarmManager.StartedCount);
+                Farmed.Text = Convert.ToString(FarmManager.FarmedCount);
+                LaunchDelay.Text = Convert.ToString(config.launchDelay);
+                tradeLink.Text = Convert.ToString(config.TradeLink);
+                TradesCheck.IsChecked = Config.GetConfig().TradesCheckbox;
+                TradesCheck.Checked += TradesCheck_Checked;
+                TradesCheck.Unchecked += TradesCheck_Checked;
+            }
+            catch (Exception e)
+            {
+                AccountManager.SaveLogInfo(e.Message);
+            }
         }
 
         private System.Windows.Threading.DispatcherTimer InitTimer()
@@ -89,9 +102,29 @@ namespace WPF_Vench_Launcher
             Config.SaveServersIp(ServerIp.Text);
         }
 
+        private void OnTextBoxDelayLostFocus(object sender, RoutedEventArgs e)
+        {
+            int seconds;
+            if (Int32.TryParse(LaunchDelay.Text, out seconds))
+            {
+                Config.SaveLaunchDelay(seconds);
+            }
+        }
+
+        private void tradeLinkLostFocus(object sender, RoutedEventArgs e)
+        {
+            Config.SaveTradeLink(tradeLink.Text);
+        }
+
         private void OnFormLostFocus(object sender, RoutedEventArgs e)
         {
             timer.Stop();
+        }
+
+        private void TradesCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            var value = TradesCheck.IsChecked == true;
+            Config.SaveTradesCheckbox(value);
         }
     }
 

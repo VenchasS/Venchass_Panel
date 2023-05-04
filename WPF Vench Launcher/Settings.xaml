@@ -86,7 +86,7 @@
             <Button Grid.Column="0" Grid.Row="4" Click="SendCMD" Content="Send text to console"  Grid.ColumnSpan="3" Margin="10,2,108,1" />
             <Button Grid.Column="2" Grid.Row="2" Click="MoveWindows" Content="Move windows"  Grid.ColumnSpan="3" Margin="38,29,81,10" Grid.RowSpan="2" />
             <TextBox Name="TextBoxToConsole" Background="#303030" Foreground="White" Grid.ColumnSpan="7"  Grid.Row="4" Margin="38,0,26,0" Grid.Column="2"/>
-            <Button Grid.Row="9" Click="OpenSDAFolder" Content="Open SDA folder"  Grid.ColumnSpan="3" Margin="10,18,108,21" Grid.RowSpan="2" />
+            <Button Grid.Row="2" Click="OpenSDAFolder" Content="Open SDA folder"  Grid.ColumnSpan="3" Margin="91,29,27,10" Grid.RowSpan="2" Grid.Column="6" />
             <Button Grid.Row="5" Click="SelectSteamPath" Content="Select Steam path"  Grid.ColumnSpan="3" Margin="10,14,108,25" Grid.RowSpan="2" />
             <TextBlock Name="SteamPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Bottom" Grid.Row="5" Text="..." Margin="38,0,26,25" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
             <Button Grid.Row="8" Click="ImportAccountsFromFile" Content="Import from file"  Grid.ColumnSpan="3" Margin="10,10,108,29" Grid.RowSpan="2" />
@@ -94,11 +94,12 @@
             <Button Grid.Row="6" Click="SelectCSGOPath" Content="Select CS:GO path"  Grid.ColumnSpan="3" Margin="7,21,111,18" Grid.RowSpan="2" />
             <TextBlock x:Name="CSGOPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="6" Text="..." Margin="37,22,27,0" Grid.ColumnSpan="7" Grid.Column="2" Height="33" Grid.RowSpan="2"/>
             <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="10" Text="Disable csgo news" Margin="44,23,20,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Height="33"/>
+            <Button Grid.Row="2" Click="OpenLogs" Content="Open logs"  Grid.ColumnSpan="3" Margin="61,29,54,10" Grid.RowSpan="2" Grid.Column="4" />
 
 
 
         </Grid>
-        <Label Content="ver 1.1" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="12,606,0,0" Width="110" RenderTransformOrigin="-8.46,0.413" />
+        <Label Content="ver 1.4" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="12,606,0,0" Width="110" RenderTransformOrigin="-8.46,0.413" />
         <ToggleButton x:Name="csgoNews" Height="20" Width="20" HorizontalAlignment="Left" Margin="12,389,0,241" >
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
