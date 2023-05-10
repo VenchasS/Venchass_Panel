@@ -123,12 +123,11 @@ namespace WPF_Vench_Launcher
                     try
                     {
                         AccountManager.UpdateAccountsChildrens();
-                        
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
                     }
                     catch (Exception ex) {
-                        //MessageBox.Show(ex.Message);
+                        AccountManager.SaveLogInfo(ex.Message);
                     }
                 }
             });
@@ -136,12 +135,14 @@ namespace WPF_Vench_Launcher
 
         void MoveWindow(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
         }
 
         private void window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //AccountLogin.Focus();
             Keyboard.ClearFocus();
         }
 

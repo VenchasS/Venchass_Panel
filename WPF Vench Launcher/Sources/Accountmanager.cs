@@ -783,6 +783,9 @@ namespace WPF_Vench_Launcher
 
         public bool TradesCheckbox { get; set; }
 
+        public bool MarkLimitCheckbox { get; set; }
+
+
 
         public string TradeLink { get; set; }
 
@@ -970,6 +973,13 @@ namespace WPF_Vench_Launcher
             config.TradesCheckbox = value;
             SaveConfig();
         }
+
+        public static void SaveMarkLimitCheckbox(bool value)
+        {
+            config.MarkLimitCheckbox = value;
+            SaveConfig();
+        }
+
 
         public static void SaveTradeLink(string link)
         {

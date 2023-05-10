@@ -292,7 +292,10 @@ namespace WPF_Vench_Launcher.Sources
                         {
                             try
                             {
+                                if (Config.GetConfig().MarkLimitCheckbox)
+                                    farmAcc.SetLastDrop();
                                 CloseAccount(farmAcc);
+                                
                                 AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by time {1} minutes", farmAcc.prop.Login, Config.GetConfig().MaxRemainingTimeToDropCase));
                             }
                             catch (Exception ex)
