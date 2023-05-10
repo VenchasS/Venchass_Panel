@@ -208,15 +208,22 @@ namespace WPF_Vench_Launcher.Sources
         {
             while (true)
             {
-                while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
+                try
                 {
-                    lock (queueToFarm)
+                    while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
                     {
-                        StartFarmAccount(queueToFarm.First());
+                        lock (queueToFarm)
+                        {
+                            StartFarmAccount(queueToFarm.First());
+                        }
+                        Thread.Sleep(Config.GetConfig().launchDelay * 1000);
                     }
-                    Thread.Sleep(Config.GetConfig().launchDelay * 1000);
+                    Thread.Sleep(5000);
                 }
-                Thread.Sleep(5000);
+                catch (Exception ex) 
+                {
+                    AccountManager.SaveLogInfo(ex.Message);
+                }
             }
             
         }

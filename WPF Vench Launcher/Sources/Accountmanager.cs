@@ -543,22 +543,19 @@ namespace WPF_Vench_Launcher
 
         public static void UpdateAccountsChildrens()
         {
-            lock (StartedAccountsDict)
+            foreach (var pair in StartedAccountsDict.ToList())
             {
-                foreach (var pair in StartedAccountsDict)
+                if (pair.Key.Status == 0)
                 {
-                    if (pair.Key.Status == 0)
+                    return;
+                }
+                var childrens = GetChildrens(pair.Key);
+                pair.Key.Status = 1;
+                foreach (var item in childrens)
+                {
+                    if (item.ProcessName == "csgo")
                     {
-                        return;
-                    }
-                    var childrens = GetChildrens(pair.Key);
-                    pair.Key.Status = 1;
-                    foreach (var item in childrens)
-                    {
-                        if (item.ProcessName == "csgo")
-                        {
-                            pair.Key.Status = 2;
-                        }
+                        pair.Key.Status = 2;
                     }
                 }
             }
@@ -607,31 +604,28 @@ namespace WPF_Vench_Launcher
 
         public static void SdaCheck( )
         {
-            lock (AccountsBase)
+            foreach (var acc in AccountManager.GetStartedAccounts())
             {
-                foreach (var acc in AccountManager.GetStartedAccounts())
+                if (acc.Status == 0 || acc.Status == 2)
                 {
-                    if (acc.Status == 0)
+                    continue;
+                }
+                var windows = GetWindowHandles(acc);
+                foreach (var hwnd in windows)
+                {
+                    var name = GetWindowNameByHwnd(hwnd);
+                    if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Sign In")
                     {
-                        continue;
-                    }
-                    var windows = GetWindowHandles(acc);
-                    foreach (var hwnd in windows)
-                    {
-                        var name = GetWindowNameByHwnd(hwnd);
-                        if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Sign In")
+                        if (SteamGuard.HasGuard(acc.Login.ToLower()))
                         {
-                            if (SteamGuard.HasGuard(acc.Login.ToLower()))
-                            {
-                                var guard = SteamGuard.GetGuard(acc.Login.ToLower());
-                                SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
-                                if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
-                                    StartConsole();
-                                Thread.Sleep(250);
-                                SendText(guard, hwnd);
-                                Thread.Sleep(250);
-                                SendText("ENTER", hwnd);
-                            }
+                            var guard = SteamGuard.GetGuard(acc.Login.ToLower());
+                            SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
+                            if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
+                                StartConsole();
+                            Thread.Sleep(250);
+                            SendText(guard, hwnd);
+                            Thread.Sleep(250);
+                            SendText("ENTER", hwnd);
                         }
                     }
                 }
