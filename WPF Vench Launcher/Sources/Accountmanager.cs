@@ -490,6 +490,11 @@ namespace WPF_Vench_Launcher
                         var proc = Process.GetProcessById(acc.PID);
                         if (proc != null && proc.ProcessName == "steam")
                             SaveAccountData(acc, proc);
+                        else
+                        {
+                            acc.PID= 0;
+                            acc.Status = 0;
+                        }
                     }
                     catch
                     {
@@ -1258,13 +1263,13 @@ namespace WPF_Vench_Launcher
                     connection.Open();
                     var sqlCommand = new SQLiteCommand(connection);
                     sqlCommand.CommandText = @"CREATE TABLE [accounts] (
-                    [id] integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    [id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     [Login] char(100) NOT NULL,
                     [Password] char(100) NOT NULL,
-                    [Status] int NOT NULL,
-                    [PID] int NOT NULL,
-                    [PrimeStatus] integer NOT NULL,
-                    [SteamId32] int NOT NULL,
+                    [Status] INTEGER NOT NULL,
+                    [PID] INTEGER NOT NULL,
+                    [PrimeStatus] INTEGER NOT NULL,
+                    [SteamId32] INTEGER NOT NULL,
                     [LastDrop] char(100)
                     );";
                     sqlCommand.CommandType = CommandType.Text;
