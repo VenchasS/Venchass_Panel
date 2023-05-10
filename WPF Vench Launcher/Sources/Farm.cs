@@ -202,7 +202,7 @@ namespace WPF_Vench_Launcher.Sources
             }
             if(farmAcc.prop.Status == 0)
                 AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
-            Config.SaveAccountsDataAsync();
+            Config.SaveAccountsDataAsync(farmAcc.prop);
         }
 
         private static void AccountsLaunchController()
@@ -257,7 +257,7 @@ namespace WPF_Vench_Launcher.Sources
                             if (Config.GetConfig().TradesCheckbox)
                                 TraderController.AddAccount(account.prop);
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
-                            Config.SaveAccountsDataAsync();
+                            Config.SaveAccountsDataAsync(account.prop);
                             break;
                         }
                         else if (line == "Not connected to server")

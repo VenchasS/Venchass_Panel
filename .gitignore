@@ -9,7 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+*.rar
 # Installer
 VPinstaller/
 
