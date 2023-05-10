@@ -282,27 +282,26 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            
+            if (!StartedAccountsDict.ContainsKey(acc))
+                return;
+            try
+            {
+                var game = GetGameProcess(acc);
+                game.Kill();
+            }
+            catch
+            {
+
+            }
+            var proc = StartedAccountsDict[acc];
+            proc.Refresh();
+            if(!proc.HasExited)
+                proc.Kill();
             lock (StartedAccountsDict)
             {
-                if (!StartedAccountsDict.ContainsKey(acc))
-                    return;
-                try
-                {
-                    var game = GetGameProcess(acc);
-                    game.Kill();
-                }
-                catch
-                {
-
-                }
-                var proc = StartedAccountsDict[acc];
-                proc.Refresh();
-                if(!proc.HasExited)
-                    proc.Kill();
                 StartedAccountsDict.Remove(acc);
-                acc.Status = 0;
             }
+            acc.Status = 0;
         }
 
 
