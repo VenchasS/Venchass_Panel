@@ -200,7 +200,8 @@ namespace WPF_Vench_Launcher.Sources
             {
                 currentFarmQueue.Add(farmAcc);
             }
-            AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
+            if(farmAcc.prop.Status == 0)
+                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
             Config.SaveAccountsDataAsync();
         }
 
@@ -210,7 +211,7 @@ namespace WPF_Vench_Launcher.Sources
             {
                 try
                 {
-                    while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
+                    while (queueToFarm.Count != 0 && (currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts || Config.GetConfig().MaxSameTimeAccounts == 0))
                     {
                         lock (queueToFarm)
                         {
@@ -287,7 +288,7 @@ namespace WPF_Vench_Launcher.Sources
                             CloseAccount(farmAcc);
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by user ", farmAcc.prop.Login));
                         }
-                        else if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
+                        else if (Config.GetConfig().MaxRemainingTimeToDropCase != 0 && DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
                         {
                             try
                             {
