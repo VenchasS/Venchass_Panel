@@ -92,32 +92,7 @@ namespace WPF_Vench_Launcher
         private void csgoNewsChecked(object sender, RoutedEventArgs e)
         {
             var check = csgoNews.IsChecked == true;
-            var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
-            if (check)
-            {
-                try
-                {
-                    using (StreamWriter w = File.AppendText(path))
-                    {
-                        w.WriteLine("127.0.0.1 blog.counter-strike.net");
-                    }
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            else
-            {
-                try
-                {
-                    var text = File.ReadAllText(path);
-                    var newText = text.Replace("127.0.0.1 blog.counter-strike.net", "");
-                    File.WriteAllText(path, newText);
-                }
-                catch(Exception ex)
-                {
-                }
-            }
+            Config.SetCSGONews(check);
             Config.SaveCsgoNewsChecked(check);
         }
     }

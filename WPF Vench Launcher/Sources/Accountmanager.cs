@@ -1131,6 +1131,141 @@ namespace WPF_Vench_Launcher
             }
             return false;
         }
+
+        private static string GetdDatabaseFileName()
+        {
+            return Config.DirectoryPath + @"\db.db";
+        }
+
+        public static void AddAccountDB(Account acc)
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                var connectionString = $"Data Source={databaseFileName};";
+                var connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var sqlCommand = new SQLiteCommand(connection);
+                sqlCommand.CommandText = @"INSERT INTO accounts (Login, Password, Status, PID, PrimeStatus, SteamId32) VALUES(@Login, @Password, 0, 0, @PrimeStatus, 0)";
+                sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+                sqlCommand.Parameters.AddWithValue("@Password", acc.Password);
+                sqlCommand.Parameters.AddWithValue("@PrimeStatus", Convert.ToInt32(acc.PrimeStatus));
+                sqlCommand.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
+            }
+        }
+
+        public static void UpdateAccountDB(Account acc)
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                var connectionString = $"Data Source={databaseFileName};";
+                var connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var sqlCommand = new SQLiteCommand(connection);
+                sqlCommand.CommandText = @"UPDATE accounts SET Login = @Login, Password = @Password, Status = @Status, PID = @PID, PrimeStatus = @PrimeStatus, SteamId32 = @SteamId32, LastDrop = @LastDrop WHERE Login = @Login";
+                sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+                sqlCommand.Parameters.AddWithValue("@Password", acc.Password);
+                sqlCommand.Parameters.AddWithValue("@Status", acc.Status);
+                sqlCommand.Parameters.AddWithValue("@PID", acc.PID);
+                sqlCommand.Parameters.AddWithValue("@PrimeStatus", Convert.ToInt32(acc.PrimeStatus));
+                sqlCommand.Parameters.AddWithValue("@SteamId32", acc.SteamId32);
+                sqlCommand.Parameters.AddWithValue("@LastDrop", acc.LastDrop);
+                sqlCommand.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
+            }
+        }
+        public static void DeleteAccountDB(Account acc)
+        {
+            var databaseFileName = GetdDatabaseFileName();
+            var connectionString = $"Data Source={databaseFileName};";
+            var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            var sqlCommand = new SQLiteCommand(connection);
+            sqlCommand.CommandText = @"DELETE FROM accounts  WHERE Login = @Login";
+            sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+            sqlCommand.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public static void InitDataBase()
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                if (!File.Exists(databaseFileName))
+                {
+                    var connectionString = $"Data Source={databaseFileName};";
+                    var connection = new SQLiteConnection(connectionString);
+                    connection.Open();
+                    var sqlCommand = new SQLiteCommand(connection);
+                    sqlCommand.CommandText = @"CREATE TABLE [accounts] (
+                    [id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    [Login] char(100) NOT NULL,
+                    [Password] char(100) NOT NULL,
+                    [Status] INTEGER NOT NULL,
+                    [PID] INTEGER NOT NULL,
+                    [PrimeStatus] INTEGER NOT NULL,
+                    [SteamId32] INTEGER NOT NULL,
+                    [LastDrop] char(100)
+                    );";
+                    sqlCommand.CommandType = CommandType.Text;
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    LoadAccountsDataDB();
+                }
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo($"database error {ex.Message}");
+            }
+            
+
+        }
+
+        internal static void SetCSGONews(bool check)
+        {
+            var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
+            var line = "0.0.0.0 store.steampowered.com";
+            if (check)
+            {
+                try
+                {
+                    using (StreamWriter w = File.AppendText(path))
+                    {
+                        w.WriteLine(line);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AccountManager.SaveLogInfo($"csgo news error: {ex.Message}");
+                }
+            }
+            else
+            {
+                try
+                {
+                    var text = File.ReadAllText(path);
+                    var newText = text.Replace(line, "");
+                    File.WriteAllText(path, newText);
+                }
+                catch (Exception ex)
+                {
+                    AccountManager.SaveLogInfo($"csgo news error: {ex.Message}");
+                }
+            }
+        }
     }
 
     public static class SteamGuard
