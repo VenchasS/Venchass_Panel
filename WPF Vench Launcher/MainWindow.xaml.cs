@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,28 +33,34 @@ namespace WPF_Vench_Launcher
         private ConfigObject config;
         public MainWindow()
         {
+            CheckStartedApps();
+            InitializeComponent();
+            CheckAdminRole();
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+            InitConfig();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
             try
             {
-                CheckStartedApps();
-                InitializeComponent();
-                CheckAdminRole();
-                InitializeFolder();
-                InitConfig();
                 InitEvents();
                 UpdateAccountsProcessesInfoThread();
                 Config.OptimizePanorama(true);
                 TraderController.TraderMainThread();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                AccountManager.SaveLogInfo(e.Message);
+                AccountManager.SaveLogInfo(ex.Message);
             }
-            
             AccountManager.SaveLogInfo("Panel started");
-            /*MainFrame.Navigate(new LoginPage(() =>
-            {
-                MainFrame.Source = new Uri("Home.xaml", UriKind.Relative);
-            }));*/
+        }
+
+        void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            //Your code to handle the event
+            Config.OptimizePanorama(false);
         }
 
         private void InitDataBase()
@@ -92,10 +99,11 @@ namespace WPF_Vench_Launcher
         /// </summary>
         public void InitConfig()
         {
-            Config.LoadAccountsData();
+            InitializeFolder();
             config = Config.LoadConfig();
             AccountManager.SetSteamPath(config.SteamPath);
             Config.InitCSGOconfig(Properties.Resources.Venchcfg);
+            Config.InitDataBase();
         }
 
 
@@ -104,8 +112,6 @@ namespace WPF_Vench_Launcher
             CustomTitle.MouseLeftButtonDown += new MouseButtonEventHandler(MoveWindow);
             LogoLabel.MouseLeftButtonDown += new MouseButtonEventHandler(MoveWindow);
             this.MouseLeftButtonDown += new MouseButtonEventHandler(window_MouseDown);
-
-            
         }
 
         public void UpdateAccountsProcessesInfoThread()
@@ -117,12 +123,11 @@ namespace WPF_Vench_Launcher
                     try
                     {
                         AccountManager.UpdateAccountsChildrens();
-                        
                         AccountManager.SdaCheck();
                         Thread.Sleep(2000);
                     }
                     catch (Exception ex) {
-                        //MessageBox.Show(ex.Message);
+                        AccountManager.SaveLogInfo(ex.Message);
                     }
                 }
             });
@@ -130,12 +135,14 @@ namespace WPF_Vench_Launcher
 
         void MoveWindow(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
         }
 
         private void window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //AccountLogin.Focus();
             Keyboard.ClearFocus();
         }
 
@@ -172,7 +179,6 @@ namespace WPF_Vench_Launcher
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
-            Config.OptimizePanorama(false);
         }
 
         private void HideButton_Click(object sender, RoutedEventArgs e)

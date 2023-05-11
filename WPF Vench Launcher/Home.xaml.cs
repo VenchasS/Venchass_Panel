@@ -105,10 +105,8 @@ namespace WPF_Vench_Launcher.pages
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
             var account = new Account(AccountLogin.Text, AccountPassword.Text);
-            if (PrimeCheck.IsChecked == true)
-                account.PrimeStatus = true;
+            account.PrimeStatus = PrimeCheck.IsChecked == true;
             AccountManager.AddAccount(account);
-            Config.SaveAccountsDataAsync();
             UpdateTable();
         }
         private void ButtonDeleteAccountClick(object sender, RoutedEventArgs e)
@@ -128,7 +126,6 @@ namespace WPF_Vench_Launcher.pages
             }
             
             AccountManager.DeleteAccount(acc);
-            Config.SaveAccountsDataAsync();
             ClearSelected();
             foreach (var account in selectedList)
             {
@@ -146,21 +143,23 @@ namespace WPF_Vench_Launcher.pages
             var s = sender as Button;
             var acc = (Account)s.DataContext;
             AccountManager.OpenSteam(acc);
-            Config.SaveAccountsDataAsync();
+            Config.SaveAccountsDataAsync(acc);
         }
 
         private void ButtonStartClick(object sender, RoutedEventArgs e)
         {
             var selectedAccounts = accountsList.SelectedItems;
+            List<Account> accounts = new List<Account>();
             lock (selectedAccounts)
             {
                 foreach (var accountObj in selectedAccounts)
                 {
                     var account = accountObj as Account;
+                    accounts.Add(account);
                     AccountManager.StartAccount(account, startupParams.Text);
                 }
             }
-            Config.SaveAccountsDataAsync();
+            Config.SaveAccountsDataAsync(accounts);
             ClearSelected();
             UpdateTable();
         }
@@ -227,7 +226,7 @@ namespace WPF_Vench_Launcher.pages
         private void StopAllButtonClick(object sender, RoutedEventArgs e)
         {
             AccountManager.StopAllAccounts();
-            Config.SaveAccountsDataAsync();
+            Config.SaveAccountsDataAsync(AccountManager.GetAccountsBase());
         }
 
         private void OnTextBoxStartupParamsChanged(object sender, RoutedEventArgs e)
@@ -322,8 +321,8 @@ namespace WPF_Vench_Launcher.pages
             foreach (Account acc in selectedAccs)
             {
                 acc.PrimeStatus = PrimeCheck.IsChecked == true;
+                Config.SaveAccountsDataAsync(acc);
             }
-            Config.SaveAccountsDataAsync();
         }
 
         private void SendTradesButton_Click(object sender, RoutedEventArgs e)

@@ -87,9 +87,9 @@
         <Label Name="LogoLabel" Content="Venchass Panel" HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.ColumnSpan="2" FontFamily="Segoe UI Black" FontSize="28"  Grid.RowSpan="2" Foreground="White" />
         <Button Grid.Row="0" Grid.Column="8" FontSize="20" Name="CloseButton" Content="x" Click="CloseButton_Click" Margin="30,10,10,33" Grid.RowSpan="2" />
         <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="HideButton" Content="-" Click="HideButton_Click" Margin="50,10,109,33" Grid.RowSpan="2" Grid.ColumnSpan="2" />
-        <Button Click="HomeuButtonClick" Grid.Row="0" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
-        <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
-        <Button  Grid.Row="0" Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" Content="Farm"  Margin="0,-6,0,0" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" Click="BoostButtonClick" />
+        <Button Click="HomeuButtonClick" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="18,18,18,20" FontFamily="Yu Gothic UI Semibold" Grid.RowSpan="2" />
+        <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="4,18,6,15" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
+        <Button Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" Content="Farm" Name="FarmButton"  Margin="15,20,35,19" FontFamily="Yu Gothic UI Semibold" Click="BoostButtonClick" Grid.RowSpan="2" />
 
 
 
