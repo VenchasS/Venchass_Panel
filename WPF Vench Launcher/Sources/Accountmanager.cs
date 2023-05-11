@@ -11,22 +11,16 @@ using Newtonsoft.Json;
 using System.Threading;
 using WPF_Vench_Launcher.pages;
 using WinForms = System.Windows.Forms;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Security.Principal;
 using Newtonsoft.Json.Linq;
-using System.Windows.Shapes;
 using System.Net.Http;
-using System.Windows.Media.Animation;
-using System.ComponentModel;
-using System.Windows.Interop;
 using System.Linq;
 using System.Globalization;
 using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
-using System.Reflection;
-using System.Xml.Linq;
-using System.Runtime.CompilerServices;
+using System.Data;
+using System.Data.SQLite;
+
 
 //Software by Venchass
 //My:
@@ -36,7 +30,7 @@ using System.Runtime.CompilerServices;
 
 namespace WPF_Vench_Launcher
 {
-    
+
     public class AccountManager
     {
         delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
@@ -302,6 +296,8 @@ namespace WPF_Vench_Launcher
                 StartedAccountsDict.Remove(acc);
             }
             acc.Status = 0;
+            acc.PID = 0;
+            Config.UpdateAccountDB(acc);
         }
 
 
@@ -471,23 +467,40 @@ namespace WPF_Vench_Launcher
                 if (AccountsBase.Select(x => x.Login).Contains(acc.Login))
                 {
                     AccountsBase.Where(x => x.Login == acc.Login).ElementAt(0).Password = acc.Password;
+                    Config.UpdateAccountDB(acc);
                 }
                 else
                 {
                     AccountsBase.Add(acc);
+                    Config.AddAccountDB(acc);
                 }
             }
-            if (acc.PID != 0)
+            
+        }
+
+        public static void AddAccountFromDB(Account acc)
+        {
+            lock (AccountsBase)
             {
-                try
+                AccountsBase.Add(acc);
+                if (acc.PID != 0)
                 {
-                    var proc = Process.GetProcessById(acc.PID);
-                    SaveAccountData(acc, proc);
-                }
-                catch
-                {
-                    acc.Status = 0;
-                    acc.PID = 0;
+                    try
+                    {
+                        var proc = Process.GetProcessById(acc.PID);
+                        if (proc != null && proc.ProcessName == "steam")
+                            SaveAccountData(acc, proc);
+                        else
+                        {
+                            acc.PID= 0;
+                            acc.Status = 0;
+                        }
+                    }
+                    catch
+                    {
+                        acc.Status = 0;
+                        acc.PID = 0;
+                    }
                 }
             }
         }
@@ -498,6 +511,7 @@ namespace WPF_Vench_Launcher
             {
                 AccountsBase.Remove(acc);
             }
+            Config.DeleteAccountDB(acc);
         }
 
         public static List<Process> GetChildrens(Account account)
@@ -769,6 +783,9 @@ namespace WPF_Vench_Launcher
 
         public bool TradesCheckbox { get; set; }
 
+        public bool MarkLimitCheckbox { get; set; }
+
+
 
         public string TradeLink { get; set; }
 
@@ -885,9 +902,27 @@ namespace WPF_Vench_Launcher
             currentDirectoryPath = newPath;
         }
 
-        public static async void SaveAccountsDataAsync()
+        public static void SaveAccountsDataAsync(Account account)
         {
-            var accounts = AccountManager.GetAccountsBase();
+            SaveAccountsDataAsync(new List<Account>() { account });
+        }
+
+        public static void SaveAccountsDataAsync(List<Account> accountsList)
+        {
+            var accountsLogins = AccountManager.GetAccountsBase().Select(x => x.Login);
+            foreach (var account in accountsList)
+            {
+                if (!accountsLogins.Contains(account.Login))
+                {
+                    Config.AddAccountDB(account);
+                }
+                else
+                {
+                    Config.UpdateAccountDB(account);
+                }
+            }
+            //deprecated
+            /*var accounts = AccountManager.GetAccountsBase();
             var json = "";
             lock (accounts)
             {
@@ -906,7 +941,7 @@ namespace WPF_Vench_Launcher
                 {
                     await writer.WriteLineAsync(json);
                 }
-            }
+            }*/
         }
 
         public static void SaveGroupsParams(List<AccountsGroup> groups)
@@ -938,6 +973,13 @@ namespace WPF_Vench_Launcher
             config.TradesCheckbox = value;
             SaveConfig();
         }
+
+        public static void SaveMarkLimitCheckbox(bool value)
+        {
+            config.MarkLimitCheckbox = value;
+            SaveConfig();
+        }
+
 
         public static void SaveTradeLink(string link)
         {
@@ -985,9 +1027,10 @@ namespace WPF_Vench_Launcher
         /// <summary>
         /// Load Accounts from Accounts.cfg to AccountsManager, rewrite file to empty when error
         /// </summary>
-        public static void LoadAccountsData()
+        public static void LoadAccountsDataDB()
         {
-            var json = "";
+            //deprecated
+            /*var json = "";
             using (StreamReader reader = new StreamReader(DirectoryPath + @"/Accounts.cfg"))
             {
                 json = reader.ReadToEnd();
@@ -1001,23 +1044,45 @@ namespace WPF_Vench_Launcher
 
                 foreach (var item in accountsList)
                 {
-                    AccountManager.AddAccount(item);
+                    AccountManager.AddAccountFromDB(item);
                 }
             }
             catch
             {
                 File.WriteAllText(DirectoryPath + @"/Accounts.cfg", @"[]");
+            } */
+            var databaseFileName = GetdDatabaseFileName();
+            var connectionString = $"Data Source={databaseFileName};";
+            var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            var sqlCommand = new SQLiteCommand(connection);
+            sqlCommand.CommandText =
+                @"
+                        SELECT *
+                        FROM accounts
+                    ";
+            DataTable data = new DataTable();
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlCommand);
+            adapter.Fill(data);
+            Console.WriteLine($"Прочитано {data.Rows.Count} записей из таблицы БД");
+            foreach (DataRow row in data.Rows)
+            {
+                Account account= new Account();
+                account.Login = row.Field<string>("Login");
+                account.Password = row.Field<string>("Password");
+                account.Status = Convert.ToInt32(row.Field<long>("Status"));
+                account.PID = Convert.ToInt32(row.Field<long>("PID"));
+                account.PrimeStatus = Convert.ToBoolean(row.Field<long>("PrimeStatus"));
+                account.SteamId32 = (ulong)row.Field<long>("SteamId32");
+                account.LastDrop = row.Field<string>("LastDrop");
+
+                AccountManager.AddAccountFromDB(account);
+                //AccountManager.SaveLogInfo($"id = {row.Field<long>("id")}");
             }
-            
         }
 
         private static async void SaveConfig()
         {
-            /*var options = new JsonSerializerOptions 
-            {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            };*/
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
             {
@@ -1125,7 +1190,6 @@ namespace WPF_Vench_Launcher
                     var newGroupsList = config.Groups.ToList();
                     newGroupsList.Add(group);
                     Config.SaveGroupsParams(newGroupsList);
-                    Config.SaveAccountsDataAsync();
                     return true;
                 }
             }

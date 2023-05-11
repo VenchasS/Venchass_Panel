@@ -59,6 +59,9 @@ namespace WPF_Vench_Launcher
                 TradesCheck.IsChecked = Config.GetConfig().TradesCheckbox;
                 TradesCheck.Checked += TradesCheck_Checked;
                 TradesCheck.Unchecked += TradesCheck_Checked;
+                MarkTimeLimit.IsChecked = Config.GetConfig().MarkLimitCheckbox;
+                MarkTimeLimit.Checked += MarkLimitChecked;
+                MarkTimeLimit.Unchecked += MarkLimitChecked;
             }
             catch (Exception e)
             {
@@ -125,6 +128,12 @@ namespace WPF_Vench_Launcher
         {
             var value = TradesCheck.IsChecked == true;
             Config.SaveTradesCheckbox(value);
+        }
+
+        private void MarkLimitChecked(object sender, RoutedEventArgs e)
+        {
+            var value = MarkTimeLimit.IsChecked == true;
+            Config.SaveMarkLimitCheckbox(value);
         }
     }
 
