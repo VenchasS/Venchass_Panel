@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WPF_Vench_Launcher"
       mc:Ignorable="d" 
-      Height="650" Width="1070"
+      Height="500" Width="800"
       Title="Settings">
 
     <Page.Resources>
@@ -82,25 +82,25 @@
                     <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
                 </Rectangle.Effect>
             </Rectangle>
-            <Button Grid.Column="0" Grid.Row="2" Click="RenameWindows"  Content="Rename windows to logins"  Grid.ColumnSpan="3" Margin="10,29,108,10" Grid.RowSpan="2" />
-            <Button Grid.Column="0" Grid.Row="4" Click="SendCMD" Content="Send text to console"  Grid.ColumnSpan="3" Margin="10,2,108,1" />
-            <Button Grid.Column="2" Grid.Row="2" Click="MoveWindows" Content="Move windows"  Grid.ColumnSpan="3" Margin="38,29,81,10" Grid.RowSpan="2" />
-            <TextBox Name="TextBoxToConsole" Background="#303030" Foreground="White" Grid.ColumnSpan="7"  Grid.Row="4" Margin="38,0,26,0" Grid.Column="2"/>
-            <Button Grid.Row="2" Click="OpenSDAFolder" Content="Open SDA folder"  Grid.ColumnSpan="3" Margin="91,29,27,10" Grid.RowSpan="2" Grid.Column="6" />
-            <Button Grid.Row="5" Click="SelectSteamPath" Content="Select Steam path"  Grid.ColumnSpan="3" Margin="10,14,108,25" Grid.RowSpan="2" />
-            <TextBlock Name="SteamPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Bottom" Grid.Row="5" Text="..." Margin="38,0,26,25" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
-            <Button Grid.Row="8" Click="ImportAccountsFromFile" Content="Import from file"  Grid.ColumnSpan="3" Margin="10,10,108,29" Grid.RowSpan="2" />
-            <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="8" Text="format: login:password" Margin="32,10,32,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
-            <Button Grid.Row="6" Click="SelectCSGOPath" Content="Select CS:GO path"  Grid.ColumnSpan="3" Margin="7,21,111,18" Grid.RowSpan="2" />
-            <TextBlock x:Name="CSGOPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="6" Text="..." Margin="37,22,27,0" Grid.ColumnSpan="7" Grid.Column="2" Height="33" Grid.RowSpan="2"/>
-            <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="10" Text="Disable csgo news" Margin="44,23,20,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Height="33"/>
-            <Button Grid.Row="2" Click="OpenLogs" Content="Open logs"  Grid.ColumnSpan="3" Margin="61,29,54,10" Grid.RowSpan="2" Grid.Column="4" />
+            <Button Height="30" Grid.Column="0" Grid.Row="3" Click="RenameWindows"  Content="Rename windows to logins"  Grid.ColumnSpan="3" Margin="11,2,66,24" Grid.RowSpan="2" />
+            <Button Height="30" Grid.Column="0" Grid.Row="4" Click="SendCMD" Content="Send text to console"  Grid.ColumnSpan="2" Margin="11,7,18,19" Grid.RowSpan="2" />
+            <Button Height="30" Grid.Column="2" Grid.Row="3" Click="MoveWindows" Content="Move windows"  Grid.ColumnSpan="3" Margin="28,2,70,24" Grid.RowSpan="2" />
+            <TextBox Name="TextBoxToConsole" Background="#303030" Foreground="White" Grid.ColumnSpan="7"  Grid.Row="4" Margin="11,8,23,20" Grid.Column="2" Grid.RowSpan="2"/>
+            <Button Height="30" Grid.Row="3" Click="OpenSDAFolder" Content="Open SDA folder"  Grid.ColumnSpan="3" Margin="81,2,23,24" Grid.RowSpan="2" Grid.Column="6" />
+            <Button Height="30" Grid.Row="5" Click="SelectSteamPath" Content="Select Steam path"  Grid.ColumnSpan="2" Margin="12,12,17,13" Grid.RowSpan="2" />
+            <TextBlock Name="SteamPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Center" Grid.Row="5" Text="..." Margin="15,0,49,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
+            <Button Height="30" Grid.Row="8" Click="ImportAccountsFromFile" Content="Import from file"  Grid.ColumnSpan="2" Margin="10,8,19,18" Grid.RowSpan="2" />
+            <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="8" Text="format: login:password" Margin="9,8,55,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Grid.Column="2" Height="33"/>
+            <Button Height="30" Grid.Row="6" Click="SelectCSGOPath" Content="Select CS:GO path"  Grid.ColumnSpan="2" Margin="12,18,17,7" Grid.RowSpan="2" />
+            <TextBlock x:Name="CSGOPathTextBlock" Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="6" Text="..." Margin="15,17,49,0" Grid.ColumnSpan="7" Grid.Column="2" Height="33" Grid.RowSpan="2"/>
+            <TextBlock Foreground="White" FontSize="20" VerticalAlignment="Top" Grid.Row="9" Text="Disable csgo news" Margin="40,14,24,0" Grid.RowSpan="2" Grid.ColumnSpan="7" Height="33"/>
+            <Button Height="30" Grid.Row="3" Click="OpenLogs" Content="Open logs"  Grid.ColumnSpan="3" Margin="51,2,44,24" Grid.RowSpan="2" Grid.Column="4" />
 
 
 
         </Grid>
         <Label Content="ver 1.4" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="15" Foreground="White" Margin="12,606,0,0" Width="110" RenderTransformOrigin="-8.46,0.413" />
-        <ToggleButton x:Name="csgoNews" Height="20" Width="20" HorizontalAlignment="Left" Margin="12,389,0,241" >
+        <ToggleButton x:Name="csgoNews" Height="20" Width="20" HorizontalAlignment="Left" Margin="12,267,0,213" >
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >

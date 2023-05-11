@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_Vench_Launcher"
         mc:Ignorable="d"
-        Title="Venchass Panel" Height="650" Width="1070">
+        Title="Venchass Panel" Height="500" Width="800">
 
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
@@ -84,12 +84,12 @@
         </Frame>
 
         <Rectangle Name="CustomTitle" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="2" Fill="#202225" />
-        <Label Name="LogoLabel" Content="Venchass Panel" HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.ColumnSpan="2" FontFamily="Segoe UI Black" FontSize="28"  Grid.RowSpan="2" Foreground="White" />
-        <Button Grid.Row="0" Grid.Column="8" FontSize="20" Name="CloseButton" Content="x" Click="CloseButton_Click" Margin="30,10,10,33" Grid.RowSpan="2" />
-        <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="HideButton" Content="-" Click="HideButton_Click" Margin="50,10,109,33" Grid.RowSpan="2" Grid.ColumnSpan="2" />
-        <Button Click="HomeuButtonClick" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="18,18,18,20" FontFamily="Yu Gothic UI Semibold" Grid.RowSpan="2" />
-        <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="4,18,6,15" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" />
-        <Button Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" Content="Farm" Name="FarmButton"  Margin="15,20,35,19" FontFamily="Yu Gothic UI Semibold" Click="BoostButtonClick" Grid.RowSpan="2" />
+        <Label Name="LogoLabel" Content="Venchass Panel" HorizontalAlignment="Left" VerticalAlignment="Center"  Grid.ColumnSpan="4" FontFamily="Segoe UI Black" FontSize="28"  Grid.RowSpan="2" Foreground="White" Width="269" Margin="5,0,0,0" />
+        <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="CloseButton" Content="x" Click="CloseButton_Click" Margin="89,10,10,20" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+        <Button Grid.Row="0" Grid.Column="7" FontSize="20" Name="HideButton" Content="-" Click="HideButton_Click" Margin="4,10,6,20" Grid.RowSpan="2" />
+        <Button Click="HomeuButtonClick" Grid.Column="3" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="HomeButton" Content="Home"  Margin="18,10,83,14" FontFamily="Yu Gothic UI Semibold" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+        <Button Click="SettingsButtonClick" Grid.Row="0" Grid.Column="4" FontSize="28" Foreground="LightBlue"  Background="Transparent" Name="SettingsButton" Content="Settings"  Margin="23,10,53,7" Grid.RowSpan="2" FontFamily="Yu Gothic UI Semibold" Grid.ColumnSpan="2" />
+        <Button Grid.Column="5" FontSize="28" Foreground="LightBlue"  Background="Transparent" Content="Farm" Name="FarmButton"  Margin="54,11,62,13" FontFamily="Yu Gothic UI Semibold" Click="BoostButtonClick" Grid.RowSpan="2" Grid.ColumnSpan="2" />
 
 
 

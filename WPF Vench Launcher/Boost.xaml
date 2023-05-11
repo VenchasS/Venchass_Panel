@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WPF_Vench_Launcher"
       mc:Ignorable="d" 
-      Height="650" Width="1070"
+      Height="500" Width="800"
       Title="Boost">
     <Page.Resources>
         <Style x:Key="IsStartedStyle" TargetType="{x:Type ListBoxItem}">
@@ -92,7 +92,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Rectangle Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="4" Grid.RowSpan="16" Fill="#202225" Margin="68,7,7,7">
+        <Rectangle Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="4" Grid.RowSpan="16" Fill="#202225" Margin="33,9,7,7">
             <Rectangle.Effect>
                 <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
             </Rectangle.Effect>
@@ -107,26 +107,26 @@
                 <DropShadowEffect Color="Black" Direction="210" ShadowDepth="5" Opacity="0.45"/>
             </Rectangle.Effect>
         </Rectangle>
-        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="In Queue:" Margin="16,33,106,1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Started:" Margin="16,35,119,36" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="4" Content="Farmed:" Margin="16,34,119,36" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
-        <TextBlock Foreground="White" x:Name="InQueue" FontSize="25" Grid.Row="2" Text="0 " Margin="29,36,119,35" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
-        <TextBlock Foreground="White" x:Name="Started" FontSize="25" Grid.Row="3" Text="0 " Margin="29,36,119,35" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
-        <TextBlock Foreground="White" x:Name="Farmed" FontSize="25" Grid.Row="4" Text="0 " Margin="29,35,119,1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="7" Content="Max same time accounts:" Margin="16,14,50,20" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="8" Content="Wait before close (min):" Margin="16,14,50,20" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="9" Content="Server ip:" Margin="16,13,50,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Want to Farm:" Margin="62,31,118,3" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2"/>
-        <TextBlock Foreground="White" x:Name="WantToFarm" FontSize="25" Grid.Row="2" Text="0 " Margin="0,35,28,0" Grid.Column="4" Grid.RowSpan="2"/>
-        <TextBox LostFocus="OnTextBoxMaxSameTimeLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="7" x:Name="sameTimeAccounts" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <TextBox LostFocus="OnTextBoxWaitBeforeCloseLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="waitBeforeClose" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <Label Foreground="White" FontSize="25" Grid.Row="10" Content="Time between launches(sec):" Margin="12,13,27,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
-        <TextBox LostFocus="OnTextBoxDelayLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="10" x:Name="LaunchDelay" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Trade link" Margin="70,21,115,8" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Enable auto trades" Margin="108,17,77,12" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
-        <TextBox LostFocus="tradeLinkLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="4" x:Name="tradeLink" Margin="73,21,14,28" Grid.Column="5" Grid.RowSpan="2"  />
-        <ToggleButton x:Name="TradesCheck" Grid.Row="2" Height="20" Width="20" HorizontalAlignment="Left" Margin="76,31,0,21" Grid.Column="5" Grid.RowSpan="2">
+        <Label Height="40" Width="150" Foreground="White" FontSize="25" Grid.Row="2" Content="In Queue:" Margin="15,9,13,6" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Height="40" Width="150" Foreground="White" FontSize="25" Grid.Row="3" Content="Started:" Margin="16,13,12,3" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label Height="40" Width="150"  Foreground="White" FontSize="25" Grid.Row="4" Content="Farmed:" Margin="16,26,12,17" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <TextBlock Height="40" Width="75" Foreground="White" x:Name="InQueue" FontSize="25" Grid.Row="2" Text="0 " Margin="50,13,53,2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <TextBlock Height="40" Width="75" Foreground="White" x:Name="Started" FontSize="25" Grid.Row="3" Text="0 " Margin="50,18,53,26" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+        <TextBlock Height="40" Width="75" Foreground="White" x:Name="Farmed" FontSize="25" Grid.Row="5" Text="0 " Margin="50,3,53,12" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <Label  Foreground="White" FontSize="25" Grid.Row="7" Content="Max same time accounts:" Margin="16,14,51,3" Grid.RowSpan="2" Grid.ColumnSpan="4"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="8" Content="Wait before close (min):" Margin="16,14,50,1" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="9" Content="Server ip:" Margin="16,13,50,1" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+        <Label Height="40" Foreground="White" FontSize="25" Grid.Row="2" Content="Want to Farm:" Margin="54,8,54,7" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2"/>
+        <TextBlock Height="40" Width="75" Foreground="White" x:Name="WantToFarm" FontSize="25" Grid.Row="2" Text="0 " Margin="44,14,58,1" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <TextBox LostFocus="OnTextBoxMaxSameTimeLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="7" x:Name="sameTimeAccounts" Margin="34,25,80,5" Grid.Column="3" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxWaitBeforeCloseLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="waitBeforeClose" Margin="34,25,80,8" Grid.Column="3" Grid.RowSpan="2"  />
+        <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="34,25,80,8" Grid.Column="3" Grid.RowSpan="2"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="10" Content="Time between launches(sec):" Margin="12,13,76,1" Grid.RowSpan="2" Grid.ColumnSpan="4"/>
+        <TextBox LostFocus="OnTextBoxDelayLostFocus" Grid.ColumnSpan="3" Background="#303030" Foreground="White" FontSize="15" Grid.Row="10" x:Name="LaunchDelay" Margin="34,25,80,7" Grid.Column="3" Grid.RowSpan="2"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Trade link" Margin="37,21,59,25" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Column="5"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Enable auto trades" Margin="70,16,58,2" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <TextBox LostFocus="tradeLinkLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="5" x:Name="tradeLink" Margin="40,8,16,27" Grid.Column="5" Grid.RowSpan="2"  />
+        <ToggleButton x:Name="TradesCheck" Grid.Row="3" Height="20" Width="20" HorizontalAlignment="Left" Margin="43,3,0,5" Grid.Column="5">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >
@@ -157,7 +157,7 @@
                 </ControlTemplate>
             </ToggleButton.Template>
         </ToggleButton>
-        <ToggleButton x:Name="MarkTimeLimit" Grid.Row="11" Height="20" Width="20" HorizontalAlignment="Left" Margin="8,25,0,27" Grid.RowSpan="2" Grid.Column="4">
+        <ToggleButton x:Name="MarkTimeLimit" Grid.Row="11" Height="20" Width="20" HorizontalAlignment="Left" Margin="79,25,0,10" Grid.RowSpan="2" Grid.Column="4" Grid.ColumnSpan="2">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >
@@ -188,7 +188,7 @@
                 </ControlTemplate>
             </ToggleButton.Template>
         </ToggleButton>
-        <Label Foreground="White" FontSize="25" Grid.Row="11" Content="Mark account as farmed after time limit" Margin="13,13,10,15" Grid.RowSpan="2" Grid.ColumnSpan="4"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="11" Content="Mark acc farmed after time limit" Margin="13,13,37,0" Grid.RowSpan="2" Grid.ColumnSpan="5"/>
 
 
     </Grid>
