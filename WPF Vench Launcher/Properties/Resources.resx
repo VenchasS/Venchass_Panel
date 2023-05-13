@@ -615,7 +615,8 @@ bind "t" "disconnect"
 m_rawinput 0
 mat_setvideomode 100 50 1
 fps_max_menu 40
-fps_max 20</value>
+fps_max 20
+sv_allowupload 1</value>
     <comment>startup cfg for csgo</comment>
   </data>
   <data name="video" xml:space="preserve">

@@ -320,7 +320,7 @@ namespace WPF_Vench_Launcher.Sources
                         }*/
                         ParseConsole(farmAcc);
                     }
-                    Thread.Sleep(10000);
+                    Thread.Sleep(30000);
                 }
                 catch (Exception e)
                 {
