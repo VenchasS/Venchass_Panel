@@ -627,7 +627,7 @@ namespace WPF_Vench_Launcher
                 foreach (var hwnd in windows)
                 {
                     var name = GetWindowNameByHwnd(hwnd);
-                    if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Guard - Computer Authorization Required")
+                    if ((Config.GetConfig().oldSteamVersion && name == "Steam Guard - Computer Authorization Required") || (!Config.GetConfig().oldSteamVersion && name == "Steam Sign In"))
                     {
                         if (SteamGuard.HasGuard(acc.Login.ToLower()))
                         {
@@ -793,6 +793,8 @@ namespace WPF_Vench_Launcher
         public bool csgoNews { get; set; }
 
         public int launchDelay { get; set; }
+
+        public bool oldSteamVersion { get; set; }
 
 
         public ConfigObject()
@@ -1021,6 +1023,12 @@ namespace WPF_Vench_Launcher
         {
             config.Login = login;
             config.Password = password;
+            SaveConfig();
+        }
+
+        public static void SaveOldSteamVersion(bool value)
+        {
+            config.oldSteamVersion = value;
             SaveConfig();
         }
 

@@ -35,6 +35,10 @@ namespace WPF_Vench_Launcher
             csgoNews.IsChecked = (config.csgoNews);
             csgoNews.Checked += csgoNewsChecked;
             csgoNews.Unchecked += csgoNewsChecked;
+            oldSteamVersion.IsChecked = Config.GetConfig().oldSteamVersion;
+            oldSteamVersion.Checked += oldVersionSteamChecked;
+            oldSteamVersion.Unchecked += oldVersionSteamChecked;
+            version.Content = "ver. 1.5";
         }
 
         private void UpdateSteamPathTextBlockContent()
@@ -94,6 +98,12 @@ namespace WPF_Vench_Launcher
             var check = csgoNews.IsChecked == true;
             Config.SetCSGONews(check);
             Config.SaveCsgoNewsChecked(check);
+        }
+
+        private void oldVersionSteamChecked(object sender, RoutedEventArgs e)
+        {
+            var check = oldSteamVersion.IsChecked == true;
+            Config.SaveOldSteamVersion(check);
         }
     }
 }
