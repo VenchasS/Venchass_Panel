@@ -63,7 +63,7 @@ namespace WPF_Vench_Launcher
         }
         public static async Task TrySignInAsync(string login, string password)
         {
-            var values = new Dictionary<string, string>
+            /*var values = new Dictionary<string, string>
             {
                 { "VenchassPanelLogin", login },
                 { "VenchassPanelPassword", password }
@@ -85,7 +85,7 @@ namespace WPF_Vench_Launcher
             catch {
                 
             }
-            
+            */
         }
 
         public static bool GetIsSignedIn()
@@ -137,7 +137,7 @@ namespace WPF_Vench_Launcher
 
         public static void StartSteamNoSandbox(Account account)
         {
-            var startParams = "-no-browser -window -novid -nosound -w 640 -h 480";
+            var startParams = ""; //u can put smth here
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
             StartAccount(account, startParams, true, path);
             
@@ -233,7 +233,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english  -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, startParams, consoleLog, cfg)
+                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams)
                 };
                 Process process = new Process()
                 {
@@ -627,7 +627,7 @@ namespace WPF_Vench_Launcher
                 foreach (var hwnd in windows)
                 {
                     var name = GetWindowNameByHwnd(hwnd);
-                    if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Sign In")
+                    if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Guard - Computer Authorization Required")
                     {
                         if (SteamGuard.HasGuard(acc.Login.ToLower()))
                         {

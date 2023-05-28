@@ -245,7 +245,15 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="bin\Release\CaseTrader\package.json" />
+    <None Include="bin\Debug\cfg\game\cfg\autoexec.cfg" />
+    <None Include="bin\Debug\cfg\game\cfg\gamestate_integration_GSI.cfg" />
+    <None Include="bin\Debug\cfg\userdata\config.cfg" />
+    <None Include="bin\Debug\cfg\userdata\remotecache_7.vdf" />
+    <None Include="bin\Debug\cfg\userdata\remotecache_730.vdf" />
+    <None Include="bin\Debug\cfg\userdata\serverbrowser_hist.vdf" />
+    <None Include="bin\Debug\cfg\userdata\sharedconfig.vdf" />
+    <None Include="bin\Debug\net6.0\consoleCSharp.deps.json" />
+    <None Include="bin\Debug\net6.0\consoleCSharp.runtimeconfig.json" />
     <None Include="bin\Release\cfg\game\cfg\autoexec.cfg" />
     <None Include="bin\Release\cfg\game\cfg\gamestate_integration_GSI.cfg" />
     <None Include="bin\Release\cfg\userdata\config.cfg" />
@@ -255,6 +263,9 @@
     <None Include="bin\Release\cfg\userdata\sharedconfig.vdf" />
     <None Include="bin\Release\net6.0\consoleCSharp.deps.json" />
     <None Include="bin\Release\net6.0\consoleCSharp.runtimeconfig.json" />
+    <None Include="CaseTrader\package.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -297,7 +308,16 @@
     <Resource Include="Sources\checkmark.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Release\CaseTrader\case-trader.js" />
+    <Content Include="CaseTrader\case-trader.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="bin\Debug\cfg\game\cfg\server_blacklist.txt" />
+    <Resource Include="bin\Debug\cfg\game\gameinfo.txt" />
+    <Resource Include="bin\Debug\cfg\userdata\video.txt" />
+    <Resource Include="bin\Debug\cfg\userdata\videodefaults.txt" />
+    <Content Include="bin\Debug\net6.0\consoleCSharp.dll" />
+    <Content Include="bin\Debug\net6.0\consoleCSharp.exe" />
+    <Content Include="bin\Debug\net6.0\consoleCSharp.pdb" />
     <Content Include="bin\Release\net6.0\consoleCSharp.dll" />
     <Content Include="bin\Release\net6.0\consoleCSharp.exe" />
     <Content Include="bin\Release\net6.0\consoleCSharp.pdb" />

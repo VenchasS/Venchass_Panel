@@ -201,7 +201,7 @@ namespace WPF_Vench_Launcher.Sources
                 currentFarmQueue.Add(farmAcc);
             }
             if(farmAcc.prop.Status == 0)
-                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
+                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0} {1}", Config.GetConfig().ServersToConnect, Config.GetConfig().StartParams), false);
             Config.SaveAccountsDataAsync(farmAcc.prop);
         }
 
