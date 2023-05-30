@@ -9,10 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+*.rar
 # Installer
 VPinstaller/
-
+/WPF Vench Launcher/bin/Release/WPF Vench Launcher.exe
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

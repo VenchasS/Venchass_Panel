@@ -117,7 +117,8 @@ namespace WPF_Vench_Launcher.Properties {
         ///m_rawinput 0
         ///mat_setvideomode 100 50 1
         ///fps_max_menu 40
-        ///fps_max 20.
+        ///fps_max 20
+        ///sv_allowupload 1.
         /// </summary>
         internal static string Venchcfg {
             get {

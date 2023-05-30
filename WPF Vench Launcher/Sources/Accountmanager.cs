@@ -11,22 +11,16 @@ using Newtonsoft.Json;
 using System.Threading;
 using WPF_Vench_Launcher.pages;
 using WinForms = System.Windows.Forms;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Security.Principal;
 using Newtonsoft.Json.Linq;
-using System.Windows.Shapes;
 using System.Net.Http;
-using System.Windows.Media.Animation;
-using System.ComponentModel;
-using System.Windows.Interop;
 using System.Linq;
 using System.Globalization;
 using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
-using System.Reflection;
-using System.Xml.Linq;
-using System.Runtime.CompilerServices;
+using System.Data;
+using System.Data.SQLite;
+
 
 //Software by Venchass
 //My:
@@ -36,7 +30,7 @@ using System.Runtime.CompilerServices;
 
 namespace WPF_Vench_Launcher
 {
-    
+
     public class AccountManager
     {
         delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
@@ -69,7 +63,7 @@ namespace WPF_Vench_Launcher
         }
         public static async Task TrySignInAsync(string login, string password)
         {
-            var values = new Dictionary<string, string>
+            /*var values = new Dictionary<string, string>
             {
                 { "VenchassPanelLogin", login },
                 { "VenchassPanelPassword", password }
@@ -91,7 +85,7 @@ namespace WPF_Vench_Launcher
             catch {
                 
             }
-            
+            */
         }
 
         public static bool GetIsSignedIn()
@@ -143,7 +137,7 @@ namespace WPF_Vench_Launcher
 
         public static void StartSteamNoSandbox(Account account)
         {
-            var startParams = "-no-browser -window -novid -nosound -w 640 -h 480";
+            var startParams = ""; //u can put smth here
             string path = Config.GetConfig().SteamPath + @"\NoSandBoxsteam.exe";
             StartAccount(account, startParams, true, path);
             
@@ -239,7 +233,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english  -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, startParams, consoleLog, cfg)
+                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams)
                 };
                 Process process = new Process()
                 {
@@ -282,27 +276,28 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            
+            if (!StartedAccountsDict.ContainsKey(acc))
+                return;
+            try
+            {
+                var game = GetGameProcess(acc);
+                game.Kill();
+            }
+            catch
+            {
+
+            }
+            var proc = StartedAccountsDict[acc];
+            proc.Refresh();
+            if(!proc.HasExited)
+                proc.Kill();
             lock (StartedAccountsDict)
             {
-                if (!StartedAccountsDict.ContainsKey(acc))
-                    return;
-                try
-                {
-                    var game = GetGameProcess(acc);
-                    game.Kill();
-                }
-                catch
-                {
-
-                }
-                var proc = StartedAccountsDict[acc];
-                proc.Refresh();
-                if(!proc.HasExited)
-                    proc.Kill();
                 StartedAccountsDict.Remove(acc);
-                acc.Status = 0;
             }
+            acc.Status = 0;
+            acc.PID = 0;
+            Config.UpdateAccountDB(acc);
         }
 
 
@@ -472,23 +467,40 @@ namespace WPF_Vench_Launcher
                 if (AccountsBase.Select(x => x.Login).Contains(acc.Login))
                 {
                     AccountsBase.Where(x => x.Login == acc.Login).ElementAt(0).Password = acc.Password;
+                    Config.UpdateAccountDB(acc);
                 }
                 else
                 {
                     AccountsBase.Add(acc);
+                    Config.AddAccountDB(acc);
                 }
             }
-            if (acc.PID != 0)
+            
+        }
+
+        public static void AddAccountFromDB(Account acc)
+        {
+            lock (AccountsBase)
             {
-                try
+                AccountsBase.Add(acc);
+                if (acc.PID != 0)
                 {
-                    var proc = Process.GetProcessById(acc.PID);
-                    SaveAccountData(acc, proc);
-                }
-                catch
-                {
-                    acc.Status = 0;
-                    acc.PID = 0;
+                    try
+                    {
+                        var proc = Process.GetProcessById(acc.PID);
+                        if (proc != null && proc.ProcessName == "steam")
+                            SaveAccountData(acc, proc);
+                        else
+                        {
+                            acc.PID= 0;
+                            acc.Status = 0;
+                        }
+                    }
+                    catch
+                    {
+                        acc.Status = 0;
+                        acc.PID = 0;
+                    }
                 }
             }
         }
@@ -499,6 +511,7 @@ namespace WPF_Vench_Launcher
             {
                 AccountsBase.Remove(acc);
             }
+            Config.DeleteAccountDB(acc);
         }
 
         public static List<Process> GetChildrens(Account account)
@@ -543,22 +556,19 @@ namespace WPF_Vench_Launcher
 
         public static void UpdateAccountsChildrens()
         {
-            lock (StartedAccountsDict)
+            foreach (var pair in StartedAccountsDict.ToList())
             {
-                foreach (var pair in StartedAccountsDict)
+                if (pair.Key.Status == 0)
                 {
-                    if (pair.Key.Status == 0)
+                    return;
+                }
+                var childrens = GetChildrens(pair.Key);
+                pair.Key.Status = 1;
+                foreach (var item in childrens)
+                {
+                    if (item.ProcessName == "csgo")
                     {
-                        return;
-                    }
-                    var childrens = GetChildrens(pair.Key);
-                    pair.Key.Status = 1;
-                    foreach (var item in childrens)
-                    {
-                        if (item.ProcessName == "csgo")
-                        {
-                            pair.Key.Status = 2;
-                        }
+                        pair.Key.Status = 2;
                     }
                 }
             }
@@ -607,31 +617,28 @@ namespace WPF_Vench_Launcher
 
         public static void SdaCheck( )
         {
-            lock (AccountsBase)
+            foreach (var acc in AccountManager.GetStartedAccounts())
             {
-                foreach (var acc in AccountManager.GetStartedAccounts())
+                if (acc.Status == 0 || acc.Status == 2)
                 {
-                    if (acc.Status == 0)
+                    continue;
+                }
+                var windows = GetWindowHandles(acc);
+                foreach (var hwnd in windows)
+                {
+                    var name = GetWindowNameByHwnd(hwnd);
+                    if ((Config.GetConfig().oldSteamVersion && name == "Steam Guard - Computer Authorization Required") || (!Config.GetConfig().oldSteamVersion && name == "Steam Sign In"))
                     {
-                        continue;
-                    }
-                    var windows = GetWindowHandles(acc);
-                    foreach (var hwnd in windows)
-                    {
-                        var name = GetWindowNameByHwnd(hwnd);
-                        if (name == "Steam Guard - Computer Authorization Required" || name == "Steam Sign In")
+                        if (SteamGuard.HasGuard(acc.Login.ToLower()))
                         {
-                            if (SteamGuard.HasGuard(acc.Login.ToLower()))
-                            {
-                                var guard = SteamGuard.GetGuard(acc.Login.ToLower());
-                                SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
-                                if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
-                                    StartConsole();
-                                Thread.Sleep(250);
-                                SendText(guard, hwnd);
-                                Thread.Sleep(250);
-                                SendText("ENTER", hwnd);
-                            }
+                            var guard = SteamGuard.GetGuard(acc.Login.ToLower());
+                            SaveLogInfo(String.Format("send {0} to {1}", guard, acc.Login.ToLower()));
+                            if (GetForegroundWindow() != Config.GetMainHandle() && GetForegroundWindow() != hwnd)
+                                StartConsole();
+                            Thread.Sleep(250);
+                            SendText(guard, hwnd);
+                            Thread.Sleep(250);
+                            SendText("ENTER", hwnd);
                         }
                     }
                 }
@@ -776,6 +783,9 @@ namespace WPF_Vench_Launcher
 
         public bool TradesCheckbox { get; set; }
 
+        public bool MarkLimitCheckbox { get; set; }
+
+
 
         public string TradeLink { get; set; }
 
@@ -783,6 +793,8 @@ namespace WPF_Vench_Launcher
         public bool csgoNews { get; set; }
 
         public int launchDelay { get; set; }
+
+        public bool oldSteamVersion { get; set; }
 
 
         public ConfigObject()
@@ -892,9 +904,27 @@ namespace WPF_Vench_Launcher
             currentDirectoryPath = newPath;
         }
 
-        public static async void SaveAccountsDataAsync()
+        public static void SaveAccountsDataAsync(Account account)
         {
-            var accounts = AccountManager.GetAccountsBase();
+            SaveAccountsDataAsync(new List<Account>() { account });
+        }
+
+        public static void SaveAccountsDataAsync(List<Account> accountsList)
+        {
+            var accountsLogins = AccountManager.GetAccountsBase().Select(x => x.Login);
+            foreach (var account in accountsList)
+            {
+                if (!accountsLogins.Contains(account.Login))
+                {
+                    Config.AddAccountDB(account);
+                }
+                else
+                {
+                    Config.UpdateAccountDB(account);
+                }
+            }
+            //deprecated
+            /*var accounts = AccountManager.GetAccountsBase();
             var json = "";
             lock (accounts)
             {
@@ -913,7 +943,7 @@ namespace WPF_Vench_Launcher
                 {
                     await writer.WriteLineAsync(json);
                 }
-            }
+            }*/
         }
 
         public static void SaveGroupsParams(List<AccountsGroup> groups)
@@ -945,6 +975,13 @@ namespace WPF_Vench_Launcher
             config.TradesCheckbox = value;
             SaveConfig();
         }
+
+        public static void SaveMarkLimitCheckbox(bool value)
+        {
+            config.MarkLimitCheckbox = value;
+            SaveConfig();
+        }
+
 
         public static void SaveTradeLink(string link)
         {
@@ -989,12 +1026,19 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        public static void SaveOldSteamVersion(bool value)
+        {
+            config.oldSteamVersion = value;
+            SaveConfig();
+        }
+
         /// <summary>
         /// Load Accounts from Accounts.cfg to AccountsManager, rewrite file to empty when error
         /// </summary>
-        public static void LoadAccountsData()
+        public static void LoadAccountsDataDB()
         {
-            var json = "";
+            //deprecated
+            /*var json = "";
             using (StreamReader reader = new StreamReader(DirectoryPath + @"/Accounts.cfg"))
             {
                 json = reader.ReadToEnd();
@@ -1008,23 +1052,45 @@ namespace WPF_Vench_Launcher
 
                 foreach (var item in accountsList)
                 {
-                    AccountManager.AddAccount(item);
+                    AccountManager.AddAccountFromDB(item);
                 }
             }
             catch
             {
                 File.WriteAllText(DirectoryPath + @"/Accounts.cfg", @"[]");
+            } */
+            var databaseFileName = GetdDatabaseFileName();
+            var connectionString = $"Data Source={databaseFileName};";
+            var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            var sqlCommand = new SQLiteCommand(connection);
+            sqlCommand.CommandText =
+                @"
+                        SELECT *
+                        FROM accounts
+                    ";
+            DataTable data = new DataTable();
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlCommand);
+            adapter.Fill(data);
+            Console.WriteLine($"Прочитано {data.Rows.Count} записей из таблицы БД");
+            foreach (DataRow row in data.Rows)
+            {
+                Account account= new Account();
+                account.Login = row.Field<string>("Login");
+                account.Password = row.Field<string>("Password");
+                account.Status = Convert.ToInt32(row.Field<long>("Status"));
+                account.PID = Convert.ToInt32(row.Field<long>("PID"));
+                account.PrimeStatus = Convert.ToBoolean(row.Field<long>("PrimeStatus"));
+                account.SteamId32 = (ulong)row.Field<long>("SteamId32");
+                account.LastDrop = row.Field<string>("LastDrop");
+
+                AccountManager.AddAccountFromDB(account);
+                //AccountManager.SaveLogInfo($"id = {row.Field<long>("id")}");
             }
-            
         }
 
         private static async void SaveConfig()
         {
-            /*var options = new JsonSerializerOptions 
-            {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            };*/
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             using (StreamWriter writer = new StreamWriter(DirectoryPath + @"/config.cfg", false))
             {
@@ -1132,11 +1198,145 @@ namespace WPF_Vench_Launcher
                     var newGroupsList = config.Groups.ToList();
                     newGroupsList.Add(group);
                     Config.SaveGroupsParams(newGroupsList);
-                    Config.SaveAccountsDataAsync();
                     return true;
                 }
             }
             return false;
+        }
+
+        private static string GetdDatabaseFileName()
+        {
+            return Config.DirectoryPath + @"\db.db";
+        }
+
+        public static void AddAccountDB(Account acc)
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                var connectionString = $"Data Source={databaseFileName};";
+                var connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var sqlCommand = new SQLiteCommand(connection);
+                sqlCommand.CommandText = @"INSERT INTO accounts (Login, Password, Status, PID, PrimeStatus, SteamId32) VALUES(@Login, @Password, 0, 0, @PrimeStatus, 0)";
+                sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+                sqlCommand.Parameters.AddWithValue("@Password", acc.Password);
+                sqlCommand.Parameters.AddWithValue("@PrimeStatus", Convert.ToInt32(acc.PrimeStatus));
+                sqlCommand.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
+            }
+        }
+
+        public static void UpdateAccountDB(Account acc)
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                var connectionString = $"Data Source={databaseFileName};";
+                var connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                var sqlCommand = new SQLiteCommand(connection);
+                sqlCommand.CommandText = @"UPDATE accounts SET Login = @Login, Password = @Password, Status = @Status, PID = @PID, PrimeStatus = @PrimeStatus, SteamId32 = @SteamId32, LastDrop = @LastDrop WHERE Login = @Login";
+                sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+                sqlCommand.Parameters.AddWithValue("@Password", acc.Password);
+                sqlCommand.Parameters.AddWithValue("@Status", acc.Status);
+                sqlCommand.Parameters.AddWithValue("@PID", acc.PID);
+                sqlCommand.Parameters.AddWithValue("@PrimeStatus", Convert.ToInt32(acc.PrimeStatus));
+                sqlCommand.Parameters.AddWithValue("@SteamId32", acc.SteamId32);
+                sqlCommand.Parameters.AddWithValue("@LastDrop", acc.LastDrop);
+                sqlCommand.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo(ex.Message);
+            }
+        }
+        public static void DeleteAccountDB(Account acc)
+        {
+            var databaseFileName = GetdDatabaseFileName();
+            var connectionString = $"Data Source={databaseFileName};";
+            var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            var sqlCommand = new SQLiteCommand(connection);
+            sqlCommand.CommandText = @"DELETE FROM accounts  WHERE Login = @Login";
+            sqlCommand.Parameters.AddWithValue("@Login", acc.Login);
+            sqlCommand.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public static void InitDataBase()
+        {
+            try
+            {
+                var databaseFileName = GetdDatabaseFileName();
+                if (!File.Exists(databaseFileName))
+                {
+                    var connectionString = $"Data Source={databaseFileName};";
+                    var connection = new SQLiteConnection(connectionString);
+                    connection.Open();
+                    var sqlCommand = new SQLiteCommand(connection);
+                    sqlCommand.CommandText = @"CREATE TABLE [accounts] (
+                    [id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    [Login] char(100) NOT NULL,
+                    [Password] char(100) NOT NULL,
+                    [Status] INTEGER NOT NULL,
+                    [PID] INTEGER NOT NULL,
+                    [PrimeStatus] INTEGER NOT NULL,
+                    [SteamId32] INTEGER NOT NULL,
+                    [LastDrop] char(100)
+                    );";
+                    sqlCommand.CommandType = CommandType.Text;
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    LoadAccountsDataDB();
+                }
+            }
+            catch (Exception ex)
+            {
+                AccountManager.SaveLogInfo($"database error {ex.Message}");
+            }
+            
+
+        }
+
+        internal static void SetCSGONews(bool check)
+        {
+            var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
+            var line = "0.0.0.0 store.steampowered.com";
+            if (check)
+            {
+                try
+                {
+                    using (StreamWriter w = File.AppendText(path))
+                    {
+                        w.WriteLine(line);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AccountManager.SaveLogInfo($"csgo news error: {ex.Message}");
+                }
+            }
+            else
+            {
+                try
+                {
+                    var text = File.ReadAllText(path);
+                    var newText = text.Replace(line, "");
+                    File.WriteAllText(path, newText);
+                }
+                catch (Exception ex)
+                {
+                    AccountManager.SaveLogInfo($"csgo news error: {ex.Message}");
+                }
+            }
         }
     }
 

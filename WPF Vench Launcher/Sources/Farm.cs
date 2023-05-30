@@ -200,23 +200,31 @@ namespace WPF_Vench_Launcher.Sources
             {
                 currentFarmQueue.Add(farmAcc);
             }
-            AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0}", Config.GetConfig().ServersToConnect), false);
-            Config.SaveAccountsDataAsync();
+            if(farmAcc.prop.Status == 0)
+                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0} {1}", Config.GetConfig().ServersToConnect, Config.GetConfig().StartParams), false);
+            Config.SaveAccountsDataAsync(farmAcc.prop);
         }
 
         private static void AccountsLaunchController()
         {
             while (true)
             {
-                while (queueToFarm.Count != 0 && currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts)
+                try
                 {
-                    lock (queueToFarm)
+                    while (queueToFarm.Count != 0 && (currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts || Config.GetConfig().MaxSameTimeAccounts == 0))
                     {
-                        StartFarmAccount(queueToFarm.First());
+                        lock (queueToFarm)
+                        {
+                            StartFarmAccount(queueToFarm.First());
+                        }
+                        Thread.Sleep(Config.GetConfig().launchDelay * 1000);
                     }
-                    Thread.Sleep(Config.GetConfig().launchDelay * 1000);
+                    Thread.Sleep(5000);
                 }
-                Thread.Sleep(5000);
+                catch (Exception ex) 
+                {
+                    AccountManager.SaveLogInfo(ex.Message);
+                }
             }
             
         }
@@ -249,7 +257,7 @@ namespace WPF_Vench_Launcher.Sources
                             if (Config.GetConfig().TradesCheckbox)
                                 TraderController.AddAccount(account.prop);
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
-                            Config.SaveAccountsDataAsync();
+                            Config.SaveAccountsDataAsync(account.prop);
                             break;
                         }
                         else if (line == "Not connected to server")
@@ -280,11 +288,14 @@ namespace WPF_Vench_Launcher.Sources
                             CloseAccount(farmAcc);
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by user ", farmAcc.prop.Login));
                         }
-                        else if (DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
+                        else if (Config.GetConfig().MaxRemainingTimeToDropCase != 0 && DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMinutes - farmAcc.StartupTime > Config.GetConfig().MaxRemainingTimeToDropCase)
                         {
                             try
                             {
+                                if (Config.GetConfig().MarkLimitCheckbox)
+                                    farmAcc.SetLastDrop();
                                 CloseAccount(farmAcc);
+                                
                                 AccountManager.SaveLogInfo(String.Format("Accounts {0} closed by time {1} minutes", farmAcc.prop.Login, Config.GetConfig().MaxRemainingTimeToDropCase));
                             }
                             catch (Exception ex)
@@ -309,7 +320,7 @@ namespace WPF_Vench_Launcher.Sources
                         }*/
                         ParseConsole(farmAcc);
                     }
-                    Thread.Sleep(10000);
+                    Thread.Sleep(30000);
                 }
                 catch (Exception e)
                 {

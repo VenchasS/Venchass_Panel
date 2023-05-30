@@ -4,12 +4,17 @@ const SteamTotp = require("steam-totp");
 const TradeOfferManager = require("steam-tradeoffer-manager");
 const args = process.argv;
 
-if (args.length <= 2) process.exit(0);
-tradeOfferLink = args[4];
+if (args.length <= 2) {
+  process.exit(0);
+} 
 
-const sendLastItem = args[3];
-const account = args[2].split(":");
-const [login, password, shared_secret, identity_secret] = account;
+
+const login = args[2];
+const password = args[3]
+const account = args[4].split(":");
+const sendLastItem = args[6];
+const tradeOfferLink = args[5];
+const [shared_secret, identity_secret] = account;
 
 const errorHandler = (message, error) => {
   if (error) {

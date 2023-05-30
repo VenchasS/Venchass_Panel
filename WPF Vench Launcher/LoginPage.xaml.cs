@@ -24,27 +24,27 @@ namespace WPF_Vench_Launcher
         public LoginPage(Action signInCallback)
         {
             InitializeComponent();
-            this.callback = signInCallback;
-            SignInFromConfig();
+            /*this.callback = signInCallback;
+            SignInFromConfig();*/
         }
 
         private void SignInFromConfig()
         {
-            var login = Config.GetConfig().Login;
+            /*var login = Config.GetConfig().Login;
             var password = Config.GetConfig().Password;
             Login.Text = login;
             Password.Text = password;
-            SignInBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            SignInBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));*/
         }
 
         private void SaveAccountsData(string login, string password)
         {
-            Config.SaveDataAccount(login, password);
+            //Config.SaveDataAccount(login, password);
         }
 
         public async void SignInButtonClickAsync(object sender, EventArgs e)
         {
-            await AccountManager.TrySignInAsync(Login.Text, Password.Text);
+            /*await AccountManager.TrySignInAsync(Login.Text, Password.Text);
             if (AccountManager.GetIsSignedIn())
             {
                 SaveAccountsData(Login.Text,Password.Text);
@@ -53,7 +53,7 @@ namespace WPF_Vench_Launcher
             else
             {
                 MessageBox.Show("Sign in error");
-            }
+            }*/
         }
 
     }
