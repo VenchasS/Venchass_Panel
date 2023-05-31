@@ -1,0 +1,26 @@
+"UserRoamingConfigStore"
+{
+	"Software"
+	{
+		"Valve"
+		{
+			"Steam"
+			{
+				"apps"
+				{
+					"730"
+					{
+						"cloudenabled"		"0"
+					}
+				}
+				"SteamDefaultDialog"		"#app_store"
+				"cloudenabled"
+				{
+				}
+				"ShowScreenshotManager"
+				{
+				}
+			}
+		}
+	}
+}
