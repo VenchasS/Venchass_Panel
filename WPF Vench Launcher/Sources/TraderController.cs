@@ -45,7 +45,7 @@ namespace WPF_Vench_Launcher.Sources
             var tradeLink = Config.GetConfig().TradeLink;
             if(tradeLink == null || tradeLink == "") { return; }
             var path = "CaseTrader\\case-trader.js ";
-            var args = String.Format(" {0} \"{1}\" {2}:{3} 1 {4}", login, pass, shared_secret, identify_secret, tradeLink.Replace("&token", "^&token"));
+            var args = String.Format(" {0} \"{1}\" {2} {3} 1 {4}", login, pass, shared_secret, identify_secret, tradeLink.Replace("&token", "^&token"));
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.Arguments = "/c node " + path + args;

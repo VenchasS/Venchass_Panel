@@ -11,11 +11,11 @@ if (args.length <= 2) {
 
 const login = args[2];
 const password = args[3]
-const account = args[4].split(":");
+const shared_secret = args[4]
+const identity_secret = args[5];
 const sendLastItem = args[6];
-const tradeOfferLink = args[5];
-const [shared_secret, identity_secret] = account;
-
+const tradeOfferLink = args[7];
+console.log(`tradelink: ${tradeOfferLink}`);
 const errorHandler = (message, error) => {
   if (error) {
     console.log(message + "\n" + error);
