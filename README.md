@@ -29,4 +29,9 @@ Easy C# panel for starting CS:GO and idle farming cases
 	  - Click on "Sandbox" Next to "Exclusions," 
 	  - click "Edit" Enter the path to the log folders 
 	  for example: "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\log"
-
+  - If you run into the updating CSGO, login without sandbox. It should make the update box go away.
+  -  Make sure Steam is being ran as Admin, in Sandbox and under Windows 7.
+  -  If you can't run over 5 clients, you may need a different port than 27015 on the server. 
+  -  If you can't run over 13 clients, you may need to add virtual adapters either from vmware or hyperv.
+  -  Recommend using BES - Battle Encoder Shirase - Set CSGO to 50%, GameOverlayUI to 50% on watch.
+  -  Recommend using mem reduct: https://www.henrypp.org/product/memreduct
