@@ -320,6 +320,18 @@
     <Content Include="CaseTrader\case-trader.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="x64\e_sqlite3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\e_sqlite3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="cfg\game\cfg\server_blacklist.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -335,9 +347,7 @@
     <Content Include="net6.0\consoleCSharp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="net6.0\consoleCSharp.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="net6.0\consoleCSharp.pdb" />
     <Resource Include="Image1.png" />
     <Resource Include="Image2.png" />
   </ItemGroup>
