@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Net;
+using System.Web;
 
 namespace WPF_Vench_Launcher.Sources
 {
@@ -122,6 +121,7 @@ namespace WPF_Vench_Launcher.Sources
         public static int StartedCount { get { return currentFarmQueue.Count; } private set { } }
         public static int FarmedCount { get; private set; }
 
+        
 
         public static void AutoFarm(List<Account> list)
         {
@@ -184,6 +184,10 @@ namespace WPF_Vench_Launcher.Sources
                 }
             }
             AccountManager.StopAccount(farmAcc.prop);
+            if (PanelManager.isEnabled())
+            {
+                PanelManager.DelteTarget(Convert.ToString(farmAcc.prop.SteamId32));
+            }
             FarmedCount += 1;
         }
 
@@ -200,8 +204,17 @@ namespace WPF_Vench_Launcher.Sources
             {
                 currentFarmQueue.Add(farmAcc);
             }
-            if(farmAcc.prop.Status == 0)
-                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0} {1}", Config.GetConfig().ServersToConnect, Config.GetConfig().StartParams), false);
+            if (farmAcc.prop.Status == 0)
+            {
+                AccountManager.StartAccount(farmAcc.prop, String.Format("-d3d9ex -nohltv -nojoy -novid -nosound -noubershader -nomouse -widnow -w 640 -h 480  -nomouse {0} ++attack2 +-left", Config.GetConfig().StartParams), false);
+                if (PanelManager.isEnabled())
+                {
+                    var resp = PanelManager.AddTarget(Convert.ToString(farmAcc.prop.SteamId32));
+                } else
+                {
+                    AccountManager.SaveLogInfo("account " + farmAcc.prop.Login + "not added, panel not found");
+                }
+            }
             Config.SaveAccountsDataAsync(farmAcc.prop);
         }
 
@@ -238,7 +251,6 @@ namespace WPF_Vench_Launcher.Sources
                     return;
                 var index = account.consoleIndex;
                 FileInfo log = new FileInfo(path);
-                AccountManager.SendCmd(account.prop, "status");
                 
                 using (var streamReader = new StreamReader(log.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
@@ -249,7 +261,7 @@ namespace WPF_Vench_Launcher.Sources
                     );
                     for (var i = index;i <lines.Count();i++)
                     {
-                        var line = lines[i];
+                        /*var line = lines[i];
                         if (line == "Disconnect: .")
                         {
                             CloseAccount(account);
@@ -264,7 +276,7 @@ namespace WPF_Vench_Launcher.Sources
                         {
                             AccountManager.SendCmd(account.prop, String.Format("connect {0}", Config.GetConfig().ServersToConnect));
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} reconected to server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
-                        }
+                        }*/
                     }
                     account.consoleIndex = lines.Count()-1;
                 }
@@ -327,6 +339,86 @@ namespace WPF_Vench_Launcher.Sources
                     AccountManager.SaveLogInfo(e.Message);
                 }
             }
+        }
+    }
+
+    static class PanelManager
+    {
+        public static string SendGetRequest(string path, Dictionary<string, string> parameters, string url = "")
+        {
+            if (url == "" || url == null)
+            {
+                url = "localhost";
+            }
+            string apiUrlWithParam = $"http://{url}:8322{path}?";
+            if (parameters != null && parameters.Count > 0)
+            {
+                // Создаем QueryString с помощью класса HttpUtility
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+                foreach (var parameter in parameters)
+                {
+                    queryString[parameter.Key] = parameter.Value;
+                }
+
+                // Добавляем QueryString к URL
+                apiUrlWithParam += queryString;
+            }
+            
+
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    return client.DownloadString(apiUrlWithParam);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    return string.Empty;
+                }
+            }
+        }
+
+        public static string SendGetRequest(string path, string url = "")
+        {
+            if (url == "" || url == null)
+            {
+                url = "localhost";
+            }
+            string apiUrlWithParam = $"http://{url}:8322{path}";
+
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    return client.DownloadString(apiUrlWithParam);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    return string.Empty;
+                }
+            }
+        }
+
+        public static string AddTarget(string steamId32)
+        {
+            return SendGetRequest("/addtarget", new Dictionary<string, string>{
+                { "id",  steamId32 },
+                { "limit", "1000" }
+            } , Config.GetConfig().CustomPanelIp);
+        }
+
+        public static string DelteTarget(string value)
+        {
+            return SendGetRequest("/deletetarget", new Dictionary<string, string>{
+                { "id",  value },
+            }, Config.GetConfig().CustomPanelIp);
+        }
+
+        public static bool  isEnabled()
+        {
+            return SendGetRequest("/ping", Config.GetConfig().CustomPanelIp) == "200";
         }
     }
 }

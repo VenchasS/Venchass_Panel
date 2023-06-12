@@ -785,16 +785,18 @@ namespace WPF_Vench_Launcher
 
         public bool MarkLimitCheckbox { get; set; }
 
-
-
         public string TradeLink { get; set; }
 
+        public string FriendLogin { get; set; }
 
         public bool csgoNews { get; set; }
 
         public int launchDelay { get; set; }
 
         public bool oldSteamVersion { get; set; }
+
+        public string CustomPanelIp { get; set; }
+
 
 
         public ConfigObject()
@@ -988,6 +990,12 @@ namespace WPF_Vench_Launcher
         public static void SaveTradeLink(string link)
         {
             config.TradeLink = link;
+            SaveConfig();
+        }
+
+        public static void SaveFriendLogin(string login)
+        {
+            config.FriendLogin = login;
             SaveConfig();
         }
 

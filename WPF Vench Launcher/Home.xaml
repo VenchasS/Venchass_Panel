@@ -269,9 +269,10 @@
         </ToggleButton>
         <Button Grid.Column="4" Grid.Row="9" Content="Export" Click="ButtonExportClick" Grid.ColumnSpan="2" Margin="63,25,81,13" Grid.RowSpan="2" />
         <Button Grid.Column="3" Grid.Row="9" Content="Import" Click="ButtonImportClick" Grid.ColumnSpan="2" Margin="75,25,68,13" Grid.RowSpan="2" />
-        <Button Grid.Column="0" Content="Farm selected" Click="FarmSelectedButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="12" Margin="10,4,108,0" />
-        <Button Grid.Column="0" Content="Autofarm" Click="AutoFarmButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="11" Margin="10,4,108,0" />
+        <Button Grid.Column="0" Content="Farm selected" Click="FarmSelectedButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="10" Margin="10,27,108,13" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Content="Autofarm" Click="AutoFarmButtonClick" Grid.ColumnSpan="3"  MinHeight="20" Grid.Row="9" Margin="10,27,108,13" Grid.RowSpan="2" />
         <Button Grid.Column="0" Grid.Row="13" Content="Send Trades" Click="SendTradesButton_Click" Grid.ColumnSpan="3" Margin="10,21,108,18" Grid.RowSpan="2" />
+        <Button Grid.Column="0" Grid.Row="12" Content="Send Friend invites" Click="SendFriendsButton_Click" Grid.ColumnSpan="3" Margin="10,20,108,18" Grid.RowSpan="2" />
 
         <!--<Button Name="Test" Grid.Row="16" Content="test" Click="OnTestButtonclick" Grid.ColumnSpan="2" Margin="10,21,107,15" Grid.RowSpan="2"/>-->
 

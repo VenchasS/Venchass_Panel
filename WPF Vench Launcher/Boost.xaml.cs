@@ -62,6 +62,16 @@ namespace WPF_Vench_Launcher
                 MarkTimeLimit.IsChecked = Config.GetConfig().MarkLimitCheckbox;
                 MarkTimeLimit.Checked += MarkLimitChecked;
                 MarkTimeLimit.Unchecked += MarkLimitChecked;
+                FriendLogin.Text = Convert.ToString(Config.GetConfig().FriendLogin);
+                ConnectedPanelLabel.Content = "Checking walkbot available";
+                Task.Run(() =>
+                {
+                    var enabled = PanelManager.isEnabled();
+                    Dispatcher.Invoke((Action)(() =>
+                    {
+                        ConnectedPanelLabel.Content = enabled ? "walkbot is available" : "walkbot not available";
+                    }));
+                });
             }
             catch (Exception e)
             {
@@ -135,6 +145,11 @@ namespace WPF_Vench_Launcher
             var value = MarkTimeLimit.IsChecked == true;
             Config.SaveMarkLimitCheckbox(value);
         }
+        private void FriendLoginLostFocus(object sender, RoutedEventArgs e)
+        {
+            Config.SaveFriendLogin(FriendLogin.Text);
+        }
+
     }
 
 }

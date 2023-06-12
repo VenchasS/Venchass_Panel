@@ -60,7 +60,7 @@ namespace WPF_Vench_Launcher
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             //Your code to handle the event
-            Config.OptimizePanorama(false);
+            //Config.OptimizePanorama(false);
         }
 
         private void InitDataBase()

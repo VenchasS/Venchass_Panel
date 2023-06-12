@@ -35,6 +35,31 @@ namespace WPF_Vench_Launcher.Sources
             }
         }
 
+        private static void StartProgramm(string path, string paramsString, int timeToExecute = 600000)
+        {
+            var args = paramsString;
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.Arguments = "/c node " + path + args;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.RedirectStandardInput = true;
+
+            p.OutputDataReceived += (s, e) =>
+                AccountManager.SaveLogInfo(e.Data);
+            p.ErrorDataReceived += (s, e) =>
+                AccountManager.SaveLogInfo(e.Data);
+            p.Start();
+            p.BeginOutputReadLine();
+            p.BeginErrorReadLine();
+            p.WaitForExit(timeToExecute);
+            p.Close();
+            AccountManager.SaveLogInfo("Invite process " + " ended");
+        }
+
         private static void SendTrade(Account account, int timeToTrade = 60000)
         {
             var login = account.Login.ToLower();
@@ -81,6 +106,31 @@ namespace WPF_Vench_Launcher.Sources
                     var acc = accounts.First();
                     SendTrade(acc);
                 }
+            });
+        }
+
+        public static void sendInvites(List<Account> accs, string mainLogin)
+        {
+            var mainAcc = AccountManager.GetAccountsBase().Where(x => x.Login.ToLower() == mainLogin.ToLower()).ToList();
+            if (mainAcc.Count() == 0)
+            {
+                return;
+            }
+            var paramsString = "";
+            accs.Insert(0, mainAcc[0]);
+            foreach (var acc in accs)
+            {
+                if (SteamGuard.HasGuard(acc.Login.ToLower()))
+                {
+                    paramsString += String.Format(" {0} \"{1}\" {2} ", acc.Login, acc.Password, SteamGuard.GetsharedSecret(acc.Login.ToLower()));
+                } else
+                {
+                    paramsString += String.Format(" {0} \"{1}\" 0 ", acc.Login, acc.Password);
+                }
+            }
+            Task.Factory.StartNew(() =>
+            {
+                StartProgramm("CaseTrader\\tools.js", paramsString);
             });
         }
     }

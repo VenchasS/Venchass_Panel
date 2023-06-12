@@ -334,6 +334,18 @@ namespace WPF_Vench_Launcher.pages
             }
 
         }
+        private void SendFriendsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedAccs = accountsList.SelectedItems;
+            var accs = new List<Account>();
+            foreach (Account acc in selectedAccs)
+            {
+                accs.Add(acc);
+            }
+            TraderController.sendInvites(accs, Config.GetConfig().FriendLogin.ToLower());
+
+        }
+        
     }
 
     public class CategoryHighlightStyleSelector : StyleSelector
