@@ -467,7 +467,7 @@ namespace WPF_Vench_Launcher.Sources
 
         public static List<PanelTarget> GetTargets()
         {
-            var resp = SendGetRequest("/getalltargets");
+            var resp = SendGetRequest("/getalltargets", Config.GetConfig().CustomPanelIp);
             if (resp == "null" || resp == "")
             {
                 return new List<PanelTarget>();
