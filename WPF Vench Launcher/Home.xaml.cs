@@ -76,10 +76,13 @@ namespace WPF_Vench_Launcher.pages
         {
             try
             {
-                AccountsTotal.Text = AccountManager.GetAccountsBase().Count().ToString();
-                AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
-                PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
-                UpdateTable();
+                Dispatcher.Invoke((Action)(() =>
+                {
+                    AccountsTotal.Text = AccountManager.GetAccountsBase().Count().ToString();
+                    AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
+                    PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
+                    UpdateTable();
+                }));
             }
             catch(Exception ex)
             {

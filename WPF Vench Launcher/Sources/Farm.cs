@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Net;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace WPF_Vench_Launcher.Sources
 {
@@ -73,6 +74,9 @@ namespace WPF_Vench_Launcher.Sources
         public Process csgo { get; set; }
 
         public int consoleIndex { get; set; }
+
+        public int privateRang { get; set; }
+
 
 
         public FarmAccount(Account acc)
@@ -207,13 +211,14 @@ namespace WPF_Vench_Launcher.Sources
             if (farmAcc.prop.Status == 0)
             {
                 AccountManager.StartAccount(farmAcc.prop, String.Format("-d3d9ex -nohltv -nojoy -novid -nosound -noubershader -nomouse -widnow -w 640 -h 480  -nomouse {0} ++attack2 +-left", Config.GetConfig().StartParams), false);
-                if (PanelManager.isEnabled())
-                {
-                    var resp = PanelManager.AddTarget(Convert.ToString(farmAcc.prop.SteamId32));
-                } else
-                {
-                    AccountManager.SaveLogInfo("account " + farmAcc.prop.Login + "not added, panel not found");
-                }
+            }
+            if (PanelManager.isEnabled())
+            {
+                var resp = PanelManager.AddTarget(Convert.ToString(farmAcc.prop.SteamId32));
+            }
+            else
+            {
+                AccountManager.SaveLogInfo("account " + farmAcc.prop.Login + "not added, panel not found");
             }
             Config.SaveAccountsDataAsync(farmAcc.prop);
         }
@@ -293,6 +298,7 @@ namespace WPF_Vench_Launcher.Sources
             {
                 try
                 {
+
                     foreach (var farmAcc in currentFarmQueue.ToList())
                     {
                         if (farmAcc.prop.Status == 0)
@@ -330,9 +336,36 @@ namespace WPF_Vench_Launcher.Sources
                                 MessageBox.Show(ex.Message);
                             }
                         }*/
-                        ParseConsole(farmAcc);
+                        //ParseConsole(farmAcc); //no need now
+                        AccountManager.SendCmd(farmAcc.prop, "slot3");
                     }
-                    Thread.Sleep(30000);
+                    var targets = PanelManager.GetTargets();
+                    var copy = new List<FarmAccount>(currentFarmQueue);
+                    foreach (var target in targets)
+                    {
+                        if (target.rank == 0 || target.rank == -1)
+                        {
+                            continue;
+                        }
+                        if (copy.Select(x => x.prop.SteamId32.ToString()).ToList().Contains(target.name))
+                        {
+                            var acc = copy.Where(x => x.prop.SteamId32.ToString() == target.name).FirstOrDefault();
+                            if (acc.privateRang == 0)
+                            {
+                                acc.privateRang = target.rank;
+                            } 
+                            else if(acc.privateRang != target.rank && (target.rank > acc.privateRang || target.rank == 1))
+                            {
+                                CloseAccount(acc);
+                                acc.SetLastDrop();
+                                if (Config.GetConfig().TradesCheckbox)
+                                    TraderController.AddAccount(acc.prop);
+                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after level up ", acc.prop.Login));
+                                Config.SaveAccountsDataAsync(acc.prop);
+                            }
+                        }
+                    }
+                    Thread.Sleep(15000);
                 }
                 catch (Exception e)
                 {
@@ -340,6 +373,17 @@ namespace WPF_Vench_Launcher.Sources
                 }
             }
         }
+    }
+
+    public class PanelTarget
+    {
+        public bool confirmed { get; set; }
+        public string name { get; set; }
+        public int rank { get; set; }
+        public int score { get; set; }
+        public int scoreLimit { get; set; }
+        public int timeStatus { get; set; }
+
     }
 
     static class PanelManager
@@ -419,6 +463,17 @@ namespace WPF_Vench_Launcher.Sources
         public static bool  isEnabled()
         {
             return SendGetRequest("/ping", Config.GetConfig().CustomPanelIp) == "200";
+        }
+
+        public static List<PanelTarget> GetTargets()
+        {
+            var resp = SendGetRequest("/getalltargets");
+            if (resp == "null" || resp == "")
+            {
+                return new List<PanelTarget>();
+            }
+            List<PanelTarget> targets = JsonConvert.DeserializeObject<List<PanelTarget>>(resp);
+            return targets;
         }
     }
 }

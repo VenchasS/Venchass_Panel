@@ -30,7 +30,6 @@ const createQuickInvite = (username, password, sharedSecret) => {
         if (err) {
           errorHandler('Ошибка при создании ссылки', err)
         } else {
-          console.log("link: ", response)
           resolve(response);
           client.logOff();
         }
