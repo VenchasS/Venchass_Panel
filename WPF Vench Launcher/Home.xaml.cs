@@ -1,22 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SteamAuth;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPF_Vench_Launcher.Sources;
+using System.Threading;
 
 //Software by Venchass
 //My:
@@ -39,13 +29,38 @@ namespace WPF_Vench_Launcher.pages
 
         private bool StartUpParamsChanged = false;
         private static bool timerStarted = false;
+        private bool isPageOpen = true;
         public Home()
         {
             InitializeComponent();
-            if(!timerStarted)
-                InitTimer();
             InitConfig();
-            timerTick(new object(),new EventArgs());
+            Unloaded += YourWpfPage_Unloaded;
+            Task.Factory.StartNew(() =>
+            {
+                while (isPageOpen)
+                {
+                    try
+                    {
+                        Dispatcher.Invoke((Action)(() =>
+                        {
+                            AccountsTotal.Text = AccountManager.GetAccountsBase().Count().ToString();
+                            AccountsStarted.Text = AccountManager.GetAccountsBase().Where(x => x.Status == 2).Count().ToString();
+                            PrimeTotal.Text = AccountManager.GetAccountsBase().Where(x => x.PrimeStatus).Count().ToString();
+                            UpdateTable();
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        AccountManager.SaveLogInfo(ex.Message);
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+        }
+
+        private void YourWpfPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            isPageOpen = false;
         }
 
         public void InitConfig()
@@ -59,6 +74,7 @@ namespace WPF_Vench_Launcher.pages
             if (config.StartParams != null)
                 startupParams.Text = config.StartParams;
             AccountGroups.ItemsSource = accountGroupsSource;
+            
         }
 
 

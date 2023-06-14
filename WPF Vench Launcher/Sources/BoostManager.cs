@@ -86,7 +86,7 @@ namespace WPF_Vench_Launcher
                 this.csgo = AccountManager.GetGameProcess(acc);
             }
 
-            static int MakeLParam(int x, int y)
+            private static int MakeLParam(int x, int y)
             {
                 return (y << 16) | (x & 0xFFFF);
             }

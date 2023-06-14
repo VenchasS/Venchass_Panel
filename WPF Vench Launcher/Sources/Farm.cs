@@ -101,7 +101,7 @@ namespace WPF_Vench_Launcher.Sources
             var color = new Color(r, g, b);
             return color;
         }
-        public bool  CheckGrayWindow()
+        public bool CheckGrayWindow()
         {
             try
             {
@@ -158,21 +158,35 @@ namespace WPF_Vench_Launcher.Sources
                 if(listToFarm.Count() == 0)
                     AutoFarmController();
             });
-            if (listToFarm.Count() == 0)
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    AccountsLaunchController();
-                });
-            }
+
         }
+        private static DateTime GetLastWednesday()
+        {
+            DateTime currentDate = DateTime.Now;
+            DayOfWeek currentWeek = currentDate.DayOfWeek;
+
+            // Находим разницу в днях между текущим днем недели и средой (DayOfWeek.Wednesday)
+            int diff = (int)DayOfWeek.Wednesday - (int)currentWeek;
+
+            // Если разница отрицательная, то нужно вычесть 7 дней
+            if (diff < 0)
+            {
+                diff -= 7;
+            }
+
+            // Вычитаем разницу в днях из текущей даты, чтобы получить первую прошлую среду
+            DateTime lastWednesday = currentDate.AddDays(diff);
+            
+            return lastWednesday.Date;
+        }
+
 
         public static List<Account> GetAutoFarmAccounts()
         {
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => Convert.ToDateTime(x.LastDrop).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
+                .Where(x => { var last = Convert.ToDateTime(x.LastDrop); return !(last >= GetLastWednesday()); })
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))
@@ -190,7 +204,7 @@ namespace WPF_Vench_Launcher.Sources
             AccountManager.StopAccount(farmAcc.prop);
             if (PanelManager.isEnabled())
             {
-                PanelManager.DelteTarget(Convert.ToString(farmAcc.prop.SteamId32));
+                PanelManager.DeleteTarget(Convert.ToString(farmAcc.prop.SteamId32));
             }
             FarmedCount += 1;
         }
@@ -210,7 +224,7 @@ namespace WPF_Vench_Launcher.Sources
             }
             if (farmAcc.prop.Status == 0)
             {
-                AccountManager.StartAccount(farmAcc.prop, String.Format("-d3d9ex -nohltv -nojoy -novid -nosound -noubershader -nomouse -widnow -w 640 -h 480  -nomouse {0} ++attack2 +-left", Config.GetConfig().StartParams), false);
+                AccountManager.StartAccount(farmAcc.prop, String.Format("-novid -nosound  -nomouse -widnow -w 640 -h 480  -nomouse {0} ++attack2 +-left", Config.GetConfig().StartParams), false);
             }
             if (PanelManager.isEnabled())
             {
@@ -321,21 +335,7 @@ namespace WPF_Vench_Launcher.Sources
                                 MessageBox.Show(ex.Message);
                             }
                         }
-                        //Deprecated
-                        /*else if (farmAcc.CheckGrayWindow()) 
-                        {
-                            try
-                            {
-                                CloseAccount(farmAcc);
-                                farmAcc.SetLastDrop();
-                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", farmAcc.prop.Login, Config.GetConfig().ServersToConnect));
-                                Config.SaveAccountsDataAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-                        }*/
+
                         //ParseConsole(farmAcc); //no need now
                         AccountManager.SendCmd(farmAcc.prop, "slot3");
                     }
@@ -364,6 +364,14 @@ namespace WPF_Vench_Launcher.Sources
                                 Config.SaveAccountsDataAsync(acc.prop);
                             }
                         }
+                    }
+                    while (queueToFarm.Count != 0 && (currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts || Config.GetConfig().MaxSameTimeAccounts == 0))
+                    {
+                        lock (queueToFarm)
+                        {
+                            StartFarmAccount(queueToFarm.First());
+                        }
+                        Thread.Sleep(Config.GetConfig().launchDelay * 1000);
                     }
                     Thread.Sleep(15000);
                 }
@@ -453,7 +461,7 @@ namespace WPF_Vench_Launcher.Sources
             } , Config.GetConfig().CustomPanelIp);
         }
 
-        public static string DelteTarget(string value)
+        public static string DeleteTarget(string value)
         {
             return SendGetRequest("/deletetarget", new Dictionary<string, string>{
                 { "id",  value },

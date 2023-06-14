@@ -226,6 +226,7 @@ namespace WPF_Vench_Launcher
                 var startApp = startSteam ? "" : "-applaunch 730"; //csgo id
                 var cfg = "+exec Vench.cfg";
                 var consoleLog = String.Format("+con_logfile \"log/{0}.log\"", account.Login.ToLower());
+                var defaultParams = "-nopreload -swapcores -noqueuedload -d3d9ex -disable_d3d9_hacks -dxlevel 90 -vrdisable -sw -limitvsconst -softparticlesdefaultoff -nohltv -noaafonts -nojoy +violence_hblood 0 +sethdmodels 0 +r_dynamic 0 +cl_disablehtmlmotd 1";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -233,7 +234,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams)
+                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2} {6} {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams, defaultParams)
                 };
                 Process process = new Process()
                 {
@@ -282,15 +283,15 @@ namespace WPF_Vench_Launcher
             {
                 var game = GetGameProcess(acc);
                 game.Kill();
+                var proc = StartedAccountsDict[acc];
+                proc.Refresh();
+                if (!proc.HasExited)
+                    proc.Kill();
             }
             catch
             {
 
             }
-            var proc = StartedAccountsDict[acc];
-            proc.Refresh();
-            if(!proc.HasExited)
-                proc.Kill();
             lock (StartedAccountsDict)
             {
                 StartedAccountsDict.Remove(acc);
