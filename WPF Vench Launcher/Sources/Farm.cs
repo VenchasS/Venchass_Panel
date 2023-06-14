@@ -164,20 +164,15 @@ namespace WPF_Vench_Launcher.Sources
         {
             DateTime currentDate = DateTime.Now;
             DayOfWeek currentWeek = currentDate.DayOfWeek;
-
             // Находим разницу в днях между текущим днем недели и средой (DayOfWeek.Wednesday)
             int diff = (int)DayOfWeek.Wednesday - (int)currentWeek;
-
             // Если разница отрицательная, то нужно вычесть 7 дней
             if (diff < 0)
-            {
                 diff -= 7;
-            }
-
             // Вычитаем разницу в днях из текущей даты, чтобы получить первую прошлую среду
             DateTime lastWednesday = currentDate.AddDays(diff);
-            
-            return lastWednesday.Date;
+
+            return lastWednesday.Date.AddHours(6);
         }
 
 
@@ -186,7 +181,7 @@ namespace WPF_Vench_Launcher.Sources
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => { var last = Convert.ToDateTime(x.LastDrop); return !(last >= GetLastWednesday()); })
+                .Where(x => { var last = Convert.ToDateTime(x.LastDrop); return (last < GetLastWednesday()); })
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))
