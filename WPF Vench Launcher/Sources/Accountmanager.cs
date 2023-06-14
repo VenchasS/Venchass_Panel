@@ -1020,7 +1020,7 @@ namespace WPF_Vench_Launcher
 
         public static void SaveServersIp(string ip)
         {
-            config.ServersToConnect = ip;
+            config.CustomPanelIp = ip;
             SaveConfig();
         }
 
