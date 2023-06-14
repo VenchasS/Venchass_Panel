@@ -49,7 +49,7 @@ namespace WPF_Vench_Launcher
                 var config = Config.LoadConfig();
                 sameTimeAccounts.Text = Convert.ToString(Config.GetConfig().MaxSameTimeAccounts);
                 waitBeforeClose.Text = Convert.ToString(Config.GetConfig().MaxRemainingTimeToDropCase);
-                ServerIp.Text = Convert.ToString(Config.GetConfig().ServersToConnect);
+                ServerIp.Text = Convert.ToString(Config.GetConfig().CustomPanelIp);
 
                 InQueue.Text = Convert.ToString(FarmManager.QueueCount);
                 Started.Text = Convert.ToString(FarmManager.StartedCount);
@@ -150,6 +150,20 @@ namespace WPF_Vench_Launcher
             Config.SaveFriendLogin(FriendLogin.Text);
         }
 
+        private void DiscordImageClick(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Tools.openUrl("https://discord.gg/3D9SVyBkjA");
+        }
+
+        private void DonateClick(object sender, MouseButtonEventArgs e)
+        {
+            Tools.openUrl("https://steamcommunity.com/tradeoffer/new/?partner=210495666&token=saTO1I-x");
+        }
+
+        private void WalkBotClick(object sender, MouseButtonEventArgs e)
+        {
+            Tools.openUrl("https://disk.yandex.ru/d/7kqjNZuyPlZKNQ");
+        }
     }
 
 }

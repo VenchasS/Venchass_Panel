@@ -192,6 +192,9 @@
         <TextBox LostFocus="FriendLoginLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="FriendLogin" Margin="73,0,14,13" Grid.Column="5"  />
         <Label Foreground="White" FontSize="25" Grid.Row="7" Content="Add Friend Login" Margin="70,0,115,29" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
         <Label Foreground="White" FontSize="25" Grid.Row="2" x:Name="ConnectedPanelLabel" Content="Walkbot Panel not connected" Margin="78,17,26,12" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <Image RenderOptions.BitmapScalingMode="HighQuality" Height="50" Width="50" MouseDown="DiscordImageClick" Margin="13,10,55,11" Grid.RowSpan="2" Source="Resources/app-icons-discord.png" Stretch="Fill" Grid.Row="16" Cursor="Hand"  />
+        <Image RenderOptions.BitmapScalingMode="HighQuality" Height="55" Width="150" MouseDown="DonateClick" Grid.ColumnSpan="2" Margin="78,4,0,7" Grid.RowSpan="2" Source="Resources/donate.png" Stretch="Fill" Grid.Row="16" Cursor="Hand"/>
+        <Label MouseDown="WalkBotClick"  Foreground="White" FontSize="25" Grid.Row="16" Content="Download Walkbot" Margin="25,10,40,18" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2" Cursor="Hand"/>
 
 
     </Grid>
