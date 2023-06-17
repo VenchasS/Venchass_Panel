@@ -144,7 +144,7 @@ namespace WPF_Vench_Launcher
             while (true)
             {
                 var windows = GetWindowHandles(account);
-                if(windows.Count() > 40)
+                if(windows.Count() > 10)
                 {
                     Thread.Sleep(10000);
                     AccountManager.StopAccount(account);
