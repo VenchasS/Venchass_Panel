@@ -277,8 +277,11 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            if (!StartedAccountsDict.ContainsKey(acc))
-                return;
+            lock (acc)
+            {
+                acc.Status = 0;
+                acc.PID = 0;
+            }
             try
             {
                 var game = GetGameProcess(acc);
@@ -288,16 +291,14 @@ namespace WPF_Vench_Launcher
                 if (!proc.HasExited)
                     proc.Kill();
             }
-            catch
-            {
-
-            }
+            catch { }
             lock (StartedAccountsDict)
             {
-                StartedAccountsDict.Remove(acc);
+                if (StartedAccountsDict.ContainsKey(acc))
+                {
+                    StartedAccountsDict.Remove(acc);
+                }
             }
-            acc.Status = 0;
-            acc.PID = 0;
             Config.UpdateAccountDB(acc);
         }
 

@@ -111,6 +111,7 @@ namespace WPF_Vench_Launcher.Sources
 
         public static void sendInvites(List<Account> accs, string mainLogin)
         {
+            if (mainLogin == "" || mainLogin == null) return;
             var mainAcc = AccountManager.GetAccountsBase().Where(x => x.Login.ToLower() == mainLogin.ToLower()).ToList();
             if (mainAcc.Count() == 0)
             {

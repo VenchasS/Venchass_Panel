@@ -47,6 +47,13 @@ namespace WPF_Vench_Launcher.Sources
             this.Y = y;
         }
     }
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
 
     public class FarmAccount
     {
@@ -62,6 +69,9 @@ namespace WPF_Vench_Launcher.Sources
 
         [DllImport("user32.dll")]
         private static extern int ReleaseDC(IntPtr hwnd, IntPtr hDC);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
 
         private static uint WM_MOUSEMOVE = 0x0200;
         private static uint WM_LBUTTONDOWN = 0x0201;
@@ -101,6 +111,26 @@ namespace WPF_Vench_Launcher.Sources
             var color = new Color(r, g, b);
             return color;
         }
+
+        private static int MakeLParam(int x, int y)
+        {
+            return (y << 16) | (x & 0xFFFF);
+        }
+
+        public void LeftClick(int x, int y)
+        {
+            PostMessage(csgo.MainWindowHandle, WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MakeLParam(x, y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONDOWN, (IntPtr)1, (IntPtr)MakeLParam(x, y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(x, y));
+        }
+
+        public void LeftClick(Vector2Int vec)
+        {
+            PostMessage(csgo.MainWindowHandle, WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONDOWN, (IntPtr)1, (IntPtr)MakeLParam(vec.X, vec.Y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+        }
+
         public bool CheckGrayWindow()
         {
             try
@@ -112,6 +142,43 @@ namespace WPF_Vench_Launcher.Sources
                 return false;
             }
             catch { return false; }
+        }
+
+        public Size widnowSize()
+        {
+            try
+            {
+                var process = this.csgo;
+                IntPtr mainWindowHandle = process.MainWindowHandle;
+                RECT windowRect;
+                // Проверка, что окно существует и получение его размера
+                if (mainWindowHandle != IntPtr.Zero && GetWindowRect(mainWindowHandle, out windowRect))
+                {
+                    int windowWidth = windowRect.Right - windowRect.Left;
+                    int windowHeight = windowRect.Bottom - windowRect.Top;
+                    return new Size(windowWidth, windowHeight);
+                }
+            }
+            catch { }
+            return new Size(0, 0);
+        }
+
+        public void Run()
+        {
+            var isCsgoEnabled = false;
+            var startTime = DateTime.Now;
+            Task.Factory.StartNew(() =>
+            {
+                while (this.prop.Status != 0)
+                {
+                    var size = this.widnowSize();
+                    if (this.prop.Status != 2 || size != new Size(351, 261))
+                    {
+                        continue;
+                    }
+                    Thread.Sleep(5000);
+                }
+            });
         }
     }
 
