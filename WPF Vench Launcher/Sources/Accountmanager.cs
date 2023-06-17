@@ -899,10 +899,18 @@ namespace WPF_Vench_Launcher
         public static void InitCSGOconfig(string value)
         {
             string path = Config.GetConfig().CSGOPath + "\\csgo\\cfg\\Vench.cfg";
-            var file = File.Create(path);
-            file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
-            var logPath = Config.GetConfig().CSGOPath + @"\csgo\log\";
-            Directory.CreateDirectory(logPath);
+            if (Directory.Exists(Config.GetConfig().CSGOPath + "\\csgo\\cfg\\"))
+            {
+                var file = File.Create(path);
+                file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
+                var logPath = Config.GetConfig().CSGOPath + @"\csgo\log\";
+                Directory.CreateDirectory(logPath);
+            }
+            else
+            {
+                MessageBox.Show("WRONG CSGO path");
+                AccountManager.SaveLogInfo("WRONG CSGO path");
+            }
         }
 
         public static void SetDirectoryPath(string newPath)
