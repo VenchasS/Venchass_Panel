@@ -227,19 +227,12 @@ namespace WPF_Vench_Launcher.Sources
             });
 
         }
-        private static DateTime GetLastWednesday()
+        public static DateTime GetPreviousWednesday()
         {
             DateTime currentDate = DateTime.Now;
-            DayOfWeek currentWeek = currentDate.DayOfWeek;
-            // Находим разницу в днях между текущим днем недели и средой (DayOfWeek.Wednesday)
-            int diff = (int)DayOfWeek.Wednesday - (int)currentWeek;
-            // Если разница отрицательная, то нужно вычесть 7 дней
-            if (diff < 0)
-                diff -= 7;
-            // Вычитаем разницу в днях из текущей даты, чтобы получить первую прошлую среду
-            DateTime lastWednesday = currentDate.AddDays(diff);
-
-            return lastWednesday.Date.AddHours(6);
+            int daysToSubtract = (currentDate.DayOfWeek - DayOfWeek.Wednesday + 7) % 7;
+            DateTime previousWednesday = currentDate.AddDays(-daysToSubtract);
+            return previousWednesday;
         }
 
 
@@ -248,7 +241,7 @@ namespace WPF_Vench_Launcher.Sources
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => { var last = Convert.ToDateTime(x.LastDrop); return (last < GetLastWednesday()); })
+                .Where(x => Convert.ToDateTime(x.LastDrop) < GetPreviousWednesday())
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))

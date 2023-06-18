@@ -144,7 +144,7 @@ namespace WPF_Vench_Launcher
             while (true)
             {
                 var windows = GetWindowHandles(account);
-                if(windows.Count() > 10)
+                if(windows.Count() > 30)
                 {
                     Thread.Sleep(10000);
                     AccountManager.StopAccount(account);
@@ -286,6 +286,10 @@ namespace WPF_Vench_Launcher
             {
                 var game = GetGameProcess(acc);
                 game.Kill();
+            }
+            catch { }
+            try
+            {
                 var proc = StartedAccountsDict[acc];
                 proc.Refresh();
                 if (!proc.HasExited)
@@ -1419,7 +1423,10 @@ namespace WPF_Vench_Launcher
             foreach (FileInfo file in dir.GetFiles("*.maFile"))
             {
                 var account = JsonConvert.DeserializeObject<SdaAccount>(File.ReadAllText(file.FullName));
-                SteamGuardDict.Add(account.account_name, account);
+                if (!SteamGuardDict.ContainsKey(account.account_name))
+                {
+                    SteamGuardDict.Add(account.account_name, account);
+                }
             }
 
 
