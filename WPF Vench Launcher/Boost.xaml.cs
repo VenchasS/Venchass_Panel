@@ -155,10 +155,7 @@ namespace WPF_Vench_Launcher
             Tools.openUrl("https://discord.gg/3D9SVyBkjA");
         }
 
-        private void DonateClick(object sender, MouseButtonEventArgs e)
-        {
-            Tools.openUrl("https://steamcommunity.com/tradeoffer/new/?partner=210495666&token=saTO1I-x");
-        }
+       
 
         private void WalkBotClick(object sender, MouseButtonEventArgs e)
         {
