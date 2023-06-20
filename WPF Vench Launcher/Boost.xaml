@@ -123,10 +123,10 @@
         <TextBox LostFocus="OnTextBoxServersLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="9" x:Name="ServerIp" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
         <Label Foreground="White" FontSize="25" Grid.Row="10" Content="Time between launches(sec):" Margin="12,13,27,15" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
         <TextBox LostFocus="OnTextBoxDelayLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="10" x:Name="LaunchDelay" Margin="87,25,80,23" Grid.Column="2" Grid.RowSpan="2"  />
-        <Label Foreground="White" FontSize="25" Grid.Row="3" Content="Trade link" Margin="70,21,115,8" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
-        <Label Foreground="White" FontSize="25" Grid.Row="2" Content="Enable auto trades" Margin="108,17,77,12" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
-        <TextBox LostFocus="tradeLinkLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="4" x:Name="tradeLink" Margin="73,21,14,28" Grid.Column="5" Grid.RowSpan="2"  />
-        <ToggleButton x:Name="TradesCheck" Grid.Row="2" Height="20" Width="20" HorizontalAlignment="Left" Margin="76,31,0,21" Grid.Column="5" Grid.RowSpan="2">
+        <Label Foreground="White" FontSize="25" Grid.Row="5" Content="Trade link" Margin="70,9,115,20" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="4" Content="Enable auto trades" Margin="108,5,77,24" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <TextBox LostFocus="tradeLinkLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="6" x:Name="tradeLink" Margin="73,9,14,4" Grid.Column="5"  />
+        <ToggleButton x:Name="TradesCheck" Grid.Row="4" Height="20" Width="20" HorizontalAlignment="Left" Margin="76,19,0,33" Grid.Column="5" Grid.RowSpan="2">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Height="20" Width="20" CornerRadius="2" HorizontalAlignment="Left" BorderThickness="1" Background="Black" >
@@ -189,6 +189,12 @@
             </ToggleButton.Template>
         </ToggleButton>
         <Label Foreground="White" FontSize="25" Grid.Row="11" Content="Mark account as farmed after time limit" Margin="13,13,10,15" Grid.RowSpan="2" Grid.ColumnSpan="4"/>
+        <TextBox LostFocus="FriendLoginLostFocus" Grid.ColumnSpan="4" Background="#303030" Foreground="White" FontSize="15" Grid.Row="8" x:Name="FriendLogin" Margin="73,0,14,13" Grid.Column="5"  />
+        <Label Foreground="White" FontSize="25" Grid.Row="7" Content="Add Friend Login" Margin="70,0,115,29" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <Label Foreground="White" FontSize="25" Grid.Row="2" x:Name="ConnectedPanelLabel" Content="Walkbot Panel not connected" Margin="78,17,26,12" Grid.RowSpan="2" Grid.ColumnSpan="4" Grid.Column="5"/>
+        <Image RenderOptions.BitmapScalingMode="HighQuality" Height="50" Width="50" MouseDown="DiscordImageClick" Margin="13,10,55,11" Grid.RowSpan="2" Source="Resources/app-icons-discord.png" Stretch="Fill" Grid.Row="16" Cursor="Hand"  />
+        <Image RenderOptions.BitmapScalingMode="HighQuality" Height="55" Width="150" MouseDown="DonateClick" Grid.ColumnSpan="2" Margin="78,4,0,7" Grid.RowSpan="2" Source="Resources/donate.png" Stretch="Fill" Grid.Row="16" Cursor="Hand"/>
+        <Label MouseDown="WalkBotClick"  Foreground="White" FontSize="25" Grid.Row="16" Content="Download Walkbot" Margin="25,10,40,18" Grid.RowSpan="2" Grid.ColumnSpan="3" Grid.Column="2" Cursor="Hand"/>
 
 
     </Grid>

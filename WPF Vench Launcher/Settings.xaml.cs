@@ -38,7 +38,7 @@ namespace WPF_Vench_Launcher
             oldSteamVersion.IsChecked = Config.GetConfig().oldSteamVersion;
             oldSteamVersion.Checked += oldVersionSteamChecked;
             oldSteamVersion.Unchecked += oldVersionSteamChecked;
-            version.Content = "ver. 1.5";
+            version.Content = "ver. 1.6";
         }
 
         private void UpdateSteamPathTextBlockContent()

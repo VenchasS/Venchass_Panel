@@ -163,6 +163,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -197,6 +198,7 @@
     </Compile>
     <Compile Include="Sources\Accountmanager.cs" />
     <Compile Include="Sources\Farm.cs" />
+    <Compile Include="Sources\Tools.cs" />
     <Compile Include="Sources\TraderController.cs" />
     <Page Include="Boost.xaml">
       <SubType>Designer</SubType>
@@ -287,10 +289,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="sticker_vk_nutri_008.ico" />
+    <Resource Include="Resources\sticker_vk_nutri_008.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="settings.png" />
+    <Resource Include="Resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="VP logo.ico" />
@@ -320,6 +322,11 @@
     <Content Include="CaseTrader\case-trader.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="CaseTrader\tools.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\app-icons-discord.png" />
+    <Resource Include="Resources\donate.png" />
     <Content Include="x64\e_sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -348,8 +355,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="net6.0\consoleCSharp.pdb" />
-    <Resource Include="Image1.png" />
-    <Resource Include="Image2.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

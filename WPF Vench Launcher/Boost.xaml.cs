@@ -49,7 +49,7 @@ namespace WPF_Vench_Launcher
                 var config = Config.LoadConfig();
                 sameTimeAccounts.Text = Convert.ToString(Config.GetConfig().MaxSameTimeAccounts);
                 waitBeforeClose.Text = Convert.ToString(Config.GetConfig().MaxRemainingTimeToDropCase);
-                ServerIp.Text = Convert.ToString(Config.GetConfig().ServersToConnect);
+                ServerIp.Text = Convert.ToString(Config.GetConfig().CustomPanelIp);
 
                 InQueue.Text = Convert.ToString(FarmManager.QueueCount);
                 Started.Text = Convert.ToString(FarmManager.StartedCount);
@@ -62,6 +62,16 @@ namespace WPF_Vench_Launcher
                 MarkTimeLimit.IsChecked = Config.GetConfig().MarkLimitCheckbox;
                 MarkTimeLimit.Checked += MarkLimitChecked;
                 MarkTimeLimit.Unchecked += MarkLimitChecked;
+                FriendLogin.Text = Convert.ToString(Config.GetConfig().FriendLogin);
+                ConnectedPanelLabel.Content = "Checking walkbot available";
+                Task.Run(() =>
+                {
+                    var enabled = PanelManager.isEnabled();
+                    Dispatcher.Invoke((Action)(() =>
+                    {
+                        ConnectedPanelLabel.Content = enabled ? "walkbot is available" : "walkbot not available";
+                    }));
+                });
             }
             catch (Exception e)
             {
@@ -134,6 +144,25 @@ namespace WPF_Vench_Launcher
         {
             var value = MarkTimeLimit.IsChecked == true;
             Config.SaveMarkLimitCheckbox(value);
+        }
+        private void FriendLoginLostFocus(object sender, RoutedEventArgs e)
+        {
+            Config.SaveFriendLogin(FriendLogin.Text);
+        }
+
+        private void DiscordImageClick(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Tools.openUrl("https://discord.gg/3D9SVyBkjA");
+        }
+
+        private void DonateClick(object sender, MouseButtonEventArgs e)
+        {
+            Tools.openUrl("https://steamcommunity.com/tradeoffer/new/?partner=210495666&token=saTO1I-x");
+        }
+
+        private void WalkBotClick(object sender, MouseButtonEventArgs e)
+        {
+            Tools.openUrl("https://disk.yandex.ru/d/7kqjNZuyPlZKNQ");
         }
     }
 

@@ -144,7 +144,7 @@ namespace WPF_Vench_Launcher
             while (true)
             {
                 var windows = GetWindowHandles(account);
-                if(windows.Count() > 40)
+                if(windows.Count() > 30)
                 {
                     Thread.Sleep(10000);
                     AccountManager.StopAccount(account);
@@ -226,6 +226,7 @@ namespace WPF_Vench_Launcher
                 var startApp = startSteam ? "" : "-applaunch 730"; //csgo id
                 var cfg = "+exec Vench.cfg";
                 var consoleLog = String.Format("+con_logfile \"log/{0}.log\"", account.Login.ToLower());
+                var defaultParams = "-nopreload -swapcores -noqueuedload -d3d9ex -disable_d3d9_hacks -dxlevel 90 -vrdisable -sw -limitvsconst -softparticlesdefaultoff -nohltv -noaafonts -nojoy +violence_hblood 0 +sethdmodels 0 +r_dynamic 0 +cl_disablehtmlmotd 1";
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = false,
@@ -233,7 +234,7 @@ namespace WPF_Vench_Launcher
                     RedirectStandardError = true,
                     WorkingDirectory = Config.GetConfig().SteamPath,
                     FileName = path,
-                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2}  {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams)
+                    Arguments = string.Format("-language english -noreactlogin -login {0} \"{1}\"  {2} {6} {3} {4} {5}", account.Login, account.Password, startApp, cfg, consoleLog, startParams, defaultParams)
                 };
                 Process process = new Process()
                 {
@@ -276,27 +277,32 @@ namespace WPF_Vench_Launcher
 
         public static void StopAccount(Account acc)
         {
-            if (!StartedAccountsDict.ContainsKey(acc))
-                return;
+            lock (acc)
+            {
+                acc.Status = 0;
+                acc.PID = 0;
+            }
             try
             {
                 var game = GetGameProcess(acc);
                 game.Kill();
             }
-            catch
+            catch { }
+            try
             {
-
+                var proc = StartedAccountsDict[acc];
+                proc.Refresh();
+                if (!proc.HasExited)
+                    proc.Kill();
             }
-            var proc = StartedAccountsDict[acc];
-            proc.Refresh();
-            if(!proc.HasExited)
-                proc.Kill();
+            catch { }
             lock (StartedAccountsDict)
             {
-                StartedAccountsDict.Remove(acc);
+                if (StartedAccountsDict.ContainsKey(acc))
+                {
+                    StartedAccountsDict.Remove(acc);
+                }
             }
-            acc.Status = 0;
-            acc.PID = 0;
             Config.UpdateAccountDB(acc);
         }
 
@@ -785,16 +791,18 @@ namespace WPF_Vench_Launcher
 
         public bool MarkLimitCheckbox { get; set; }
 
-
-
         public string TradeLink { get; set; }
 
+        public string FriendLogin { get; set; }
 
         public bool csgoNews { get; set; }
 
         public int launchDelay { get; set; }
 
         public bool oldSteamVersion { get; set; }
+
+        public string CustomPanelIp { get; set; }
+
 
 
         public ConfigObject()
@@ -895,10 +903,18 @@ namespace WPF_Vench_Launcher
         public static void InitCSGOconfig(string value)
         {
             string path = Config.GetConfig().CSGOPath + "\\csgo\\cfg\\Vench.cfg";
-            var file = File.Create(path);
-            file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
-            var logPath = Config.GetConfig().CSGOPath + @"\csgo\log\";
-            Directory.CreateDirectory(logPath);
+            if (Directory.Exists(Config.GetConfig().CSGOPath + "\\csgo\\cfg\\"))
+            {
+                var file = File.Create(path);
+                file.Write(Encoding.Default.GetBytes(value), 0, value.Length);
+                var logPath = Config.GetConfig().CSGOPath + @"\csgo\log\";
+                Directory.CreateDirectory(logPath);
+            }
+            else
+            {
+                MessageBox.Show("WRONG CSGO path");
+                AccountManager.SaveLogInfo("WRONG CSGO path");
+            }
         }
 
         public static void SetDirectoryPath(string newPath)
@@ -991,6 +1007,12 @@ namespace WPF_Vench_Launcher
             SaveConfig();
         }
 
+        public static void SaveFriendLogin(string login)
+        {
+            config.FriendLogin = login;
+            SaveConfig();
+        }
+
         public static void SaveCsgoNewsChecked(bool value)
         {
             config.csgoNews = value;
@@ -1011,7 +1033,7 @@ namespace WPF_Vench_Launcher
 
         public static void SaveServersIp(string ip)
         {
-            config.ServersToConnect = ip;
+            config.CustomPanelIp = ip;
             SaveConfig();
         }
 
@@ -1401,7 +1423,10 @@ namespace WPF_Vench_Launcher
             foreach (FileInfo file in dir.GetFiles("*.maFile"))
             {
                 var account = JsonConvert.DeserializeObject<SdaAccount>(File.ReadAllText(file.FullName));
-                SteamGuardDict.Add(account.account_name, account);
+                if (!SteamGuardDict.ContainsKey(account.account_name))
+                {
+                    SteamGuardDict.Add(account.account_name, account);
+                }
             }
 
 

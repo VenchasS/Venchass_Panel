@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Net;
+using System.Web;
+using Newtonsoft.Json;
 
 namespace WPF_Vench_Launcher.Sources
 {
@@ -47,6 +47,13 @@ namespace WPF_Vench_Launcher.Sources
             this.Y = y;
         }
     }
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
 
     public class FarmAccount
     {
@@ -63,6 +70,9 @@ namespace WPF_Vench_Launcher.Sources
         [DllImport("user32.dll")]
         private static extern int ReleaseDC(IntPtr hwnd, IntPtr hDC);
 
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
         private static uint WM_MOUSEMOVE = 0x0200;
         private static uint WM_LBUTTONDOWN = 0x0201;
         private static uint WM_LBUTTONUP = 0x0202;
@@ -74,6 +84,9 @@ namespace WPF_Vench_Launcher.Sources
         public Process csgo { get; set; }
 
         public int consoleIndex { get; set; }
+
+        public int privateRang { get; set; }
+
 
 
         public FarmAccount(Account acc)
@@ -98,7 +111,27 @@ namespace WPF_Vench_Launcher.Sources
             var color = new Color(r, g, b);
             return color;
         }
-        public bool  CheckGrayWindow()
+
+        private static int MakeLParam(int x, int y)
+        {
+            return (y << 16) | (x & 0xFFFF);
+        }
+
+        public void LeftClick(int x, int y)
+        {
+            PostMessage(csgo.MainWindowHandle, WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MakeLParam(x, y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONDOWN, (IntPtr)1, (IntPtr)MakeLParam(x, y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(x, y));
+        }
+
+        public void LeftClick(Vector2Int vec)
+        {
+            PostMessage(csgo.MainWindowHandle, WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONDOWN, (IntPtr)1, (IntPtr)MakeLParam(vec.X, vec.Y));
+            PostMessage(csgo.MainWindowHandle, WM_LBUTTONUP, (IntPtr)0, (IntPtr)MakeLParam(vec.X, vec.Y));
+        }
+
+        public bool CheckGrayWindow()
         {
             try
             {
@@ -109,6 +142,43 @@ namespace WPF_Vench_Launcher.Sources
                 return false;
             }
             catch { return false; }
+        }
+
+        public Size widnowSize()
+        {
+            try
+            {
+                var process = this.csgo;
+                IntPtr mainWindowHandle = process.MainWindowHandle;
+                RECT windowRect;
+                // Проверка, что окно существует и получение его размера
+                if (mainWindowHandle != IntPtr.Zero && GetWindowRect(mainWindowHandle, out windowRect))
+                {
+                    int windowWidth = windowRect.Right - windowRect.Left;
+                    int windowHeight = windowRect.Bottom - windowRect.Top;
+                    return new Size(windowWidth, windowHeight);
+                }
+            }
+            catch { }
+            return new Size(0, 0);
+        }
+
+        public void Run()
+        {
+            var isCsgoEnabled = false;
+            var startTime = DateTime.Now;
+            Task.Factory.StartNew(() =>
+            {
+                while (this.prop.Status != 0)
+                {
+                    var size = this.widnowSize();
+                    if (this.prop.Status != 2 || size != new Size(351, 261))
+                    {
+                        continue;
+                    }
+                    Thread.Sleep(5000);
+                }
+            });
         }
     }
 
@@ -122,6 +192,7 @@ namespace WPF_Vench_Launcher.Sources
         public static int StartedCount { get { return currentFarmQueue.Count; } private set { } }
         public static int FarmedCount { get; private set; }
 
+        
 
         public static void AutoFarm(List<Account> list)
         {
@@ -154,21 +225,23 @@ namespace WPF_Vench_Launcher.Sources
                 if(listToFarm.Count() == 0)
                     AutoFarmController();
             });
-            if (listToFarm.Count() == 0)
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    AccountsLaunchController();
-                });
-            }
+
         }
+        public static DateTime GetPreviousWednesday()
+        {
+            DateTime currentDate = DateTime.Now;
+            int daysToSubtract = (currentDate.DayOfWeek - DayOfWeek.Wednesday + 7) % 7;
+            DateTime previousWednesday = currentDate.AddDays(-daysToSubtract);
+            return previousWednesday;
+        }
+
 
         public static List<Account> GetAutoFarmAccounts()
         {
             return AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop != null)
-                .Where(x => Convert.ToDateTime(x.LastDrop).Subtract(new DateTime(1970, 1, 1)).TotalHours - DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalHours < -168)
+                .Where(x => Convert.ToDateTime(x.LastDrop) < GetPreviousWednesday())
                 .Concat(AccountManager.GetAccountsBase()
                 .Where(x => x.PrimeStatus == true)
                 .Where(x => x.LastDrop == null))
@@ -184,6 +257,10 @@ namespace WPF_Vench_Launcher.Sources
                 }
             }
             AccountManager.StopAccount(farmAcc.prop);
+            if (PanelManager.isEnabled())
+            {
+                PanelManager.DeleteTarget(Convert.ToString(farmAcc.prop.SteamId32));
+            }
             FarmedCount += 1;
         }
 
@@ -200,8 +277,18 @@ namespace WPF_Vench_Launcher.Sources
             {
                 currentFarmQueue.Add(farmAcc);
             }
-            if(farmAcc.prop.Status == 0)
-                AccountManager.StartAccount(farmAcc.prop, String.Format(" -novid -nosound -w 640 -h 480  -nomouse +connect {0} {1}", Config.GetConfig().ServersToConnect, Config.GetConfig().StartParams), false);
+            if (farmAcc.prop.Status == 0)
+            {
+                AccountManager.StartAccount(farmAcc.prop, String.Format("-novid -nosound  -nomouse -widnow -w 640 -h 480  -nomouse {0} ++attack2 +-left", Config.GetConfig().StartParams), false);
+            }
+            if (PanelManager.isEnabled())
+            {
+                var resp = PanelManager.AddTarget(Convert.ToString(farmAcc.prop.SteamId32));
+            }
+            else
+            {
+                AccountManager.SaveLogInfo("account " + farmAcc.prop.Login + "not added, panel not found");
+            }
             Config.SaveAccountsDataAsync(farmAcc.prop);
         }
 
@@ -238,7 +325,6 @@ namespace WPF_Vench_Launcher.Sources
                     return;
                 var index = account.consoleIndex;
                 FileInfo log = new FileInfo(path);
-                AccountManager.SendCmd(account.prop, "status");
                 
                 using (var streamReader = new StreamReader(log.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
@@ -249,7 +335,7 @@ namespace WPF_Vench_Launcher.Sources
                     );
                     for (var i = index;i <lines.Count();i++)
                     {
-                        var line = lines[i];
+                        /*var line = lines[i];
                         if (line == "Disconnect: .")
                         {
                             CloseAccount(account);
@@ -264,7 +350,7 @@ namespace WPF_Vench_Launcher.Sources
                         {
                             AccountManager.SendCmd(account.prop, String.Format("connect {0}", Config.GetConfig().ServersToConnect));
                             AccountManager.SaveLogInfo(String.Format("Accounts {0} reconected to server {1}", account.prop.Login, Config.GetConfig().ServersToConnect));
-                        }
+                        }*/
                     }
                     account.consoleIndex = lines.Count()-1;
                 }
@@ -281,6 +367,7 @@ namespace WPF_Vench_Launcher.Sources
             {
                 try
                 {
+
                     foreach (var farmAcc in currentFarmQueue.ToList())
                     {
                         if (farmAcc.prop.Status == 0)
@@ -303,30 +390,153 @@ namespace WPF_Vench_Launcher.Sources
                                 MessageBox.Show(ex.Message);
                             }
                         }
-                        //Deprecated
-                        /*else if (farmAcc.CheckGrayWindow()) 
-                        {
-                            try
-                            {
-                                CloseAccount(farmAcc);
-                                farmAcc.SetLastDrop();
-                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after kick from server {1}", farmAcc.prop.Login, Config.GetConfig().ServersToConnect));
-                                Config.SaveAccountsDataAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-                        }*/
-                        ParseConsole(farmAcc);
+
+                        //ParseConsole(farmAcc); //no need now
+                        AccountManager.SendCmd(farmAcc.prop, "slot3");
                     }
-                    Thread.Sleep(30000);
+                    var targets = PanelManager.GetTargets();
+                    var copy = new List<FarmAccount>(currentFarmQueue);
+                    foreach (var target in targets)
+                    {
+                        if (target.rank == 0 || target.rank == -1)
+                        {
+                            continue;
+                        }
+                        if (copy.Select(x => x.prop.SteamId32.ToString()).ToList().Contains(target.name))
+                        {
+                            var acc = copy.Where(x => x.prop.SteamId32.ToString() == target.name).FirstOrDefault();
+                            if (acc.privateRang == 0)
+                            {
+                                acc.privateRang = target.rank;
+                            } 
+                            else if(acc.privateRang != target.rank && (target.rank > acc.privateRang || target.rank == 1))
+                            {
+                                CloseAccount(acc);
+                                acc.SetLastDrop();
+                                if (Config.GetConfig().TradesCheckbox)
+                                    TraderController.AddAccount(acc.prop);
+                                AccountManager.SaveLogInfo(String.Format("Accounts {0} closed after level up ", acc.prop.Login));
+                                Config.SaveAccountsDataAsync(acc.prop);
+                            }
+                        }
+                    }
+                    while (queueToFarm.Count != 0 && (currentFarmQueue.Count < Config.GetConfig().MaxSameTimeAccounts || Config.GetConfig().MaxSameTimeAccounts == 0))
+                    {
+                        lock (queueToFarm)
+                        {
+                            StartFarmAccount(queueToFarm.First());
+                        }
+                        Thread.Sleep(Config.GetConfig().launchDelay * 1000);
+                    }
+                    Thread.Sleep(15000);
                 }
                 catch (Exception e)
                 {
                     AccountManager.SaveLogInfo(e.Message);
                 }
             }
+        }
+    }
+
+    public class PanelTarget
+    {
+        public bool confirmed { get; set; }
+        public string name { get; set; }
+        public int rank { get; set; }
+        public int score { get; set; }
+        public int scoreLimit { get; set; }
+        public int timeStatus { get; set; }
+
+    }
+
+    static class PanelManager
+    {
+        public static string SendGetRequest(string path, Dictionary<string, string> parameters, string url = "")
+        {
+            if (url == "" || url == null)
+            {
+                url = "localhost";
+            }
+            string apiUrlWithParam = $"http://{url}:8322{path}?";
+            if (parameters != null && parameters.Count > 0)
+            {
+                // Создаем QueryString с помощью класса HttpUtility
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+                foreach (var parameter in parameters)
+                {
+                    queryString[parameter.Key] = parameter.Value;
+                }
+
+                // Добавляем QueryString к URL
+                apiUrlWithParam += queryString;
+            }
+            
+
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    return client.DownloadString(apiUrlWithParam);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    return string.Empty;
+                }
+            }
+        }
+
+        public static string SendGetRequest(string path, string url = "")
+        {
+            if (url == "" || url == null)
+            {
+                url = "localhost";
+            }
+            string apiUrlWithParam = $"http://{url}:8322{path}";
+
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    return client.DownloadString(apiUrlWithParam);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    return string.Empty;
+                }
+            }
+        }
+
+        public static string AddTarget(string steamId32)
+        {
+            return SendGetRequest("/addtarget", new Dictionary<string, string>{
+                { "id",  steamId32 },
+                { "limit", "1000" }
+            } , Config.GetConfig().CustomPanelIp);
+        }
+
+        public static string DeleteTarget(string value)
+        {
+            return SendGetRequest("/deletetarget", new Dictionary<string, string>{
+                { "id",  value },
+            }, Config.GetConfig().CustomPanelIp);
+        }
+
+        public static bool  isEnabled()
+        {
+            return SendGetRequest("/ping", Config.GetConfig().CustomPanelIp) == "200";
+        }
+
+        public static List<PanelTarget> GetTargets()
+        {
+            var resp = SendGetRequest("/getalltargets", Config.GetConfig().CustomPanelIp);
+            if (resp == "null" || resp == "")
+            {
+                return new List<PanelTarget>();
+            }
+            List<PanelTarget> targets = JsonConvert.DeserializeObject<List<PanelTarget>>(resp);
+            return targets;
         }
     }
 }

@@ -86,8 +86,7 @@ namespace WPF_Vench_Launcher.Properties {
         ///bind &quot;s&quot; &quot;+back&quot;
         ///bind &quot;t&quot; &quot;+spray_menu&quot;
         ///bind &quot;u&quot; &quot;messagemode2&quot;
-        ///bind &quot;w&quot; &quot;+forward&quot;
-        ///bind &quot;x&quot; &quot....
+        ///bind &quot;w&quot; &quot; [остаток стро....
         /// </summary>
         internal static string configDefault {
             get {
@@ -115,7 +114,7 @@ namespace WPF_Vench_Launcher.Properties {
         ///con_filter_text match_id
         ///bind &quot;t&quot; &quot;disconnect&quot;
         ///m_rawinput 0
-        ///mat_setvideomode 100 50 1
+        ///mat_setvideomode 350 260 1
         ///fps_max_menu 40
         ///fps_max 20
         ///sv_allowupload 1.
